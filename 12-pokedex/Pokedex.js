@@ -7,7 +7,6 @@ import { Image, View } from "react-native";
 
 import MoveDetail from "./screens/MoveDetail";
 import MoveList from "./screens/MoveList";
-import UserDetail from "./screens/UserDetail";
 import PokemonDetail from "./screens/PokemonDetail";
 import PokemonList from "./screens/PokemonList";
 
@@ -22,7 +21,7 @@ const stackScreenOptions = {
   gestureEnabled: true,
 };
 
-function QuizScreen() {
+function PokemonStackScreen() {
   return (
     <PokemonStack.Navigator screenOptions={stackScreenOptions}>
       <PokemonStack.Screen name="PokemonList" component={PokemonList} />
@@ -31,25 +30,7 @@ function QuizScreen() {
   );
 }
 
-function GroupScreen() {
-  return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="MoveList" component={MoveList} />
-      <MoveStack.Screen name="MoveDetail" component={MoveDetail} />
-    </MoveStack.Navigator>
-  );
-}
-
-
-function UserScreen() {
-  return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="MoveList" component={UserDetail} />
-    </MoveStack.Navigator>
-  );
-}
-
-function AboutScreen() {
+function MoveStackScreen() {
   return (
     <MoveStack.Navigator screenOptions={stackScreenOptions}>
       <MoveStack.Screen name="MoveList" component={MoveList} />
@@ -92,10 +73,8 @@ export default function Pokedex() {
         <Tab.Navigator
           screenOptions={tabScreenOptions}
         >
-          <Tab.Screen name="Quiz" component={QuizScreen} />
-          <Tab.Screen name="Group" component={GroupScreen} />
-          <Tab.Screen name="User" component={UserScreen} />
-          <Tab.Screen name="About" component={AboutScreen} />
+          <Tab.Screen name="Pokemons" component={PokemonStackScreen} />
+          <Tab.Screen name="Moves" component={MoveStackScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </>

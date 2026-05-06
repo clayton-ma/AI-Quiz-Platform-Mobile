@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from "react-native";
-import MainHeader from "../../assignment3/components/MainHeader";
-import { BackgroundColor } from "../constants";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import MainHeader from "../components/MainHeader";
+import { BackgroundColor } from "../../constants";
 
 export default function UserDetail({ navigation, route }) {
   const [firstName, setFirstName] = useState("John");
   const [lastName, setLastName] = useState("Doe");
-  const [email,setEmail]=useState("john.doe@example.com");
+  const [email, setEmail] = useState("john.doe@example.com");
 
   const handleSave = () => {
     Alert.alert("Success", "User information updated!");
@@ -65,7 +73,7 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     marginHorizontal: 15,
   },
- inputGroup: {
+  inputGroup: {
     marginBottom: 20,
   },
   label: {

@@ -5,14 +5,16 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Image, View } from "react-native";
 
-import MoveDetail from "./screens/MoveDetail";
-import MoveList from "./screens/MoveList";
-import UserDetail from "./screens/UserDetail";
-import PokemonDetail from "./screens/PokemonDetail";
-import PokemonList from "./screens/PokemonList";
+import MoveDetail from "../../screens/MoveDetail";
+import MoveList from "../../screens/MoveList";
+import UserDetail from "../../screens/UserDetail";
+import PokemonDetail from "../../screens/PokemonDetail";
+import PokemonList from "../../screens/PokemonList";
 
-import moveTabIcon from "./assets/move-active.png";
-import pokemonTabIcon from "./assets/pokemon-active.png";
+import moveTabIcon from "../../assets/move-active.png";
+import pokemonTabIcon from "../../assets/pokemon-active.png";
+import About from "../../features/about/screens/AboutScreen";
+import QuizList from "../../features/quiz/screen";
 
 // https://reactnavigation.org/docs/stack-navigator/
 const PokemonStack = createStackNavigator();
@@ -25,8 +27,7 @@ const stackScreenOptions = {
 function QuizScreen() {
   return (
     <PokemonStack.Navigator screenOptions={stackScreenOptions}>
-      <PokemonStack.Screen name="PokemonList" component={PokemonList} />
-      <PokemonStack.Screen name="PokemonDetail" component={PokemonDetail} />
+      <PokemonStack.Screen name="QuizList" component={QuizList} />
     </PokemonStack.Navigator>
   );
 }
@@ -40,7 +41,6 @@ function GroupScreen() {
   );
 }
 
-
 function UserScreen() {
   return (
     <MoveStack.Navigator screenOptions={stackScreenOptions}>
@@ -52,8 +52,7 @@ function UserScreen() {
 function AboutScreen() {
   return (
     <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="MoveList" component={MoveList} />
-      <MoveStack.Screen name="MoveDetail" component={MoveDetail} />
+      <MoveStack.Screen name="AboutScreen" component={About} />
     </MoveStack.Navigator>
   );
 }
@@ -63,7 +62,6 @@ const Tab = createBottomTabNavigator();
 const ActiveColor = "#000000";
 const InActiveColor = "#00000077";
 const tabScreenOptions = ({ route }) => ({
-
   headerShown: false,
   tabBarActiveTintColor: ActiveColor,
   tabBarInactiveTintColor: InActiveColor,
@@ -83,21 +81,15 @@ const tabScreenOptions = ({ route }) => ({
   },
 });
 
-export default function Pokedex() {
+export default function Navigator() {
   return (
-    <>
-      <StatusBar style="light" />
-
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={tabScreenOptions}
-        >
-          <Tab.Screen name="Quiz" component={QuizScreen} />
-          <Tab.Screen name="Group" component={GroupScreen} />
-          <Tab.Screen name="User" component={UserScreen} />
-          <Tab.Screen name="About" component={AboutScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </>
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={tabScreenOptions}>
+        <Tab.Screen name="Quiz" component={QuizScreen} />
+        <Tab.Screen name="Group" component={GroupScreen} />
+        <Tab.Screen name="User" component={UserScreen} />
+        <Tab.Screen name="About" component={AboutScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }

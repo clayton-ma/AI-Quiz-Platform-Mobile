@@ -1,4 +1,4 @@
-import { debounce } from 'lodash';
+import { debounce } from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -10,9 +10,9 @@ import {
 import { Avatar, ListItem, SearchBar } from "react-native-elements";
 
 import pokeballIcon from "../assets/pokeball.png";
-import MainHeader from "../../assignment3/components/MainHeader";
-import PokemonType from "../../assignment3/components/PokemonType";
-import { FullPokemonsAPI } from "../constants";
+import MainHeader from "../components/MainHeader";
+import PokemonType from "../components/PokemonType";
+import { FullPokemonsAPI } from "../../constants";
 
 export default function PokemonList({ navigation }) {
   const [displayPokemons, setDisplayPokemons] = useState([]);
@@ -71,7 +71,7 @@ export default function PokemonList({ navigation }) {
         setDisplayPokemons(filteredPokemons);
       }
     }, 1000),
-    [pokemons]
+    [pokemons],
   );
 
   const inputSearchPokemon = (keyword) => {
@@ -96,8 +96,8 @@ export default function PokemonList({ navigation }) {
             cp: "1115",
             field_pokemon_generation: "Generation 1",
             catch_rate: "20%",
-            field_flee_rate: "10%"
-          }
+            field_flee_rate: "10%",
+          },
         ];
 
         setPokemons(responseJson);

@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Icon } from "react-native-elements";
-import { BackgroundColor } from "../constants";
+import { BackgroundColor } from "../../constants";
 
 export default function MainHeader({ navigation, isMain, title }) {
   if (isMain) {

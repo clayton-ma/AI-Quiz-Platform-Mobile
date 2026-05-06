@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import { ListItem, SearchBar } from "react-native-elements";
 
-import MainHeader from "../../assignment3/components/MainHeader";
-import { FullMovesAPI, PokemonTypeIcon } from "../constants";
+import MainHeader from "../components/MainHeader";
+import { FullMovesAPI, PokemonTypeIcon } from "../../constants";
 
 import { debounce } from "lodash";
 
@@ -53,7 +53,7 @@ export default function MoveList({ navigation }) {
         setDisplayMoves(filteredMoves);
       }
     }, 1000),
-    [moves]
+    [moves],
   );
 
   const inputSearchMove = (keyword) => {

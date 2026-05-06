@@ -8,10 +8,10 @@ import {
   View,
 } from "react-native";
 
-import MainHeader from "../../assignment3/components/MainHeader";
-import PokemonStatus from "../../assignment3/components/PokemonStatus";
-import PokemonType from "../../assignment3/components/PokemonType";
-import { BackgroundColor } from "../constants";
+import MainHeader from "../components/MainHeader";
+import PokemonStatus from "../components/PokemonStatus";
+import PokemonType from "../components/PokemonType";
+import { BackgroundColor } from "../../constants";
 
 export default function PokemonDetail({ navigation, route }) {
   const [staProgress, setStaProgress] = useState(0);
@@ -62,7 +62,6 @@ export default function PokemonDetail({ navigation, route }) {
             PlaceholderContent={<ActivityIndicator />}
             source={{ uri: pokemon.uri }}
           />
-          
 
           <Text style={styles.pokemonName}>{pokemon.title_1}1111</Text>
 

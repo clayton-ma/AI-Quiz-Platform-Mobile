@@ -6,12 +6,12 @@ import { ThemeProvider } from "./providers/ThemeContext";
 
 export default function App() {
   return (
-    <AuthProvider>
+     <AuthProvider>
       <ThemeProvider>
         <StatusBar style="light" />
 
         <RootNavigator />
       </ThemeProvider>
-    </AuthProvider>
+     </AuthProvider>
   );
 }

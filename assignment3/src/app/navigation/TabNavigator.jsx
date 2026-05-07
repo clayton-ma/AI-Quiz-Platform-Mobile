@@ -10,6 +10,8 @@ import MoveList from "../../screens/MoveList";
 import UserDetail from "../../screens/UserDetail";
 import PokemonDetail from "../../screens/PokemonDetail";
 import PokemonList from "../../screens/PokemonList";
+import ListGroup from "../../features/group/screens/ListGroupScreen";
+import EditGroup from "../../features/group/screens/EditGroupScreen";
 
 import moveTabIcon from "../../assets/move-active.png";
 import pokemonTabIcon from "../../assets/pokemon-active.png";
@@ -35,8 +37,8 @@ function QuizScreen() {
 function GroupScreen() {
   return (
     <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="MoveList" component={MoveList} />
-      <MoveStack.Screen name="MoveDetail" component={MoveDetail} />
+      <MoveStack.Screen name="GroupList" component={ListGroup} />
+      <MoveStack.Screen name="EditGroup" component={EditGroup} />
     </MoveStack.Navigator>
   );
 }

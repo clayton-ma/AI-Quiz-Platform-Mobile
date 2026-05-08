@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { ListItem, SearchBar } from "react-native-elements";
 
-import MainHeader from "../components/MainHeader";
+import MainHeader from "../components/ui/MainHeader";
 import { FullMovesAPI, PokemonTypeIcon } from "../../constants";
 
 import { debounce } from "lodash";

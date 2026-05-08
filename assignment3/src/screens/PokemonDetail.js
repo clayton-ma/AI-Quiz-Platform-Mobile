@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 
-import MainHeader from "../components/MainHeader";
+import MainHeader from "../components/ui/MainHeader";
 import PokemonStatus from "../components/PokemonStatus";
 import PokemonType from "../components/PokemonType";
 import { BackgroundColor } from "../../constants";

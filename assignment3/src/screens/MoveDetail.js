@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Image } from "react-native-elements";
-import MainHeader from "../components/MainHeader";
+import MainHeader from "../components/ui/MainHeader";
 
 import { BackgroundColor, PokemonTypeIcon } from "../../constants";
 

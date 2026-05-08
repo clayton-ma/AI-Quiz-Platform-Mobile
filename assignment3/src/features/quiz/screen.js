@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SearchBar, ListItem, Icon } from "react-native-elements";
-import MainHeader from "../../components/MainHeader";
+import MainHeader from "../../components/ui/MainHeader";
 import { BackgroundColor } from "../../../constants";
 import { debounce } from "lodash";
+import MainContainer from "../../components/layout/MainContainer";
 
 /**
  * QuizList component displays a paginated, searchable, and sortable list of quizzes.
@@ -92,13 +93,7 @@ export default function QuizList({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
-      <MainHeader
-        title="Available Quizzes"
-        isMain={true}
-        navigation={navigation}
-      />
-
+    <MainContainer title="Quizzes" navigation={navigation} isMain={true}>
       <SearchBar
         placeholder="Search quizzes..."
         value={keyword}
@@ -130,7 +125,7 @@ export default function QuizList({ navigation }) {
       >
         <Icon name="add" color="#fff" size={30} />
       </TouchableOpacity>
-    </View>
+    </MainContainer>
   );
 }
 

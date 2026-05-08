@@ -10,7 +10,7 @@ import {
 import { Avatar, ListItem, SearchBar } from "react-native-elements";
 
 import pokeballIcon from "../assets/pokeball.png";
-import MainHeader from "../components/MainHeader";
+import MainHeader from "../components/ui/MainHeader";
 import PokemonType from "../components/PokemonType";
 import { FullPokemonsAPI } from "../../constants";
 

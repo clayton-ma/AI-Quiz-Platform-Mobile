@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import MainHeader from "../../../components/MainHeader";
+import MainHeader from "../../../components/ui/MainHeader";
 import { Icon } from "react-native-elements";
 import { BackgroundColor } from "../../../../constants";
 

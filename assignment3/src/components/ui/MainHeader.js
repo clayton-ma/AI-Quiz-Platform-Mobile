@@ -1,6 +1,6 @@
 import React from "react";
 import { Header, Icon } from "react-native-elements";
-import { BackgroundColor } from "../../constants";
+import { BackgroundColor } from "../../../constants";
 
 export default function MainHeader({ navigation, isMain, title }) {
   if (isMain) {
@@ -21,12 +21,11 @@ export default function MainHeader({ navigation, isMain, title }) {
         }}
         leftComponent={
           <Icon
-            name="keyboard-arrow-left"
+            type="material"
+            name="keyboard_backspace"
             color="#fff"
-            size={40}
-            onPress={() => {
-              navigation.goBack();
-            }}
+            size={30}
+            onPress={() => navigation.goBack()}
           />
         }
         centerComponent={{ text: title, style: { color: "#fff" } }}

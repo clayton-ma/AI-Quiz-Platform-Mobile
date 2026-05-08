@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import MainHeader from "../components/MainHeader";
+import MainHeader from "../components/ui/MainHeader";
 import { BackgroundColor } from "../../constants";
 
 export default function UserDetail({ navigation, route }) {

@@ -1,55 +1,32 @@
+import React, { useState, useEffect } from "react";
 import {
-  TextInput,
-  Textarea,
+  View,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
   Switch,
-  MultiSelect,
-  Button,
-  Stack,
-  Group,
-  Container,
-  Paper,
-  Title,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useState, useEffect } from "react";
-import {
-  IconPlus,
-  IconArrowLeft,
-  IconUsers,
-  IconInfoCircle,
-} from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
+} from "react-native";
+import { Input, Button, Text, Icon, CheckBox } from "react-native-elements";
+import MultiSelect from "react-native-multiple-select";
 import { createQuiz } from "../api";
 import { fetchGroups } from "../../group/api";
 import ShowErrorNotification from "@/components/ui/ShowErrorNotification";
-import PageTitle from "../../../components/ui/PageTitle";
+import MainContainer from "../../../components/layout/MainContainer";
+import { BackgroundColor } from "../../../../constants";
 
 /**
  * CreateQuiz component provides a form for users to initialize a new quiz.
- * It requires the user to be an admin of at least one group to assign the quiz.
  */
-export default function CreateQuiz() {
-  const [loading, setLoading] = useState(false); // Controls loading state for API calls
-  const [groupsData, setGroupsData] = useState([]); // Stores formatted groups where user is admin
-  const navigate = useNavigate();
-
-  // Initialize form with validation
-  const form = useForm({
-    initialValues: {
-      name: "",
-      description: "",
-      instant_result: true,
-      groupIds: [],
-    },
-    validate: {
-      name: (value) =>
-        value.length < 3 ? "Title must be at least 3 characters" : null,
-      groupIds: (value) =>
-        value.length === 0 ? "Please select at least one group" : null,
-    },
+export default function CreateQuiz({ navigation }) {
+  const [loading, setLoading] = useState(false);
+  const [groupsData, setGroupsData] = useState([]);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    instant_result: true,
+    groupIds: [],
   });
 
-  // Fetch groups where the current user has admin privileges on component mount
   useEffect(() => {
     const loadGroups = async () => {
       try {
@@ -57,10 +34,9 @@ export default function CreateQuiz() {
         const { data: adminGroups } = await fetchGroups({ role: "admin" });
 
         if (adminGroups) {
-          // Format data for Mantine MultiSelect
           setGroupsData(
             adminGroups.map((g) => ({
-              value: g._id,
+              id: g._id,
               label: g.name,
             })),
           );
@@ -74,22 +50,22 @@ export default function CreateQuiz() {
     loadGroups();
   }, []);
 
-  /**
-   * Handles the quiz creation submission.
-   * On success, redirects the user to the quiz editor to add questions.
-   * @param {Object} values - Validated form values
-   */
-  const handleSubmit = async (values) => {
-    setLoading(true);
-    if (form.validate().hasErrors) {
-      setLoading(false);
-      return;
+  const handleSubmit = async () => {
+    if (formData.name.length < 3) {
+      return ShowErrorNotification({
+        message: "Title must be at least 3 characters",
+      });
+    }
+    if (formData.groupIds.length === 0) {
+      return ShowErrorNotification({
+        message: "Please select at least one group",
+      });
     }
 
+    setLoading(true);
     try {
-      // Create quiz and navigate to edit page to add questions
-      const { _id: quizId } = await createQuiz(values);
-      navigate(`/quiz/edit-quiz/${quizId}`);
+      const { _id: quizId } = await createQuiz(formData);
+      navigation.navigate("EditQuiz", { quizId });
     } catch (errors) {
       ShowErrorNotification(errors);
     } finally {
@@ -98,82 +74,128 @@ export default function CreateQuiz() {
   };
 
   return (
-    <Container size="sm" py="xl">
-      <Stack gap="lg">
-        {/* Reusable page header with back navigation to quiz list */}
-        <PageTitle title="Create New Quiz" backLink="/quiz" />
+    <MainContainer title="Create New Quiz" navigation={navigation}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.formCard}>
+          <Input
+            label="Quiz Title *"
+            placeholder="Initial Quiz Title"
+            value={formData.name}
+            onChangeText={(val) => setFormData({ ...formData, name: val })}
+            leftIcon={<Icon name="info-outline" size={20} color="#7F8C8D" />}
+            disabled={loading}
+          />
 
-        <Paper withBorder p="xl" radius="md" shadow="sm">
-          <form onSubmit={form.onSubmit(handleSubmit)}>
-            <Stack gap="md">
-              <TextInput
-                label="Quiz Title"
-                placeholder="Initial Quiz Title"
-                required
-                disabled={loading}
-                leftSection={<IconInfoCircle size={16} />}
-                {...form.getInputProps("name")}
-              />
+          <Input
+            label="Description"
+            placeholder="Description of the quiz"
+            value={formData.description}
+            onChangeText={(val) =>
+              setFormData({ ...formData, description: val })
+            }
+            multiline
+            numberOfLines={3}
+            disabled={loading}
+          />
 
-              {/* Optional description for the quiz context */}
-              <Textarea
-                label="Description"
-                placeholder="Description of the quiz"
-                minRows={3}
-                disabled={loading}
-                {...form.getInputProps("description")}
-              />
+          <View style={styles.multiSelectContainer}>
+            <Text style={styles.label}>Assign to Groups *</Text>
+            <MultiSelect
+              items={groupsData}
+              uniqueKey="id"
+              onSelectedItemsChange={(val) =>
+                setFormData({ ...formData, groupIds: val })
+              }
+              selectedItems={formData.groupIds}
+              selectText="Select one or more groups"
+              searchInputPlaceholderText="Search Groups..."
+              tagRemoveIconColor={BackgroundColor}
+              tagBorderColor={BackgroundColor}
+              tagTextColor={BackgroundColor}
+              selectedItemTextColor={BackgroundColor}
+              selectedItemIconColor={BackgroundColor}
+              itemTextColor="#000"
+              displayKey="label"
+              searchInputStyle={{ color: "#CCC" }}
+              submitButtonColor={BackgroundColor}
+              submitButtonText="Confirm"
+            />
+          </View>
 
-              {/* Group assignment is mandatory for quiz visibility */}
-              <MultiSelect
-                label="Assign to Groups"
-                placeholder="Select one or more groups"
-                leftSection={<IconUsers size={16} />}
-                data={groupsData}
-                required
-                disabled={loading}
-                nothingFoundMessage={
-                  <Button
-                    variant="subtle"
-                    size="xs"
-                    onClick={() => navigate("/group/create-group")}
-                  >
-                    No admin groups found. Create one?
-                  </Button>
-                }
-                description={
-                  groupsData.length === 0
-                    ? "You need to be an admin of a group to create a quiz."
-                    : null
-                }
-                {...form.getInputProps("groupIds")}
-              />
+          <View style={styles.switchRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.switchLabel}>
+                Show instant results to students
+              </Text>
+              <Text style={styles.switchSub}>
+                Students will see their score immediately after submission
+              </Text>
+            </View>
+            <Switch
+              value={formData.instant_result}
+              onValueChange={(val) =>
+                setFormData({ ...formData, instant_result: val })
+              }
+              trackColor={{ false: "#767577", true: BackgroundColor }}
+              disabled={loading}
+            />
+          </View>
 
-              {/* Toggle for immediate feedback after student submission */}
-              <Switch
-                label="Show instant results to students"
-                description="Students will see their score immediately after submission"
-                disabled={loading}
-                {...form.getInputProps("instant_result", { type: "checkbox" })}
-              />
-
-              {/* Submission button triggers form validation and API call */}
-              <Group justify="flex-end" mt="md">
-                <Button
-                  fullWidth
-                  size="md"
-                  type="submit"
-                  loading={loading}
-                  disabled={loading}
-                  leftSection={<IconPlus size={20} />}
-                >
-                  Create Quiz
-                </Button>
-              </Group>
-            </Stack>
-          </form>
-        </Paper>
-      </Stack>
-    </Container>
+          <Button
+            title="Create Quiz"
+            loading={loading}
+            onPress={handleSubmit}
+            buttonStyle={styles.submitBtn}
+            icon={<Icon name="add" color="white" style={{ marginRight: 10 }} />}
+          />
+        </View>
+      </ScrollView>
+    </MainContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 15,
+  },
+  formCard: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 15,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#86939e",
+    marginBottom: 10,
+    marginLeft: 10,
+  },
+  multiSelectContainer: {
+    marginBottom: 20,
+  },
+  switchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    marginBottom: 30,
+  },
+  switchLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#2C3E50",
+  },
+  switchSub: {
+    fontSize: 12,
+    color: "#7F8C8D",
+  },
+  submitBtn: {
+    backgroundColor: BackgroundColor,
+    borderRadius: 8,
+    paddingVertical: 12,
+  },
+});

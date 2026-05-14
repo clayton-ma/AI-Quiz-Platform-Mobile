@@ -1,39 +1,32 @@
-import { useEffect, useReducer, useCallback, useState } from "react";
+import React, { useEffect, useReducer, useCallback, useState } from "react";
 import {
-  Container,
-  Button,
-  Group,
-  Stack,
-  Title,
-  Divider,
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
   Text,
-} from "@mantine/core";
-import {
-  IconPlus,
-  IconDeviceFloppy,
-  IconRocket,
-  IconSparkles,
-} from "@tabler/icons-react";
-import { useParams, useNavigate } from "react-router-dom";
-
-import PageTitle from "../../../components/ui/PageTitle";
-
+} from "react-native";
+import { Icon, Button, Divider } from "react-native-elements";
+import MainContainer from "../../../components/layout/MainContainer";
 import {
   fetchQuizByIdForEdit,
   generateQuestions,
   updateQuiz,
   publishQuiz,
-} from "../api";
+} from "../services/quizApi";
 
-import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import ConfirmDialog from "../../../components/ui/ConfirmDialog";
 
-import { fetchGroups } from "../../group/api";
-import ShowErrorNotification from "@/components/ui/ShowErrorNotification";
-import ShowNotification from "@/components/ui/ShowNotification";
+import { fetchGroups } from "../../group/services/groupApi";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+import ShowNotification from "../../../components/ui/ShowNotification";
 
 import EditQuestionCard from "../components/EditQuestionCard";
 import EditQuizMetadata from "../components/EditQuizMetadata";
 import GenerateQuestionModal from "../components/GenerateQuestionModal";
+import { BackgroundColor } from "../../../../constants";
 
 /**
  * Initial state structure for the quiz being edited.
@@ -82,11 +75,19 @@ function reducer(state, action) {
         questions: [
           ...state.questions,
           {
-            temId: crypto.randomUUID(), // Let MongoDB generate a valid ObjectId
+            temId: Math.random().toString(36).substring(7),
             content: "",
             options: [
-              { temId: crypto.randomUUID(), content: "", is_correct: true },
-              { temId: crypto.randomUUID(), content: "", is_correct: false },
+              {
+                temId: Math.random().toString(36).substring(7),
+                content: "",
+                is_correct: true,
+              },
+              {
+                temId: Math.random().toString(36).substring(7),
+                content: "",
+                is_correct: false,
+              },
             ],
           },
         ],
@@ -99,22 +100,22 @@ function reducer(state, action) {
         questions: [
           ...state.questions,
           ...action.payload.map((q) => ({
-            temId: crypto.randomUUID(),
+            temId: Math.random().toString(36).substring(7),
             content: q.content || "",
             options: q.options
               ? q.options.map((o) => ({
-                  temId: crypto.randomUUID(),
+                  temId: Math.random().toString(36).substring(7),
                   content: o.content || "",
                   is_correct: o.is_correct,
                 }))
               : [
                   {
-                    temId: crypto.randomUUID(),
+                    temId: Math.random().toString(36).substring(7),
                     content: "",
                     is_correct: false,
                   },
                   {
-                    temId: crypto.randomUUID(),
+                    temId: Math.random().toString(36).substring(7),
                     content: "",
                     is_correct: false,
                   },
@@ -155,16 +156,13 @@ function reducer(state, action) {
  * EditQuizPage component provides a comprehensive interface for instructors to
  * modify quiz settings, manage questions manually, or generate them using AI.
  */
-export default function EditQuizPage() {
+export default function EditQuiz({ route, navigation }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [groupsData, setGroupsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [topics, setTopics] = useState("");
-  const [numQuestions, setNumQuestions] = useState(5);
-  const [confirmPublishOpen, setConfirmPublishOpen] = useState(false);
-  const { quizId } = useParams();
-  const navigate = useNavigate();
+  const { quizId } = route.params;
 
   // Load quiz and group data on component mount
   useEffect(() => {
@@ -179,7 +177,8 @@ export default function EditQuizPage() {
             message: "Published quizzes cannot be edited.",
             type: "error",
           });
-          return navigate(`/quiz/attempt/${quizId}`);
+          navigation.goBack();
+          return;
         }
 
         // Fetch groups where user has admin privileges
@@ -204,10 +203,10 @@ export default function EditQuizPage() {
             questions:
               quiz.questions.map((q) => ({
                 ...q,
-                temId: q._id || crypto.randomUUID(),
+                temId: q._id || Math.random().toString(36).substring(7),
                 options: q.options.map((o) => ({
                   ...o,
-                  temId: o._id || crypto.randomUUID(),
+                  temId: o._id || Math.random().toString(36).substring(7),
                 })),
               })) || [],
           },
@@ -236,7 +235,7 @@ export default function EditQuizPage() {
     try {
       setLoading(true);
 
-      const res = await generateQuestions(topics, numQuestions);
+      const res = await generateQuestions(topics, 5);
 
       if (!res || !res.questions) {
         throw new Error("Failed to generate questions. Please try again.");
@@ -258,7 +257,7 @@ export default function EditQuizPage() {
     } finally {
       setLoading(false);
     }
-  }, [topics, numQuestions, quizId]);
+  }, [topics, quizId]);
 
   /**
    * Saves current quiz state (metadata and questions) to the backend.
@@ -289,7 +288,7 @@ export default function EditQuizPage() {
     try {
       await saveQuiz();
       await publishQuiz(quizId);
-      navigate(`/attempt/quiz/${quizId}`);
+      navigation.navigate("QuizList");
       ShowNotification({
         title: "Success",
         message: "Quiz published successfully",
@@ -298,105 +297,145 @@ export default function EditQuizPage() {
     } catch (errors) {
       ShowErrorNotification(errors);
     }
-  }, [saveQuiz, quizId, navigate]);
+  }, [saveQuiz, quizId, navigation]);
+
+  if (loading && !state.metadata.name) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={BackgroundColor} />
+      </View>
+    );
+  }
 
   return (
-    <Container size="md" py="xl">
-      {/* AI Generation Interface */}
-      <GenerateQuestionModal
-        opened={generateOpen}
-        onClose={() => setGenerateOpen(false)}
-        topics={topics}
-        setTopics={setTopics}
-        numQuestions={numQuestions}
-        setNumQuestions={setNumQuestions}
-        onGenerate={handleGenerateQuestions}
-        loading={loading}
-      />
-
-      {/* Final Publication Confirmation */}
-      <ConfirmDialog
-        opened={confirmPublishOpen}
-        onClose={() => setConfirmPublishOpen(false)}
-        onConfirm={() => {
-          setConfirmPublishOpen(false);
-          handlePublish();
-        }}
-        title="Confirm Action"
-        message="Do you want to save and publish the quiz? Once published, the quiz cannot be edited."
-        confirmLabel="Confirm"
-        confirmColor="red"
-        loading={loading}
-      />
-
-      {/* Header Actions */}
-      <PageTitle title="Edit Quiz" backLink="/quiz">
-        <Group>
+    <MainContainer title="Edit Quiz" navigation={navigation}>
+      <View style={styles.topActionsContainer}>
+        <View style={styles.headerActionsRow}>
           <Button
-            variant="outline"
-            color="blue"
-            leftSection={<IconRocket size={18} />}
-            onClick={() => setConfirmPublishOpen(true)}
-            loading={loading}
-          >
-            Publish
-          </Button>
-
+            title="Publish Quiz"
+            type="outline"
+            icon={
+              <Icon
+                name="rocket"
+                type="font-awesome"
+                size={15}
+                color={BackgroundColor}
+                style={{ marginRight: 5 }}
+              />
+            }
+            onPress={() => {
+              Alert.alert(
+                "Confirm",
+                "Publish this quiz? It cannot be edited after.",
+                [
+                  { text: "Cancel", style: "cancel" },
+                  { text: "Publish", onPress: handlePublish },
+                ],
+              );
+            }}
+            buttonStyle={styles.actionBtn}
+          />
           <Button
-            leftSection={<IconDeviceFloppy size={18} />}
-            onClick={saveQuiz}
-            loading={loading}
-          >
-            Save Changes
-          </Button>
-        </Group>
-      </PageTitle>
+            title="Save Changes"
+            icon={
+              <Icon
+                name="check"
+                size={15}
+                color="white"
+                style={{ marginRight: 5 }}
+              />
+            }
+            onPress={saveQuiz}
+            buttonStyle={[
+              styles.actionBtn,
+              { backgroundColor: BackgroundColor },
+            ]}
+          />
+        </View>
+      </View>
 
-      <Stack gap="xl">
-        {/* Quiz Settings Section */}
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <EditQuizMetadata
           metadata={state.metadata}
           dispatch={dispatch}
           groupsData={groupsData}
         />
 
-        <Divider label="Questions" labelPosition="center" />
+        <Divider style={styles.divider} />
 
-        {/* Questions Management Section */}
-        <Group justify="space-between">
-          <Title order={4}>Quiz Questions ({state.questions.length})</Title>
-          <Button
-            variant="light"
-            leftSection={<IconSparkles size={18} />}
-            onClick={() => setGenerateOpen(true)}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>
+            Questions ({state.questions.length})
+          </Text>
+          <TouchableOpacity
+            onPress={() => setGenerateOpen(true)}
+            style={styles.aiButton}
           >
-            AI Generator
-          </Button>
-        </Group>
+            <Icon name="auto-fix-high" color={BackgroundColor} size={20} />
+            <Text style={styles.aiButtonText}>AI Generate</Text>
+          </TouchableOpacity>
+        </View>
 
-        {/* List of Question Cards */}
-        <Stack gap="md">
-          {state.questions.map((q, index) => (
-            <EditQuestionCard
-              key={q.temId || index}
-              q={q}
-              index={index}
-              dispatch={dispatch}
-            />
-          ))}
+        {state.questions.map((q, index) => (
+          <EditQuestionCard
+            key={q.temId || index}
+            q={q}
+            index={index}
+            dispatch={dispatch}
+          />
+        ))}
 
-          {/* Manual Addition Trigger */}
-          <Button
-            variant="outline"
-            leftSection={<IconPlus size={18} />}
-            onClick={addQuestion}
-            fullWidth
-            mt="md"
-          >
-            Add Question Manually
-          </Button>
-        </Stack>
-      </Stack>
-    </Container>
+        <Button
+          title="Add Question Manually"
+          type="outline"
+          icon={<Icon name="add" color={BackgroundColor} />}
+          onPress={addQuestion}
+          containerStyle={styles.addBtnContainer}
+          buttonStyle={{ borderColor: BackgroundColor }}
+          titleStyle={{ color: BackgroundColor }}
+        />
+      </ScrollView>
+
+      <GenerateQuestionModal
+        visible={generateOpen}
+        onClose={() => setGenerateOpen(false)}
+        topics={topics}
+        setTopics={setTopics}
+        onGenerate={handleGenerateQuestions}
+        loading={loading}
+      />
+    </MainContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  scrollContainer: { padding: 15, paddingBottom: 40 },
+  topActionsContainer: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  headerActionsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  actionBtn: {
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    minWidth: 150,
+  },
+  divider: { marginVertical: 20 },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#2C3E50" },
+  aiButton: { flexDirection: "row", alignItems: "center" },
+  aiButtonText: { color: BackgroundColor, marginLeft: 5, fontWeight: "600" },
+  addBtnContainer: { marginTop: 20 },
+});

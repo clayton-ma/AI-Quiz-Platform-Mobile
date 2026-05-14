@@ -5,22 +5,21 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Image, View } from "react-native";
 
-import MoveDetail from "../../screens/MoveDetail";
-import MoveList from "../../screens/MoveList";
-import UserDetail from "../../screens/UserDetail";
-import PokemonDetail from "../../screens/PokemonDetail";
-import PokemonList from "../../screens/PokemonList";
+import UserProfile from "../../features/user/screens/UserProfileScreen";
 import ListGroup from "../../features/group/screens/ListGroupScreen";
 import EditGroup from "../../features/group/screens/EditGroupScreen";
 
 import moveTabIcon from "../../assets/move-active.png";
 import pokemonTabIcon from "../../assets/pokemon-active.png";
 import About from "../../features/about/screens/AboutScreen";
-import QuizList from "../../features/quiz/screen";
+import QuizList from "../../features/quiz/screens/ListQuizScreen";
+import EditQuiz from "../../features/quiz/screens/EditQuizScreen";
 
 // https://reactnavigation.org/docs/stack-navigator/
-const PokemonStack = createStackNavigator();
-const MoveStack = createStackNavigator();
+const QuizStack = createStackNavigator();
+const GroupStack = createStackNavigator();
+const UserStack = createStackNavigator();
+const AboutStack = createStackNavigator();
 const stackScreenOptions = {
   headerShown: false,
   gestureEnabled: true,
@@ -28,34 +27,35 @@ const stackScreenOptions = {
 
 function QuizScreen() {
   return (
-    <PokemonStack.Navigator screenOptions={stackScreenOptions}>
-      <PokemonStack.Screen name="QuizList" component={QuizList} />
-    </PokemonStack.Navigator>
+    <QuizStack.Navigator screenOptions={stackScreenOptions}>
+      <QuizStack.Screen name="QuizList" component={QuizList} />
+      <QuizStack.Screen name="EditQuiz" component={EditQuiz} />
+    </QuizStack.Navigator>
   );
 }
 
 function GroupScreen() {
   return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="GroupList" component={ListGroup} />
-      <MoveStack.Screen name="EditGroup" component={EditGroup} />
-    </MoveStack.Navigator>
+    <GroupStack.Navigator screenOptions={stackScreenOptions}>
+      <GroupStack.Screen name="GroupList" component={ListGroup} />
+      <GroupStack.Screen name="EditGroup" component={EditGroup} />
+    </GroupStack.Navigator>
   );
 }
 
 function UserScreen() {
   return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="MoveList" component={UserDetail} />
-    </MoveStack.Navigator>
+    <UserStack.Navigator screenOptions={stackScreenOptions}>
+      <UserStack.Screen name="UserProfile" component={UserProfile} />
+    </UserStack.Navigator>
   );
 }
 
 function AboutScreen() {
   return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="AboutScreen" component={About} />
-    </MoveStack.Navigator>
+    <AboutStack.Navigator screenOptions={stackScreenOptions}>
+      <AboutStack.Screen name="AboutScreen" component={About} />
+    </AboutStack.Navigator>
   );
 }
 
@@ -71,7 +71,7 @@ const tabScreenOptions = ({ route }) => ({
     return (
       <View style={{ alignItems: "center" }}>
         <Image
-          source={route.name === "Pokemons" ? pokemonTabIcon : moveTabIcon}
+          source={route.name === "Quiz" ? pokemonTabIcon : moveTabIcon}
           style={{
             opacity: color === ActiveColor ? 1 : 0.5,
             width: size,

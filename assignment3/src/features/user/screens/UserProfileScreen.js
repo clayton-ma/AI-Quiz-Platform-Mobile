@@ -1,7 +1,7 @@
 import { Container, Title, Stack } from "@mantine/core";
 import ProfileForm from "../components/ProfileForm";
 
-export default function Profile() {
+export default function UserProfile() {
   return (
     <Container size="sm">
       <Stack gap="xl">

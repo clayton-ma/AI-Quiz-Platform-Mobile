@@ -4,74 +4,44 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Image, View } from "react-native";
+import { Icon } from "react-native-elements";
 
-import MoveDetail from "../../screens/MoveDetail";
-import MoveList from "../../screens/MoveList";
-import UserDetail from "../../screens/UserDetail";
-import PokemonDetail from "../../screens/PokemonDetail";
-import PokemonList from "../../screens/PokemonList";
-import Login from "../../features/auth/screens/LoginScreen"
-import Register from "../../features/auth/screens/RegisterScreen"
 
-import moveTabIcon from "../../assets/move-active.png";
-import pokemonTabIcon from "../../assets/pokemon-active.png";
+import { LoginScreen as Login } from "../../features/auth/screens/LoginScreen"
+import { RegisterScreen as Register } from "../../features/auth/screens/RegisterScreen"
+
 import About from "../../features/about/screens/AboutScreen";
-import QuizList from "../../features/quiz/screen";
 
 // https://reactnavigation.org/docs/stack-navigator/
-const PokemonStack = createStackNavigator();
-const MoveStack = createStackNavigator();
+const AuthStack = createStackNavigator();
 const stackScreenOptions = {
   headerShown: false,
   gestureEnabled: true,
 };
 
-function QuizScreen() {
-  return (
-    <PokemonStack.Navigator screenOptions={stackScreenOptions}>
-      <PokemonStack.Screen name="QuizList" component={QuizList} />
-    </PokemonStack.Navigator>
-  );
-}
 
-function GroupScreen() {
-  return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="MoveList" component={MoveList} />
-      <MoveStack.Screen name="MoveDetail" component={MoveDetail} />
-    </MoveStack.Navigator>
-  );
-}
-
-function UserScreen() {
-  return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="MoveList" component={UserDetail} />
-    </MoveStack.Navigator>
-  );
-}
 
 function LoginScreen() {
   return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="LoginScreen" component={Login} />
-    </MoveStack.Navigator>
+    <AuthStack.Navigator screenOptions={stackScreenOptions}>
+      <AuthStack.Screen name="LoginScreen" component={Login} />
+    </AuthStack.Navigator>
   );
 }
 
 function RegisterScreen() {
   return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="RegisterScreen" component={Register} />
-    </MoveStack.Navigator>
+    <AuthStack.Navigator screenOptions={stackScreenOptions}>
+      <AuthStack.Screen name="RegisterScreen" component={Register} />
+    </AuthStack.Navigator>
   );
 }
 
 function AboutScreen() {
   return (
-    <MoveStack.Navigator screenOptions={stackScreenOptions}>
-      <MoveStack.Screen name="AboutScreen" component={About} />
-    </MoveStack.Navigator>
+    <AuthStack.Navigator screenOptions={stackScreenOptions}>
+      <AuthStack.Screen name="AboutScreen" component={About} />
+    </AuthStack.Navigator>
   );
 }
 
@@ -85,16 +55,12 @@ const tabScreenOptions = ({ route }) => ({
   tabBarInactiveTintColor: InActiveColor,
   tabBarIcon: ({ color, size }) => {
     return (
-      <View style={{ alignItems: "center" }}>
-        <Image
-          source={route.name === "Pokemons" ? pokemonTabIcon : moveTabIcon}
-          style={{
-            opacity: color === ActiveColor ? 1 : 0.5,
-            width: size,
-            height: size,
-          }}
-        />
-      </View>
+      <Icon
+        name={route.name === "Login" ? "login" : route.name === "Register" ? "person-add" : "info"}
+        type="material"
+        size={size}
+        color={color}
+      />
     );
   },
 });
@@ -105,8 +71,7 @@ export default function AuthNavigator() {
       <Tab.Navigator screenOptions={tabScreenOptions}>
         <Tab.Screen name="About" component={AboutScreen} />
         <Tab.Screen name="Login" component={LoginScreen} />
-        <Tab.Screen name="Register" component={RegisterScreen}/>
-
+        <Tab.Screen name="Register" component={RegisterScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

@@ -1,6 +1,8 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Icon } from "react-native-elements";
 import MainHeader from "../ui/MainHeader";
+import { useAuth } from "../../app/providers/AuthContext";
 
 export default function MainContainer({
   children,
@@ -8,6 +10,8 @@ export default function MainContainer({
   navigation,
   isMain = true,
 }) {
+  const { logout } = useAuth();
+
   return (
     <View style={styles.container}>
       <MainHeader
@@ -15,6 +19,11 @@ export default function MainContainer({
         isMain={isMain}
         navigation={navigation}
       />
+      {isMain && (
+        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+          <Icon name="logout" type="material" color="#000" size={24} />
+        </TouchableOpacity>
+      )}
       {children}
     </View>
   );
@@ -24,6 +33,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+  },
+  logoutButton: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    zIndex: 10,
   },
   searchContainer: {
     backgroundColor: "transparent",

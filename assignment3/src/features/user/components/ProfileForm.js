@@ -1,15 +1,12 @@
-import { IconUser, IconMail, IconLock } from "@tabler/icons-react";
-import { Paper, TextInput, Stack, Group, SimpleGrid } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, ScrollView, Alert, TextInput, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import UserAvatar from "../../../components/ui/UserAvatar";
 import { isValidName } from "../../../utils/validationFunction";
-import { SaveButton, PasswordButton } from "../../../components/ui/Buttons";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { SaveButton } from "../../../components/ui/Button";
 import { useAuth } from "../../../app/providers/AuthContext";
-import { updateUser } from "../api";
-import ShowErrorNotification from "@/components/ui/ShowErrorNotification";
-import ShowNotification from "../../../components/ui/ShowNotification";
+import { updateUser } from "../services/userApi";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 /**
  * ProfileForm component allows users to view and update their personal information.
@@ -18,25 +15,19 @@ import ShowNotification from "../../../components/ui/ShowNotification";
 export default function ProfileForm() {
   const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const navigation = useNavigation();
 
-  // Initialize form
-  const form = useForm({
-    initialValues: {
-      firstname: user?.firstname || "",
-      lastname: user?.lastname || "",
-      email: user?.email || "",
-    },
-    validate: {
-      firstname: (value) => (isValidName(value) ? null : "Invalid first name"),
-      lastname: (value) => (isValidName(value) ? null : "Invalid last name"),
-    },
+  const [formData, setFormData] = useState({
+    firstname: user?.firstname || "",
+    lastname: user?.lastname || "",
+    email: user?.email || "",
   });
 
-  // Update form values when user data is loaded from AuthContext
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     if (user) {
-      form.setValues({
+      setFormData({
         firstname: user.firstname || "",
         lastname: user.lastname || "",
         email: user.email || "",
@@ -44,87 +35,119 @@ export default function ProfileForm() {
     }
   }, [user]);
 
+  const validate = () => {
+    const newErrors = {};
+    if (!isValidName(formData.firstname)) newErrors.firstname = "Invalid first name";
+    if (!isValidName(formData.lastname)) newErrors.lastname = "Invalid last name";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   /**
    * Handles the profile update submission.
-   * @param {Object} values - The validated form values.
    */
-  const handleSave = async (values) => {
+  const handleSave = async () => {
+    if (!validate()) return;
+
     setLoading(true);
-
-    // Validate form values
-    const validation = form.validate();
-    if (validation.hasErrors) {
-      setLoading(false);
-      return;
-    }
-
     try {
       await updateUser({
-        firstname: values.firstname,
-        lastname: values.lastname,
+        firstname: formData.firstname,
+        lastname: formData.lastname,
       });
 
-      ShowNotification({
-        id: "update-success",
-        title: "Success",
-        message: "Account updated successfully.",
-        type: "success",
-      });
-
-      // refresh the user in the context
+      Alert.alert("Success", "Account updated successfully.");
       await refreshUser();
-
-      navigate("/quiz");
-    } catch (errors) {
-      ShowErrorNotification(errors);
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Error", error.message || "Failed to update profile");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Paper withBorder p="xl" radius="md" shadow="sm">
-      <Stack gap="lg" align="stretch">
-        {/* Visual representation of the user */}
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.avatarContainer}>
         <UserAvatar
-          firstname={form.values.firstname}
-          lastname={form.values.lastname}
+          firstname={formData.firstname}
+          lastname={formData.lastname}
+          size={100}
         />
+      </View>
 
-        {/* Name fields */}
-        <SimpleGrid cols={{ base: 1, xs: 2 }} spacing="md">
-          <TextInput
-            label="First Name"
-            placeholder="Your first name"
-            leftSection={<IconUser size={16} />}
-            {...form.getInputProps("firstname")}
-          />
+      <Text style={styles.label}>First Name</Text>
+      <TextInput
+        value={formData.firstname}
+        onChangeText={(text) => setFormData({ ...formData, firstname: text })}
+        style={[styles.input, errors.firstname && styles.inputError]}
+      />
+      {errors.firstname && <Text style={styles.errorText}>{errors.firstname}</Text>}
 
-          <TextInput
-            label="Last Name"
-            placeholder="Your last name"
-            {...form.getInputProps("lastname")}
-          />
-        </SimpleGrid>
+      <Text style={styles.label}>Last Name</Text>
+      <TextInput
+        value={formData.lastname}
+        onChangeText={(text) => setFormData({ ...formData, lastname: text })}
+        style={[styles.input, errors.lastname && styles.inputError]}
+      />
+      {errors.lastname && <Text style={styles.errorText}>{errors.lastname}</Text>}
 
-        {/* Read-only email field */}
-        <TextInput
-          label="Email Address"
-          description="Email address cannot be changed"
-          disabled
-          leftSection={<IconMail size={16} />}
-          {...form.getInputProps("email")}
-        />
+      <Text style={styles.label}>Email Address</Text>
+      <TextInput
+        value={formData.email}
+        editable={false}
+        style={[styles.input, styles.disabledInput]}
+      />
+      <Text style={styles.infoText}>Email address cannot be changed</Text>
 
-        <Group justify="flex-end" mt="md">
-          <SaveButton
-            loading={loading}
-            disabled={loading}
-            type="submit"
-            onClick={form.onSubmit(handleSave)}
-          />
-        </Group>
-      </Stack>
-    </Paper>
+      <View style={styles.buttonContainer}>
+        <SaveButton loading={loading} onPress={handleSave} />
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+  avatarContainer: {
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 4,
+    color: "#333",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 10,
+    marginBottom: 8,
+    fontSize: 16,
+    backgroundColor: "#fff",
+  },
+  inputError: {
+    borderColor: "#B00020",
+  },
+  disabledInput: {
+    backgroundColor: "#f0f0f0",
+    color: "#888",
+  },
+  errorText: {
+    color: "#B00020",
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  infoText: {
+    color: "#666",
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  buttonContainer: {
+    marginTop: 24,
+  },
+});

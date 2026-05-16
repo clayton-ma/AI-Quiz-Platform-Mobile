@@ -3,14 +3,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Image, View } from "react-native";
+import { Image, View, TouchableOpacity } from "react-native";
+import { Icon, Text } from "react-native-elements";
 
+import { useAuth } from "../providers/AuthContext";
 import UserProfile from "../../features/user/screens/UserProfileScreen";
 import ListGroup from "../../features/group/screens/ListGroupScreen";
 import EditGroup from "../../features/group/screens/EditGroupScreen";
 
-import moveTabIcon from "../../assets/move-active.png";
-import pokemonTabIcon from "../../assets/pokemon-active.png";
 import About from "../../features/about/screens/AboutScreen";
 import QuizList from "../../features/quiz/screens/ListQuizScreen";
 import EditQuiz from "../../features/quiz/screens/EditQuizScreen";
@@ -44,9 +44,24 @@ function GroupScreen() {
 }
 
 function UserScreen() {
+  const { logout } = useAuth();
   return (
-    <UserStack.Navigator screenOptions={stackScreenOptions}>
-      <UserStack.Screen name="UserProfile" component={UserProfile} />
+    <UserStack.Navigator>
+      <UserStack.Screen
+        name="UserProfile"
+        component={UserProfile}
+        options={{
+          headerTitle: "Profile",
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={logout}
+              style={{ marginRight: 15 }}
+            >
+              <Icon name="logout" type="material" color="#000" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </UserStack.Navigator>
   );
 }
@@ -68,17 +83,24 @@ const tabScreenOptions = ({ route }) => ({
   tabBarActiveTintColor: ActiveColor,
   tabBarInactiveTintColor: InActiveColor,
   tabBarIcon: ({ color, size }) => {
+    let iconName;
+    if (route.name === "Quiz") {
+      iconName = "quiz";
+    } else if (route.name === "Group") {
+      iconName = "group";
+    } else if (route.name === "User") {
+      iconName = "person";
+    } else {
+      iconName = "info";
+    }
+
     return (
-      <View style={{ alignItems: "center" }}>
-        <Image
-          source={route.name === "Quiz" ? pokemonTabIcon : moveTabIcon}
-          style={{
-            opacity: color === ActiveColor ? 1 : 0.5,
-            width: size,
-            height: size,
-          }}
-        />
-      </View>
+      <Icon
+        name={iconName}
+        type="material"
+        size={size}
+        color={color}
+      />
     );
   },
 });

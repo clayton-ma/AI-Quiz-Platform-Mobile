@@ -1,13 +1,13 @@
-import { Container, Title, Stack } from "@mantine/core";
+import MainContainer from "../../../components/layout/MainContainer";
 import ProfileForm from "../components/ProfileForm";
 
-export default function UserProfile() {
+/**
+ * UserProfileScreen component provides the layout for viewing and editing user profile.
+ */
+export default function UserProfileScreen({ navigation }) {
   return (
-    <Container size="sm">
-      <Stack gap="xl">
-        <Title order={2}>User Profile</Title>
-        <ProfileForm />
-      </Stack>
-    </Container>
+    <MainContainer title="User Profile" navigation={navigation} isMain={true}>
+      {/* <ProfileForm /> */}
+    </MainContainer>
   );
 }

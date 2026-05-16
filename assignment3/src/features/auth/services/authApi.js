@@ -2,6 +2,7 @@
  * @file auth/api.js
  * @description Service layer for handling user authentication including registration, login, and logout.
  */
+import { useAuth } from "../../../app/providers/AuthContext";
 import { API_BASE_URL } from "../../../services/authHeader";
 import * as SecureStore from "expo-secure-store";
 
@@ -43,6 +44,8 @@ export const registerUser = async (userInfo) => {
  * @throws {Error} If authentication fails or server returns an error.
  */
 export const loginUser = async (loginInfo) => {
+  // const {}=useAuth();
+  
   // Call api
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
@@ -62,5 +65,6 @@ export const loginUser = async (loginInfo) => {
 
   // Store the token in SecureStore
   const { data } = await response.json();
+  
   await SecureStore.setItemAsync("jwt", data);
 };

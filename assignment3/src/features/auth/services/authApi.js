@@ -44,7 +44,6 @@ export const registerUser = async (userInfo) => {
  * @throws {Error} If authentication fails or server returns an error.
  */
 export const loginUser = async (loginInfo) => {
-  console.log(API_BASE_URL);
   // const {}=useAuth();
 
   // Call api
@@ -55,7 +54,6 @@ export const loginUser = async (loginInfo) => {
     },
     body: JSON.stringify(loginInfo),
   });
-  console.log("after call");
 
   // Error handling
   if (!response.ok) {

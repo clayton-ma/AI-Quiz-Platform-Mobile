@@ -45,21 +45,9 @@ function GroupScreen() {
 }
 
 function UserScreen() {
-  const { logout } = useAuth();
   return (
-    <UserStack.Navigator>
-      <UserStack.Screen
-        name="UserProfile"
-        component={UserProfile}
-        options={{
-          headerTitle: "Profile",
-          headerRight: () => (
-            <TouchableOpacity onPress={logout} style={{ marginRight: 15 }}>
-              <Icon name="logout" type="material" color="#000" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+    <UserStack.Navigator screenOptions={stackScreenOptions}>
+      <UserStack.Screen name="UserProfile" component={UserProfile} />
     </UserStack.Navigator>
   );
 }

@@ -10,7 +10,7 @@ export default function MainContainer({
   navigation,
   isMain = true,
 }) {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -19,7 +19,7 @@ export default function MainContainer({
         isMain={isMain}
         navigation={navigation}
       />
-      {isMain && (
+      {isMain && user && (
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Icon name="logout" type="material" color="#000" size={24} />
         </TouchableOpacity>

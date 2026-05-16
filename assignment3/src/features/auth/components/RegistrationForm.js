@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Switch,
 } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 import {
   isValidEmail,
   isValidPassword,
@@ -19,6 +20,8 @@ import ShowNotification from "../../../components/ui/ShowNotification";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import { useAuth } from "../../../app/providers/AuthContext";
 import { useTheme } from "../../../app/providers/ThemeContext";
+import Heading from "../../../components/ui/Heading";
+import FormContainer from "../../../components/ui/FormContainer";
 
 /**
  * Register component provides a form for new users to create an account.
@@ -27,6 +30,23 @@ import { useTheme } from "../../../app/providers/ThemeContext";
 export default function RegisterForm({ navigation }) {
   const [loading, setLoading] = useState(false); // Local state for submission loading
   const { theme } = useTheme();
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      confirm_email: "",
+      password: "",
+      confirm_password: "",
+      agreeToTerms: false,
+    },
+  });
 
   // Access authentication context to check if user is already logged in
   const { user } = useAuth();
@@ -44,63 +64,14 @@ export default function RegisterForm({ navigation }) {
     }
   }, [user]);
 
-  // Local state for form management
-  const [values, setValues] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: "",
-    confirm_email: "",
-    confirm_password: "",
-    agreeToTerms: false,
-  });
-  const [errors, setErrors] = useState({});
-
-  const validate = () => {
-    let newErrors = {};
-    if (!isValidName(values.firstname))
-      newErrors.firstname = "Invalid first name";
-    if (!isValidName(values.lastname)) newErrors.lastname = "Invalid last name";
-    if (!isValidEmail(values.email)) newErrors.email = "Invalid email address";
-    if (!isValidPassword(values.password))
-      newErrors.password =
-        "Password must be at least 8 characters long and contain at least one letter and one number";
-    if (values.confirm_email !== values.email)
-      newErrors.confirm_email = "Email addresses do not match";
-    if (values.confirm_password !== values.password)
-      newErrors.confirm_password = "Passwords do not match";
-    if (!values.agreeToTerms)
-      newErrors.agreeToTerms = "You must agree to the terms and conditions";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const setFieldValue = (field, value) => {
-    setValues((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => {
-        const newErrs = { ...prev };
-        delete newErrs[field];
-        return newErrs;
-      });
-    }
-  };
-
   /**
    * Handles the registration form submission.
    */
-  const handleRegister = async () => {
+  const onSubmit = async (data) => {
     setLoading(true);
-
-    if (!validate()) {
-      setLoading(false);
-      return;
-    }
-
     try {
       const { confirm_email, confirm_password, agreeToTerms, ...apiData } =
-        values;
+        data;
       await registerUser(apiData);
 
       ShowNotification({
@@ -127,75 +98,90 @@ export default function RegisterForm({ navigation }) {
         { backgroundColor: theme.colors.background },
       ]}
     >
-      <Text style={[styles.title, { color: theme.colors.text }]}>
-        Create an account
-      </Text>
+      <Heading
+        title="Create an account"
+        linkText="Already have an account?"
+        linkActionText="Login"
+        onLinkPress={() => navigation.navigate("Login")}
+      />
 
-      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.linkText}>
-          Already have an account?{" "}
-          <Text style={[styles.link, { color: theme.colors.primary }]}>
-            Login
-          </Text>
-        </Text>
-      </TouchableOpacity>
-
-      <View
-        style={[
-          styles.formCard,
-          {
-            backgroundColor: theme.colors.card,
-            borderColor: theme.colors.border,
-          },
-        ]}
-      >
+      <FormContainer>
         <View style={styles.row}>
-          <View style={styles.flex1}>
-            <Text style={[styles.label, { color: theme.colors.text }]}>
-              First Name *
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                { color: theme.colors.text, borderColor: theme.colors.border },
-              ]}
-              placeholder="Clayton"
-              placeholderTextColor={theme.dark ? "#666" : "#999"}
-              onChangeText={(val) => setFieldValue("firstname", val)}
-              value={values.firstname}
-            />
-            {errors.firstname && (
-              <Text style={styles.error}>{errors.firstname}</Text>
+          <Controller
+            control={control}
+            name="firstname"
+            rules={{
+              required: "First name is required",
+              validate: (v) => isValidName(v) || "Invalid first name",
+            }}
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.flex1}>
+                <Text style={[styles.label, { color: theme.colors.text }]}>
+                  First Name *
+                </Text>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {
+                      color: theme.colors.text,
+                      borderColor: theme.colors.border,
+                    },
+                  ]}
+                  placeholder="Clayton"
+                  placeholderTextColor={theme.dark ? "#666" : "#999"}
+                  onChangeText={onChange}
+                  value={value}
+                />
+                {errors.firstname && (
+                  <Text style={styles.error}>{errors.firstname.message}</Text>
+                )}
+              </View>
             )}
-          </View>
-          <View style={[styles.flex1, { marginLeft: 10 }]}>
-            <Text style={[styles.label, { color: theme.colors.text }]}>
-              Last Name *
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                { color: theme.colors.text, borderColor: theme.colors.border },
-              ]}
-              placeholder="Ma"
-              placeholderTextColor={theme.dark ? "#666" : "#999"}
-              onChangeText={(val) => setFieldValue("lastname", val)}
-              value={values.lastname}
-            />
-            {errors.lastname && (
-              <Text style={styles.error}>{errors.lastname}</Text>
+          />
+          <Controller
+            control={control}
+            name="lastname"
+            rules={{
+              required: "Last name is required",
+              validate: (v) => isValidName(v) || "Invalid last name",
+            }}
+            render={({ field: { onChange, value } }) => (
+              <View style={[styles.flex1, { marginLeft: 10 }]}>
+                <Text style={[styles.label, { color: theme.colors.text }]}>
+                  Last Name *
+                </Text>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {
+                      color: theme.colors.text,
+                      borderColor: theme.colors.border,
+                    },
+                  ]}
+                  placeholder="Ma"
+                  placeholderTextColor={theme.dark ? "#666" : "#999"}
+                  onChangeText={onChange}
+                  value={value}
+                />
+                {errors.lastname && (
+                  <Text style={styles.error}>{errors.lastname.message}</Text>
+                )}
+              </View>
             )}
-          </View>
+          />
         </View>
 
-        {["email", "confirm_email", "password", "confirm_password"].map(
-          (field) => (
-            <View key={field}>
+        <Controller
+          control={control}
+          name="email"
+          rules={{
+            required: "Email is required",
+            validate: (v) => isValidEmail(v) || "Invalid email address",
+          }}
+          render={({ field: { onChange, value } }) => (
+            <View>
               <Text style={[styles.label, { color: theme.colors.text }]}>
-                {field
-                  .replace("_", " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase())}{" "}
-                *
+                Email *
               </Text>
               <TextInput
                 style={[
@@ -205,38 +191,150 @@ export default function RegisterForm({ navigation }) {
                     borderColor: theme.colors.border,
                   },
                 ]}
-                placeholder={
-                  field.includes("email") ? "you@example.com" : "Your password"
-                }
+                placeholder="you@example.com"
                 placeholderTextColor={theme.dark ? "#666" : "#999"}
-                keyboardType={
-                  field.includes("email") ? "email-address" : "default"
-                }
+                keyboardType="email-address"
                 autoCapitalize="none"
-                secureTextEntry={field.includes("password")}
-                onChangeText={(val) => setFieldValue(field, val)}
-                value={values[field]}
+                onChangeText={onChange}
+                value={value}
               />
-              {errors[field] && (
-                <Text style={styles.error}>{errors[field]}</Text>
+              {errors.email && (
+                <Text style={styles.error}>{errors.email.message}</Text>
               )}
             </View>
-          ),
-        )}
+          )}
+        />
 
-        <View style={styles.checkboxContainer}>
-          <Switch
-            value={values.agreeToTerms}
-            onValueChange={(val) => setFieldValue("agreeToTerms", val)}
-            trackColor={{ false: "#767577", true: theme.colors.primary }}
-          />
-          <Text style={[styles.checkboxLabel, { color: theme.colors.text }]}>
-            I agree to the terms and conditions
-          </Text>
-        </View>
-        {errors.agreeToTerms && (
-          <Text style={styles.error}>{errors.agreeToTerms}</Text>
-        )}
+        <Controller
+          control={control}
+          name="confirm_email"
+          rules={{
+            required: "Please confirm your email",
+            validate: (v) =>
+              v === watch("email") || "Email addresses do not match",
+          }}
+          render={({ field: { onChange, value } }) => (
+            <View>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
+                Confirm Email *
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    color: theme.colors.text,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.dark ? "#666" : "#999"}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={onChange}
+                value={value}
+              />
+              {errors.confirm_email && (
+                <Text style={styles.error}>{errors.confirm_email.message}</Text>
+              )}
+            </View>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="password"
+          rules={{
+            required: "Password is required",
+            validate: (v) =>
+              isValidPassword(v) ||
+              "Password must be at least 8 characters long and contain at least one letter and one number",
+          }}
+          render={({ field: { onChange, value } }) => (
+            <View>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
+                Password *
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    color: theme.colors.text,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+                placeholder="Your password"
+                placeholderTextColor={theme.dark ? "#666" : "#999"}
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+              />
+              {errors.password && (
+                <Text style={styles.error}>{errors.password.message}</Text>
+              )}
+            </View>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="confirm_password"
+          rules={{
+            required: "Please confirm your password",
+            validate: (v) =>
+              v === watch("password") || "Passwords do not match",
+          }}
+          render={({ field: { onChange, value } }) => (
+            <View>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
+                Confirm Password *
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    color: theme.colors.text,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+                placeholder="Your password"
+                placeholderTextColor={theme.dark ? "#666" : "#999"}
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+              />
+              {errors.confirm_password && (
+                <Text style={styles.error}>
+                  {errors.confirm_password.message}
+                </Text>
+              )}
+            </View>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="agreeToTerms"
+          rules={{ required: "You must agree to the terms and conditions" }}
+          render={({ field: { onChange, value } }) => (
+            <View>
+              <View style={styles.checkboxContainer}>
+                <Switch
+                  value={value}
+                  onValueChange={onChange}
+                  trackColor={{ false: "#767577", true: theme.colors.primary }}
+                />
+                <Text
+                  style={[styles.checkboxLabel, { color: theme.colors.text }]}
+                >
+                  I agree to the terms and conditions
+                </Text>
+              </View>
+              {errors.agreeToTerms && (
+                <Text style={styles.error}>{errors.agreeToTerms.message}</Text>
+              )}
+            </View>
+          )}
+        />
 
         <TouchableOpacity
           style={[
@@ -244,7 +342,7 @@ export default function RegisterForm({ navigation }) {
             { backgroundColor: theme.colors.primary },
             loading && styles.buttonDisabled,
           ]}
-          onPress={handleRegister}
+          onPress={handleSubmit(onSubmit)}
           disabled={loading}
         >
           {loading ? (
@@ -253,7 +351,7 @@ export default function RegisterForm({ navigation }) {
             <Text style={styles.buttonText}>Register</Text>
           )}
         </TouchableOpacity>
-      </View>
+      </FormContainer>
     </ScrollView>
   );
 }

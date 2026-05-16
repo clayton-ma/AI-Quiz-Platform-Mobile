@@ -54,6 +54,8 @@ export const ThemeProvider = ({ children }) => {
       card: isDark ? "#25262B" : "#F8F9FA",
       border: isDark ? "#373A40" : "#DEE2E6",
       primary: "#228be6",
+      tabActiveColor: "#228be6",
+      tabInactiveColor: isDark ? "#909296" : "#adb5bd",
     },
   };
 

@@ -6,20 +6,18 @@ import React from "react";
 import { Image, View } from "react-native";
 import { Icon } from "react-native-elements";
 
+import Login from "../../features/auth/screens/LoginScreen";
+import Register from "../../features/auth/screens/RegisterScreen";
 
-import { LoginScreen as Login } from "../../features/auth/screens/LoginScreen"
-import { RegisterScreen as Register } from "../../features/auth/screens/RegisterScreen"
+import { useTheme } from "../providers/ThemeContext";
 
 import About from "../../features/about/screens/AboutScreen";
 
-// https://reactnavigation.org/docs/stack-navigator/
 const AuthStack = createStackNavigator();
 const stackScreenOptions = {
   headerShown: false,
   gestureEnabled: true,
 };
-
-
 
 function LoginScreen() {
   return (
@@ -47,25 +45,31 @@ function AboutScreen() {
 
 // https://reactnavigation.org/docs/bottom-tab-navigator/
 const Tab = createBottomTabNavigator();
-const ActiveColor = "#000000";
-const InActiveColor = "#00000077";
-const tabScreenOptions = ({ route }) => ({
-  headerShown: false,
-  tabBarActiveTintColor: ActiveColor,
-  tabBarInactiveTintColor: InActiveColor,
-  tabBarIcon: ({ color, size }) => {
-    return (
-      <Icon
-        name={route.name === "Login" ? "login" : route.name === "Register" ? "person-add" : "info"}
-        type="material"
-        size={size}
-        color={color}
-      />
-    );
-  },
-});
 
 export default function AuthNavigator() {
+  const colors = useTheme();
+  const tabScreenOptions = ({ route }) => ({
+    headerShown: false,
+    tabBarActiveTintColor: colors.tabActiveColor,
+    tabBarInactiveTintColor: colors.tabInactiveColor,
+    tabBarIcon: ({ color, size }) => {
+      return (
+        <Icon
+          name={
+            route.name === "Login"
+              ? "login"
+              : route.name === "Register"
+                ? "person-add"
+                : "info"
+          }
+          type="material"
+          size={size}
+          color={color}
+        />
+      );
+    },
+  });
+
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={tabScreenOptions}>

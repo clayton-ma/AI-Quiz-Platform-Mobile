@@ -1,10 +1,10 @@
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  TextInput,
   ScrollView,
 } from "react-native";
 import {
@@ -12,11 +12,14 @@ import {
   isValidPassword,
 } from "../../../utils/validationFunction";
 import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { loginUser } from "../services/authApi";
 import ShowNotification from "../../../components/ui/ShowNotification";
 import { useAuth } from "../../../app/providers/AuthContext";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import { useTheme } from "../../../app/providers/ThemeContext";
+import Heading from "../../../components/ui/Heading";
+import FormContainer from "../../../components/ui/FormContainer";
 
 /**
  * Login component provides a form for existing users to authenticate.
@@ -29,9 +32,16 @@ export default function LoginForm({ navigation }) {
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
-  // Local state for form management (replacing Mantine useForm)
-  const [values, setValues] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({});
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   useEffect(() => {
     if (user !== null) {
@@ -45,42 +55,14 @@ export default function LoginForm({ navigation }) {
     }
   }, [user]);
 
-  const validate = () => {
-    let newErrors = {};
-    if (!isValidEmail(values.email)) {
-      newErrors.email = "Invalid email address";
-    }
-    if (!values.password) {
-      newErrors.password = "Password is required";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const setFieldValue = (field, value) => {
-    setValues((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => {
-        const newErrs = { ...prev };
-        delete newErrs[field];
-        return newErrs;
-      });
-    }
-  };
-
   /**
    * Handles the login form submission.
    */
-  const handleLogin = async () => {
+  const onSubmit = async (data) => {
     setLoading(true);
-    if (!validate()) {
-      setLoading(false);
-      return;
-    }
     try {
       // Attempt to authenticate with the backend
-      await loginUser(values);
+      await loginUser(data);
 
       // Update the global AuthContext with the new user data
       await refreshUser();
@@ -99,59 +81,81 @@ export default function LoginForm({ navigation }) {
         { backgroundColor: theme.colors.background },
       ]}
     >
-      <Text style={[styles.title, { color: theme.colors.text }]}>
-        Welcome back!
-      </Text>
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.linkText}>
-          Do not have an account yet?{" "}
-          <Text style={[styles.link, { color: theme.colors.primary }]}>
-            Create account
-          </Text>
-        </Text>
-      </TouchableOpacity>
+      <Heading
+        title="Login"
+        linkText="Don't have an account?"
+        linkActionText="Create account"
+        onLinkPress={() => navigation.navigate("Register")}
+      />
 
-      <View
-        style={[
-          styles.formCard,
-          {
-            backgroundColor: theme.colors.card,
-            borderColor: theme.colors.border,
-          },
-        ]}
-      >
-        <Text style={[styles.label, { color: theme.colors.text }]}>
-          Email *
-        </Text>
-        <TextInput
-          style={[
-            styles.input,
-            { color: theme.colors.text, borderColor: theme.colors.border },
-          ]}
-          placeholder="you@example.com"
-          placeholderTextColor={theme.dark ? "#666" : "#999"}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          onChangeText={(val) => setFieldValue("email", val)}
-          value={values.email}
+      <FormContainer>
+        <Controller
+          control={control}
+          rules={{
+            required: "Email is required",
+            validate: (value) => isValidEmail(value) || "Invalid email address",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
+                Email *
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    color: theme.colors.text,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.dark ? "#666" : "#999"}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+              {errors.email && (
+                <Text style={styles.error}>{errors.email.message}</Text>
+              )}
+            </View>
+          )}
+          name="email"
         />
-        {errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
-        <Text style={[styles.label, { color: theme.colors.text }]}>
-          Password *
-        </Text>
-        <TextInput
-          style={[
-            styles.input,
-            { color: theme.colors.text, borderColor: theme.colors.border },
-          ]}
-          placeholder="Your password"
-          placeholderTextColor={theme.dark ? "#666" : "#999"}
-          secureTextEntry
-          onChangeText={(val) => setFieldValue("password", val)}
-          value={values.password}
+        <Controller
+          control={control}
+          rules={{
+            required: "Password is required",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
+                Password *
+              </Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    color: theme.colors.text,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+                placeholder="Your password"
+                placeholderTextColor={theme.dark ? "#666" : "#999"}
+                secureTextEntry
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+              {errors.password && (
+                <Text style={styles.error}>{errors.password.message}</Text>
+              )}
+            </View>
+          )}
+          name="password"
         />
-        {errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
         <TouchableOpacity
           style={[
@@ -159,7 +163,7 @@ export default function LoginForm({ navigation }) {
             { backgroundColor: theme.colors.primary },
             loading && styles.buttonDisabled,
           ]}
-          onPress={handleLogin}
+          onPress={handleSubmit(onSubmit)}
           disabled={loading}
         >
           {loading ? (
@@ -168,7 +172,7 @@ export default function LoginForm({ navigation }) {
             <Text style={styles.buttonText}>Log in</Text>
           )}
         </TouchableOpacity>
-      </View>
+      </FormContainer>
     </ScrollView>
   );
 }

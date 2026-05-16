@@ -44,8 +44,9 @@ export const registerUser = async (userInfo) => {
  * @throws {Error} If authentication fails or server returns an error.
  */
 export const loginUser = async (loginInfo) => {
+  console.log(API_BASE_URL);
   // const {}=useAuth();
-  
+
   // Call api
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
@@ -54,6 +55,7 @@ export const loginUser = async (loginInfo) => {
     },
     body: JSON.stringify(loginInfo),
   });
+  console.log("after call");
 
   // Error handling
   if (!response.ok) {
@@ -65,6 +67,6 @@ export const loginUser = async (loginInfo) => {
 
   // Store the token in SecureStore
   const { data } = await response.json();
-  
+
   await SecureStore.setItemAsync("jwt", data);
 };

@@ -25,6 +25,8 @@ export const AuthProvider = ({ children }) => {
         if (token) {
           const loginedUser = await fetchUser();
           if (loginedUser) setUser(loginedUser);
+        } else {
+          await clearUser();
         }
       } catch (errors) {
         await SecureStore.deleteItemAsync("jwt");
@@ -46,6 +48,8 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         const freshUser = await fetchUser();
         if (freshUser) setUser(freshUser);
+      } else {
+        await clearUser();
       }
     } catch (errors) {
       ShowErrorNotification(errors);

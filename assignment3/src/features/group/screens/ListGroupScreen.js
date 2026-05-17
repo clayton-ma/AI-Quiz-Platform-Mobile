@@ -27,12 +27,20 @@ export default function ListGroupScreen({ navigation }) {
     {
       key: "role",
       label: "Role",
-      options: ["All", "Admin", "Member"],
+      options: [
+        { label: "All", value: "All" },
+        { label: "Admin", value: "Admin" },
+        { label: "Member", value: "Member" },
+      ],
     },
     {
       key: "sort",
       label: "Sort By",
-      options: ["Newest", "Oldest", "Name"],
+      options: [
+        { label: "Newest", value: "updatedAt" },
+        { label: "Oldest", value: "-updatedAt" },
+        { label: "Name", value: "name" },
+      ],
     },
   ];
 

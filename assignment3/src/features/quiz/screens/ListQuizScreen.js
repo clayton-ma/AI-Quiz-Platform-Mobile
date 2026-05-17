@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -11,100 +11,72 @@ import MainContainer from "../../../components/layout/MainContainer";
 import SearchBar from "../../../components/ui/SearchBar";
 import FilterBar from "../../../components/ui/FilterBar";
 import { BackgroundColor } from "../../../../constants";
-
-const mockQuizzes = [
-  {
-    id: "1",
-    name: "General Knowledge",
-    status: "Published",
-    group: "React Native Developers",
-    lastUpdated: "2023-10-25",
-    instant_result: true,
-  },
-  {
-    id: "2",
-    name: "React Native Basics",
-    status: "Draft",
-    group: "UI/UX Enthusiasts",
-    lastUpdated: "2023-10-27",
-    instant_result: false,
-  },
-];
+import ListQuiz from "../components/ListQuiz";
+import { fetchQuizzes } from "../services/quizApi";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+import { ActivityIndicator, RefreshControl } from "react-native";
+import parseLinkHeader from "../../../utils/parseLinkHeader";
 
 export default function ListQuizScreen({ navigation }) {
   const [search, setSearch] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     status: "All",
-    sort: "Newest",
+    sort: "newest",
   });
+  const [quizzes, setQuizzes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [paginationLinks, setPaginationLinks] = useState({});
+
+  const loadQuizzes = useCallback(
+    async (isRefresh = false) => {
+      if (loading) return;
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
+
+      try {
+        const params = {
+          search: search || undefined,
+          sort: selectedFilters.sort,
+        };
+        const response = await fetchQuizzes(params);
+        if (response) {
+          setQuizzes(response.data || []);
+          const linkHeader = response.linkHeader || "";
+          const links = parseLinkHeader(linkHeader);
+          setPaginationLinks(links);
+        }
+      } catch (error) {
+        ShowErrorNotification(error);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [search, selectedFilters],
+  );
+
+  useEffect(() => {
+    loadQuizzes();
+  }, [loadQuizzes]);
+
+  const onRefresh = useCallback(() => {
+    loadQuizzes(true);
+  }, [loadQuizzes]);
 
   const filters = [
     {
-      key: "status",
-      label: "Status",
-      options: ["All", "Published", "Draft"],
-    },
-    {
       key: "sort",
       label: "Sort",
-      options: ["Newest", "Oldest"],
+      options: [
+        { label: "All", value: "" },
+        { label: "Newest First", value: "newest" },
+        { label: "Oldest First", value: "oldest" },
+        { label: "Name (A-Z)", value: "name" },
+        { label: "Status", value: "status" },
+      ],
     },
   ];
-
-  const filteredAndSortedQuizzes = useMemo(() => {
-    let result = mockQuizzes.filter((item) => {
-      const matchesSearch =
-        item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.group.toLowerCase().includes(search.toLowerCase());
-      const matchesStatus =
-        selectedFilters.status === "All" ||
-        item.status === selectedFilters.status;
-      return matchesSearch && matchesStatus;
-    });
-
-    result.sort((a, b) => {
-      const dateA = new Date(a.lastUpdated);
-      const dateB = new Date(b.lastUpdated);
-      return selectedFilters.sort === "Newest" ? dateB - dateA : dateA - dateB;
-    });
-
-    return result;
-  }, [search, selectedFilters]);
-
-  const renderItem = ({ item }) => (
-    <ListItem bottomDivider>
-      <ListItem.Content>
-        <View style={styles.headerRow}>
-          <ListItem.Title style={styles.quizName}>{item.name}</ListItem.Title>
-          <Badge
-            value={item.status}
-            status={item.status === "Published" ? "success" : "warning"}
-          />
-        </View>
-        <ListItem.Subtitle style={styles.subtitle}>
-          Group: {item.group}
-        </ListItem.Subtitle>
-        <View style={styles.resultRow}>
-          <Icon
-            name={item.instant_result ? "visibility" : "visibility-off"}
-            size={14}
-            color="#7F8C8D"
-          />
-          <Text style={styles.resultText}>
-            Instant Results: {item.instant_result ? "On" : "Off"}
-          </Text>
-        </View>
-        <Text style={styles.lastUpdated}>Last Updated: {item.lastUpdated}</Text>
-      </ListItem.Content>
-      <View style={styles.actions}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("EditQuiz", { quizId: item.id })}
-        >
-          <Icon name="edit" color={BackgroundColor} size={24} />
-        </TouchableOpacity>
-      </View>
-    </ListItem>
-  );
 
   return (
     <MainContainer
@@ -124,11 +96,20 @@ export default function ListQuizScreen({ navigation }) {
           setSelectedFilters((prev) => ({ ...prev, [key]: val }))
         }
       />
-      <FlatList
-        data={filteredAndSortedQuizzes}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+      {loading && !refreshing ? (
+        <ActivityIndicator
+          size="large"
+          color={BackgroundColor}
+          style={{ marginTop: 20 }}
+        />
+      ) : (
+        <ListQuiz
+          quizzes={quizzes}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      )}
       <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate("CreateQuiz")}

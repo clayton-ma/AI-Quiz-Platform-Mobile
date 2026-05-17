@@ -28,7 +28,6 @@ export default function FilterBar({
     onFilterChange(key, value);
     setVisibleModal(null);
   };
-
   return (
     <View style={styles.container}>
       <ScrollView
@@ -37,13 +36,20 @@ export default function FilterBar({
         contentContainerStyle={styles.scrollContent}
       >
         {filters.map((filter) => {
-          const currentValue = selectedFilters[filter.key] || "All";
-          const isActive = currentValue !== "All";
+          const currentValue = selectedFilters[filter.key];
+          const selectedOption =
+            filter.options.find((opt) => opt.value === currentValue) ||
+            filter.options[0];
+          const displayLabel = selectedOption?.label || "All";
+          const isActive =
+            currentValue !== "" &&
+            currentValue !== "All" &&
+            currentValue !== undefined;
 
           return (
             <View key={filter.key}>
               <Button
-                title={`${filter.label}: ${currentValue}`}
+                title={`${filter.label}: ${displayLabel}`}
                 type={isActive ? "solid" : "outline"}
                 onPress={() => setVisibleModal(filter.key)}
                 iconRight
@@ -74,16 +80,16 @@ export default function FilterBar({
                   onPress={() => setVisibleModal(null)}
                 >
                   <View style={styles.modalContent}>
-                    {filter.options.map((opt) => (
+                    {filter.options.map(({ value, label }) => (
                       <ListItem
-                        key={opt}
+                        key={value}
                         bottomDivider
-                        onPress={() => handleSelect(filter.key, opt)}
+                        onPress={() => handleSelect(filter.key, value)}
                       >
                         <ListItem.Content>
-                          <ListItem.Title>{opt}</ListItem.Title>
+                          <ListItem.Title>{label}</ListItem.Title>
                         </ListItem.Content>
-                        {currentValue === opt && (
+                        {currentValue === value && (
                           <Icon name="check" color={BackgroundColor} />
                         )}
                       </ListItem>

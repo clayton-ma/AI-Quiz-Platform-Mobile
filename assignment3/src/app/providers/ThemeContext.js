@@ -56,6 +56,8 @@ export const ThemeProvider = ({ children }) => {
       primary: "#228be6",
       tabActiveColor: "#228be6",
       tabInactiveColor: isDark ? "#909296" : "#adb5bd",
+      avatarBackground: isDark ? "#228be6" : "#000000",
+      avatarText: "#FFFFFF",
     },
   };
 

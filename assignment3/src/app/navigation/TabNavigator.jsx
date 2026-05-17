@@ -15,6 +15,7 @@ import EditGroup from "../../features/group/screens/EditGroupScreen";
 import About from "../../features/about/screens/AboutScreen";
 import QuizList from "../../features/quiz/screens/ListQuizScreen";
 import EditQuiz from "../../features/quiz/screens/EditQuizScreen";
+import UserSettingList from "../../features/user/screens/UserSettingListScreen";
 
 // https://reactnavigation.org/docs/stack-navigator/
 const QuizStack = createStackNavigator();
@@ -47,16 +48,10 @@ function GroupScreen() {
 function UserScreen() {
   return (
     <UserStack.Navigator screenOptions={stackScreenOptions}>
+      <UserStack.Screen name="UserSettingList" component={UserSettingList} />
       <UserStack.Screen name="UserProfile" component={UserProfile} />
+      <UserStack.Screen name="About" component={About} />
     </UserStack.Navigator>
-  );
-}
-
-function AboutScreen() {
-  return (
-    <AboutStack.Navigator screenOptions={stackScreenOptions}>
-      <AboutStack.Screen name="AboutScreen" component={About} />
-    </AboutStack.Navigator>
   );
 }
 
@@ -91,7 +86,6 @@ export default function TabNavigator() {
         <Tab.Screen name="Quiz" component={QuizScreen} />
         <Tab.Screen name="Group" component={GroupScreen} />
         <Tab.Screen name="User" component={UserScreen} />
-        <Tab.Screen name="About" component={AboutScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

@@ -1,20 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useTheme } from "../../app/providers/ThemeContext";
 // import { BackgroundColor } from "../../constants";
-
-const BackgroundColor="white"
 
 /**
  * UserAvatar component displays the user's initials in a circular container.
- * 
+ *
  * @param {string} firstname - User's first name.
  * @param {string} lastname - User's last name.
  * @param {number} size - Diameter of the avatar.
  */
 export default function UserAvatar({ firstname, lastname, size = 50 }) {
+  const { theme } = useTheme();
   const getInitials = () => {
-    const f = firstname ? firstname.charAt(0).toUpperCase() : "";
-    const l = lastname ? lastname.charAt(0).toUpperCase() : "";
+    const f = firstname ? firstname.charAt(0).toUpperCase() : "A";
+    const l = lastname ? lastname.charAt(0).toUpperCase() : "I";
     return `${f}${l}` || "?";
   };
 
@@ -26,7 +26,7 @@ export default function UserAvatar({ firstname, lastname, size = 50 }) {
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: BackgroundColor,
+          backgroundColor: theme.colors.avatarBackground,
         },
       ]}
     >
@@ -35,6 +35,7 @@ export default function UserAvatar({ firstname, lastname, size = 50 }) {
           styles.initials,
           {
             fontSize: size * 0.4,
+            color: theme.colors.avatarText,
           },
         ]}
       >

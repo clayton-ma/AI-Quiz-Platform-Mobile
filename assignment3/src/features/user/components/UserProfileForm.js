@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Alert, TextInput, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  TextInput,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import UserAvatar from "../../../components/ui/UserAvatar";
 import { isValidName } from "../../../utils/validationFunction";
 import { SaveButton } from "../../../components/ui/Button";
@@ -12,7 +21,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
  * ProfileForm component allows users to view and update their personal information.
  * It handles name updates and provides a link to the password change page.
  */
-export default function ProfileForm() {
+export default function UserProfileForm() {
   const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -37,8 +46,10 @@ export default function ProfileForm() {
 
   const validate = () => {
     const newErrors = {};
-    if (!isValidName(formData.firstname)) newErrors.firstname = "Invalid first name";
-    if (!isValidName(formData.lastname)) newErrors.lastname = "Invalid last name";
+    if (!isValidName(formData.firstname))
+      newErrors.firstname = "Invalid first name";
+    if (!isValidName(formData.lastname))
+      newErrors.lastname = "Invalid last name";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -82,7 +93,9 @@ export default function ProfileForm() {
         onChangeText={(text) => setFormData({ ...formData, firstname: text })}
         style={[styles.input, errors.firstname && styles.inputError]}
       />
-      {errors.firstname && <Text style={styles.errorText}>{errors.firstname}</Text>}
+      {errors.firstname && (
+        <Text style={styles.errorText}>{errors.firstname}</Text>
+      )}
 
       <Text style={styles.label}>Last Name</Text>
       <TextInput
@@ -90,7 +103,9 @@ export default function ProfileForm() {
         onChangeText={(text) => setFormData({ ...formData, lastname: text })}
         style={[styles.input, errors.lastname && styles.inputError]}
       />
-      {errors.lastname && <Text style={styles.errorText}>{errors.lastname}</Text>}
+      {errors.lastname && (
+        <Text style={styles.errorText}>{errors.lastname}</Text>
+      )}
 
       <Text style={styles.label}>Email Address</Text>
       <TextInput

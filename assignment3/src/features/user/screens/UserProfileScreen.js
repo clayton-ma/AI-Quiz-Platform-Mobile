@@ -1,5 +1,5 @@
 import MainContainer from "../../../components/layout/MainContainer";
-import ProfileForm from "../components/ProfileForm";
+import UserProfileForm from "../components/UserProfileForm";
 import UserSettingList from "../components/UserSetting";
 
 /**
@@ -8,8 +8,7 @@ import UserSettingList from "../components/UserSetting";
 export default function UserProfileScreen({ navigation }) {
   return (
     <MainContainer title="User Profile" navigation={navigation} isMain={true}>
-      <UserSettingList />
-      {/* <ProfileForm /> */}
+      <UserProfileForm />
     </MainContainer>
   );
 }

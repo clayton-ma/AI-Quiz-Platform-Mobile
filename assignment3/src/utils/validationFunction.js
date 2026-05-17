@@ -27,6 +27,6 @@ export function isValidPassword(password) {
  * @returns {boolean} True if valid.
  */
 export function isValidName(name) {
-  const namePattern = /^[a-zA-Z\s]{2,50}$/;
+  const namePattern = /^[a-zA-Z\s\W]{2,50}$/;
   return typeof name === "string" && namePattern.test(name.trim());
 }

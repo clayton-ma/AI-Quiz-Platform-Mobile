@@ -183,8 +183,9 @@ export default function EditQuiz({ route, navigation }) {
 
         // Fetch groups where user has admin privileges
         const groups = await fetchGroups({ role: "admin" });
+        const groupsList = Array.isArray(groups?.data) ? groups.data : (Array.isArray(groups) ? groups : []);
         setGroupsData(
-          groups.data.map((g) => ({
+          groupsList.map((g) => ({
             value: g._id,
             label: g.name,
           })),

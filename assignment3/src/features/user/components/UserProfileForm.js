@@ -9,13 +9,16 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 import UserAvatar from "../../../components/ui/UserAvatar";
 import { isValidName } from "../../../utils/validationFunction";
 import { SaveButton } from "../../../components/ui/Button";
 import { useAuth } from "../../../app/providers/AuthContext";
 import { updateUser } from "../services/userApi";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../../../app/providers/ThemeContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import FormContainer from "../../../components/ui/FormContainer";
 
 /**
  * ProfileForm component allows users to view and update their personal information.
@@ -25,42 +28,34 @@ export default function UserProfileForm() {
   const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
-  const [formData, setFormData] = useState({
-    firstname: user?.firstname || "",
-    lastname: user?.lastname || "",
-    email: user?.email || "",
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstname: user?.firstname || "",
+      lastname: user?.lastname || "",
+      email: user?.email || "",
+    },
   });
-
-  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (user) {
-      setFormData({
+      reset({
         firstname: user.firstname || "",
         lastname: user.lastname || "",
         email: user.email || "",
       });
     }
-  }, [user]);
+  }, [user, reset]);
 
-  const validate = () => {
-    const newErrors = {};
-    if (!isValidName(formData.firstname))
-      newErrors.firstname = "Invalid first name";
-    if (!isValidName(formData.lastname))
-      newErrors.lastname = "Invalid last name";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  /**
-   * Handles the profile update submission.
-   */
-  const handleSave = async () => {
-    if (!validate()) return;
-
+  const onSubmit = async (formData) => {
     setLoading(true);
+    console.log(formData);
     try {
       await updateUser({
         firstname: formData.firstname,
@@ -78,46 +73,112 @@ export default function UserProfileForm() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
       <View style={styles.avatarContainer}>
         <UserAvatar
-          firstname={formData.firstname}
-          lastname={formData.lastname}
+          firstname={user?.firstname}
+          lastname={user?.lastname}
           size={100}
         />
       </View>
+      <FormContainer>
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          First Name
+        </Text>
+        <Controller
+          control={control}
+          name="firstname"
+          rules={{
+            required: "First name is required",
+            validate: (v) => isValidName(v) || "Invalid first name",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={[
+                styles.input,
+                {
+                  color: theme.colors.text,
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.card,
+                },
+                errors.firstname && styles.inputError,
+              ]}
+              placeholderTextColor={theme.dark ? "#666" : "#999"}
+            />
+          )}
+        />
+        {errors.firstname && (
+          <Text style={styles.errorText}>{errors.firstname.message}</Text>
+        )}
 
-      <Text style={styles.label}>First Name</Text>
-      <TextInput
-        value={formData.firstname}
-        onChangeText={(text) => setFormData({ ...formData, firstname: text })}
-        style={[styles.input, errors.firstname && styles.inputError]}
-      />
-      {errors.firstname && (
-        <Text style={styles.errorText}>{errors.firstname}</Text>
-      )}
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Last Name
+        </Text>
+        <Controller
+          control={control}
+          name="lastname"
+          rules={{
+            required: "Last name is required",
+            validate: (v) => isValidName(v) || "Invalid last name",
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              style={[
+                styles.input,
+                {
+                  color: theme.colors.text,
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.card,
+                },
+                errors.lastname && styles.inputError,
+              ]}
+              placeholderTextColor={theme.dark ? "#666" : "#999"}
+            />
+          )}
+        />
+        {errors.lastname && (
+          <Text style={styles.errorText}>{errors.lastname.message}</Text>
+        )}
 
-      <Text style={styles.label}>Last Name</Text>
-      <TextInput
-        value={formData.lastname}
-        onChangeText={(text) => setFormData({ ...formData, lastname: text })}
-        style={[styles.input, errors.lastname && styles.inputError]}
-      />
-      {errors.lastname && (
-        <Text style={styles.errorText}>{errors.lastname}</Text>
-      )}
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Email Address
+        </Text>
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { value } }) => (
+            <TextInput
+              value={value}
+              editable={false}
+              style={[
+                styles.input,
+                {
+                  color: theme.dark ? "#888" : "#666",
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.dark ? "#2c2e33" : "#f0f0f0",
+                },
+                styles.disabledInput,
+              ]}
+            />
+          )}
+        />
+        <Text style={styles.infoText}>Email address cannot be changed</Text>
 
-      <Text style={styles.label}>Email Address</Text>
-      <TextInput
-        value={formData.email}
-        editable={false}
-        style={[styles.input, styles.disabledInput]}
-      />
-      <Text style={styles.infoText}>Email address cannot be changed</Text>
-
-      <View style={styles.buttonContainer}>
-        <SaveButton loading={loading} onPress={handleSave} />
-      </View>
+        <View style={styles.buttonContainer}>
+          <SaveButton loading={loading} onPress={handleSubmit(onSubmit)} />
+        </View>
+      </FormContainer>
     </ScrollView>
   );
 }

@@ -1,5 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { FlatList, StyleSheet, ActivityIndicator, RefreshControl, View, Text } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  RefreshControl,
+  View,
+  Text,
+} from "react-native";
 import Group from "../components/Group";
 import MainContainer from "../../../components/layout/MainContainer";
 import SearchBar from "../../../components/ui/SearchBar";
@@ -33,38 +40,45 @@ export default function ListGroupScreen({ navigation }) {
     setSelectedFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  const fetchGroups = useCallback(async (pageNum, isRefresh = false) => {
-    if (loading) return;
-    
-    setLoading(true);
-    try {
-      const params = {
-        page: pageNum,
-        limit: 10,
-        search: keyword,
-        role: selectedFilters.role !== "All" ? selectedFilters.role.toLowerCase() : undefined,
-        sort: selectedFilters.sort,
-      };
+  // const fetchGroups = useCallback(
+  //   async (pageNum, isRefresh = false) => {
+  //     if (loading) return;
 
-      const response = await fetchGroups(params);
-      const { data: newGroups, linkHeader } = response;
-      
+  //     setLoading(true);
+  //     try {
+  //       const params = {
+  //         page: pageNum,
+  //         limit: 10,
+  //         search: keyword,
+  //         role:
+  //           selectedFilters.role !== "All"
+  //             ? selectedFilters.role.toLowerCase()
+  //             : undefined,
+  //         sort: selectedFilters.sort,
+  //       };
 
-      setDisplayData(prev => isRefresh ? newGroups : [...prev, ...newGroups]);
-      // Check if linkHeader contains 'rel="next"' to determine if more pages exist
-      setHasMore(linkHeader.includes('rel="next"'));
-      setPage(pageNum);
-    } catch (error) {
-      ShowErrorNotification(error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [keyword, selectedFilters]);
+  //       const response = await fetchGroups(params);
+  //       const { data: newGroups, linkHeader } = response;
 
-  useEffect(() => {
-    fetchGroups(1, true);
-  }, [keyword, selectedFilters]);
+  //       setDisplayData((prev) =>
+  //         isRefresh ? newGroups : [...prev, ...newGroups],
+  //       );
+  //       // Check if linkHeader contains 'rel="next"' to determine if more pages exist
+  //       setHasMore(linkHeader.includes('rel="next"'));
+  //       setPage(pageNum);
+  //     } catch (error) {
+  //       ShowErrorNotification(error);
+  //     } finally {
+  //       setLoading(false);
+  //       setRefreshing(false);
+  //     }
+  //   },
+  //   [keyword, selectedFilters],
+  // );
+
+  // useEffect(() => {
+  //   fetchGroups(1, true);
+  // }, [keyword, selectedFilters]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -80,7 +94,11 @@ export default function ListGroupScreen({ navigation }) {
   const renderFooter = () => {
     if (!loading || refreshing) return null;
     return (
-      <ActivityIndicator style={{ marginVertical: 20 }} size="small" color="#0000ff" />
+      <ActivityIndicator
+        style={{ marginVertical: 20 }}
+        size="small"
+        color="#0000ff"
+      />
     );
   };
 
@@ -96,7 +114,7 @@ export default function ListGroupScreen({ navigation }) {
         selectedFilters={selectedFilters}
         onFilterChange={handleFilterChange}
       />
-      <FlatList
+      {/* <FlatList
         data={displayData}
         renderItem={({ item }) => (
           <Group
@@ -120,7 +138,7 @@ export default function ListGroupScreen({ navigation }) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      />
+      /> */}
     </MainContainer>
   );
 }

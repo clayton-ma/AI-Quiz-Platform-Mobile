@@ -16,6 +16,7 @@ import { fetchQuizzes } from "../services/quizApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import { ActivityIndicator, RefreshControl } from "react-native";
 import parseLinkHeader from "../../../utils/parseLinkHeader";
+import CreateButton from "../../../components/ui/CreateButton";
 
 export default function ListQuizScreen({ navigation }) {
   const [search, setSearch] = useState("");
@@ -69,7 +70,6 @@ export default function ListQuizScreen({ navigation }) {
       key: "sort",
       label: "Sort",
       options: [
-        { label: "All", value: "" },
         { label: "Newest First", value: "newest" },
         { label: "Oldest First", value: "oldest" },
         { label: "Name (A-Z)", value: "name" },
@@ -110,12 +110,8 @@ export default function ListQuizScreen({ navigation }) {
           }
         />
       )}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate("CreateQuiz")}
-      >
-        <Icon name="add" color="#fff" size={30} />
-      </TouchableOpacity>
+
+      <CreateButton handlePress={() => navigation.navigate("CreateQuiz")} />
     </MainContainer>
   );
 }
@@ -155,21 +151,5 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  fab: {
-    position: "absolute",
-    right: 20,
-    bottom: 20,
-    backgroundColor: BackgroundColor,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
 });

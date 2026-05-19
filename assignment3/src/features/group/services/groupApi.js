@@ -1,4 +1,5 @@
 import { API_BASE_URL, getAuthHeader } from "../../../services/authHeader";
+import parseLinkHeader from "../../../utils/parseLinkHeader";
 
 /**
  * Fetches all groups available to the current user.
@@ -28,8 +29,9 @@ export const fetchGroups = async (params = {}) => {
   }
 
   // Return the data
-  const { data } = await response.json();
-  const linkHeader = response.headers.get("Link") || "";
+  const json = await response.json();
+  const data = json.data;
+  const linkHeader = parseLinkHeader(response.headers.get("Link")) || "";
   return { data, linkHeader };
 };
 

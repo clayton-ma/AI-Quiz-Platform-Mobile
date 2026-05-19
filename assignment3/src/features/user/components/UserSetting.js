@@ -25,11 +25,13 @@ export default function UserSettingList() {
     {
       title: "Edit Profile",
       icon: "person-outline",
+      key: "edit-profile",
       onPress: () => navigation.navigate("UserProfile"),
     },
     {
       title: "About This App",
       icon: "info-outline",
+      key: "about",
       onPress: () => navigation.navigate("About"),
     },
   ];
@@ -60,9 +62,9 @@ export default function UserSettingList() {
 
       {/* Settings Options */}
       <View style={styles.listContainer}>
-        {settingsOptions.map((item, i) => (
+        {settingsOptions.map((item) => (
           <ListItem
-            key={i}
+            key={`setting-${item.key}`}
             onPress={item.onPress}
             containerStyle={{ backgroundColor: theme.colors.background }}
             bottomDivider
@@ -78,18 +80,21 @@ export default function UserSettingList() {
         ))}
 
         {/* Logout Button */}
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <ListItem
-            containerStyle={{ backgroundColor: theme.colors.background }}
-          >
-            <Icon name="logout" color="#fa5252" />
-            <ListItem.Content>
-              <ListItem.Title style={{ color: "#fa5252", fontWeight: "600" }}>
-                Logout
-              </ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
-        </TouchableOpacity>
+        <ListItem
+          onPress={handleLogout}
+          key="logout"
+          containerStyle={[
+            styles.logoutButton,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <Icon name="logout" color="#fa5252" />
+          <ListItem.Content>
+            <ListItem.Title style={{ color: "#fa5252", fontWeight: "600" }}>
+              Logout
+            </ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
       </View>
     </ScrollView>
   );

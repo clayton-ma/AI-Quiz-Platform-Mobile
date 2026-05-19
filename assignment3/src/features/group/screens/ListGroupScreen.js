@@ -11,8 +11,11 @@ import Group from "../components/Group";
 import MainContainer from "../../../components/layout/MainContainer";
 import SearchBar from "../../../components/ui/SearchBar";
 import FilterBar from "../../../components/ui/FilterBar";
-import { fetchGroups } from "../services/groupApi";
+import { fetchGroups as fetchGroupsApi } from "../services/groupApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+import CreateButton from "../../../components/ui/CreateButton";
+import ListFooter from "../../../components/ui/ListFooter";
+import CreateGroupModal from "../components/CreateGroupModal";
 
 export default function ListGroupScreen({ navigation }) {
   const [keyword, setKeyword] = useState("");
@@ -22,13 +25,14 @@ export default function ListGroupScreen({ navigation }) {
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
   const filters = [
     {
       key: "role",
       label: "Role",
       options: [
-        { label: "All", value: "All" },
+        { label: "All", value: "" },
         { label: "Admin", value: "Admin" },
         { label: "Member", value: "Member" },
       ],
@@ -37,6 +41,7 @@ export default function ListGroupScreen({ navigation }) {
       key: "sort",
       label: "Sort By",
       options: [
+        { label: "All", value: "" },
         { label: "Newest", value: "updatedAt" },
         { label: "Oldest", value: "-updatedAt" },
         { label: "Name", value: "name" },
@@ -48,45 +53,46 @@ export default function ListGroupScreen({ navigation }) {
     setSelectedFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  // const fetchGroups = useCallback(
-  //   async (pageNum, isRefresh = false) => {
-  //     if (loading) return;
+  const fetchGroups = useCallback(
+    async (pageNum, isRefresh = false) => {
+      if (loading) return;
 
-  //     setLoading(true);
-  //     try {
-  //       const params = {
-  //         page: pageNum,
-  //         limit: 10,
-  //         search: keyword,
-  //         role:
-  //           selectedFilters.role !== "All"
-  //             ? selectedFilters.role.toLowerCase()
-  //             : undefined,
-  //         sort: selectedFilters.sort,
-  //       };
+      setLoading(true);
+      try {
+        const params = {
+          page: pageNum,
+          limit: 10,
+          search: keyword,
+          role:
+            selectedFilters.role !== "All"
+              ? selectedFilters.role.toLowerCase()
+              : undefined,
+          sort: selectedFilters.sort,
+        };
 
-  //       const response = await fetchGroups(params);
-  //       const { data: newGroups, linkHeader } = response;
+        const response = await fetchGroupsApi(params);
+        if (response) {
+          const { data: newGroups, linkHeader } = response;
+          setDisplayData((prev) =>
+            isRefresh ? newGroups : [...prev, ...newGroups],
+          );
+          // Check if linkHeader contains 'rel="next"' to determine if more pages exist
+          setHasMore(!!linkHeader.next);
+          setPage(pageNum);
+        }
+      } catch (error) {
+        ShowErrorNotification(error);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [keyword, selectedFilters],
+  );
 
-  //       setDisplayData((prev) =>
-  //         isRefresh ? newGroups : [...prev, ...newGroups],
-  //       );
-  //       // Check if linkHeader contains 'rel="next"' to determine if more pages exist
-  //       setHasMore(linkHeader.includes('rel="next"'));
-  //       setPage(pageNum);
-  //     } catch (error) {
-  //       ShowErrorNotification(error);
-  //     } finally {
-  //       setLoading(false);
-  //       setRefreshing(false);
-  //     }
-  //   },
-  //   [keyword, selectedFilters],
-  // );
-
-  // useEffect(() => {
-  //   fetchGroups(1, true);
-  // }, [keyword, selectedFilters]);
+  useEffect(() => {
+    fetchGroups(1, true);
+  }, [keyword, selectedFilters, fetchGroups]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -97,17 +103,6 @@ export default function ListGroupScreen({ navigation }) {
     if (!loading && hasMore) {
       fetchGroups(page + 1);
     }
-  };
-
-  const renderFooter = () => {
-    if (!loading || refreshing) return null;
-    return (
-      <ActivityIndicator
-        style={{ marginVertical: 20 }}
-        size="small"
-        color="#0000ff"
-      />
-    );
   };
 
   return (
@@ -122,17 +117,21 @@ export default function ListGroupScreen({ navigation }) {
         selectedFilters={selectedFilters}
         onFilterChange={handleFilterChange}
       />
-      {/* <FlatList
+      <FlatList
         data={displayData}
         renderItem={({ item }) => (
           <Group
             name={item.name}
             memberCount={item.memberCount}
             isAdmin={item.isAdmin}
-            onActionPress={() => navigation.navigate("EditGroup", { groupId: item.id })}
+            onActionPress={() =>
+              navigation.navigate("EditGroup", { groupId: item.id })
+            }
           />
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) =>
+          item._id?.toString() || item.id?.toString() || index.toString()
+        }
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={
@@ -142,11 +141,17 @@ export default function ListGroupScreen({ navigation }) {
             </View>
           )
         }
-        ListFooterComponent={renderFooter}
+        ListFooterComponent={ListFooter(loading, refreshing)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      /> */}
+      />
+      <CreateButton handlePress={() => setIsCreateModalVisible(true)} />
+      <CreateGroupModal
+        visible={isCreateModalVisible}
+        onClose={() => setIsCreateModalVisible(false)}
+        navigation={navigation}
+      />
     </MainContainer>
   );
 }

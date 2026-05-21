@@ -22,7 +22,7 @@ export default function MainHeader({ navigation, isMain, title }) {
         leftComponent={
           <Icon
             type="material"
-            name="keyboard_backspace"
+            name="arrow-back"
             color="#fff"
             size={30}
             onPress={() => navigation.goBack()}

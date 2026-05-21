@@ -48,7 +48,9 @@ export default function CreateGroupScreen({ navigation, visible, onClose }) {
       });
 
       // Navigate to EditGroup to allow adding members or further configuration
-      navigation.replace("EditGroup", { groupId: newGroup.id || newGroup._id });
+      navigation.navigate("EditGroup", {
+        groupId: newGroup,
+      });
       if (onClose) onClose();
     } catch (error) {
       ShowErrorNotification(error);

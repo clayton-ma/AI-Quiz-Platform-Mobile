@@ -199,6 +199,7 @@ export default function EditGroupForm({ groupId, navigation }) {
         message: "The group has been successfully removed.",
         type: "success",
       });
+      navigation.navigate("GroupList");
     } catch (errors) {
       ShowErrorNotification(errors);
       setLoading(false);

@@ -125,7 +125,7 @@ export default function ListGroupScreen({ navigation }) {
             memberCount={item.memberCount}
             isAdmin={item.isAdmin}
             onActionPress={() =>
-              navigation.navigate("EditGroup", { groupId: item.id })
+              navigation.navigate("EditGroup", { groupId: item._id })
             }
           />
         )}

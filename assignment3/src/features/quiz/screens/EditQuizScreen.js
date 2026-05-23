@@ -12,12 +12,9 @@ import { Icon, Button, Divider } from "react-native-elements";
 import MainContainer from "../../../components/layout/MainContainer";
 import {
   fetchQuizByIdForEdit,
-  generateQuestions,
   updateQuiz,
   publishQuiz,
 } from "../services/quizApi";
-
-import ConfirmDialog from "../../../components/ui/ConfirmDialog";
 
 import { fetchGroups } from "../../group/services/groupApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
@@ -161,7 +158,6 @@ export default function EditQuiz({ route, navigation }) {
   const [groupsData, setGroupsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generateOpen, setGenerateOpen] = useState(false);
-  const [topics, setTopics] = useState("");
   const { quizId } = route.params;
 
   // Load quiz and group data on component mount
@@ -183,7 +179,11 @@ export default function EditQuiz({ route, navigation }) {
 
         // Fetch groups where user has admin privileges
         const groups = await fetchGroups({ role: "admin" });
-        const groupsList = Array.isArray(groups?.data) ? groups.data : (Array.isArray(groups) ? groups : []);
+        const groupsList = Array.isArray(groups?.data)
+          ? groups.data
+          : Array.isArray(groups)
+            ? groups
+            : [];
         setGroupsData(
           groupsList.map((g) => ({
             value: g._id,
@@ -230,37 +230,6 @@ export default function EditQuiz({ route, navigation }) {
   }, []);
 
   /**
-   * Calls AI API to generate questions based on user-provided topics.
-   */
-  const handleGenerateQuestions = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const res = await generateQuestions(topics, 5);
-
-      if (!res || !res.questions) {
-        throw new Error("Failed to generate questions. Please try again.");
-      }
-
-      dispatch({
-        type: "ADD_QUESTIONS",
-        payload: res.questions,
-      });
-
-      ShowNotification({
-        title: "Success",
-        message: "Questions generated successfully",
-        type: "success",
-      });
-      setGenerateOpen(false);
-    } catch (err) {
-      ShowErrorNotification(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [topics, quizId]);
-
-  /**
    * Saves current quiz state (metadata and questions) to the backend.
    */
   const saveQuiz = useCallback(async () => {
@@ -269,7 +238,7 @@ export default function EditQuiz({ route, navigation }) {
         ...state.metadata,
         questions: state.questions,
       };
-
+      console.log(payload);
       await updateQuiz(quizId, payload);
 
       ShowNotification({
@@ -299,6 +268,10 @@ export default function EditQuiz({ route, navigation }) {
       ShowErrorNotification(errors);
     }
   }, [saveQuiz, quizId, navigation]);
+
+  /**
+   * Calls AI API to generate questions based on user-provided topics.
+   */
 
   if (loading && !state.metadata.name) {
     return (
@@ -398,12 +371,10 @@ export default function EditQuiz({ route, navigation }) {
       </ScrollView>
 
       <GenerateQuestionModal
-        visible={generateOpen}
+        opened={generateOpen}
         onClose={() => setGenerateOpen(false)}
-        topics={topics}
-        setTopics={setTopics}
-        onGenerate={handleGenerateQuestions}
         loading={loading}
+        dispatch={dispatch}
       />
     </MainContainer>
   );

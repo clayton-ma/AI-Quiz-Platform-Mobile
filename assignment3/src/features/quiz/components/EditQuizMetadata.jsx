@@ -1,14 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-} from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { View, Text, TextInput, StyleSheet, Switch } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
+import { fetchGroups } from "../../group/services/groupApi";
 
 /**
  * EditQuizMetadata component handles the quiz settings.
@@ -16,11 +10,22 @@ import { MaterialIcons } from "@expo/vector-icons";
  */
 export default function EditQuizMetadata({ metadata, dispatch }) {
   const [local, setLocal] = useState(metadata);
-  const groupsData = [
-    { id: "1", name: "Computer Science 101" },
-    { id: "2", name: "Advanced Mathematics" },
-    { id: "3", name: "History of Art" },
-  ];
+  const [groupsData, setGroupsData] = useState([]);
+
+  useEffect(() => {
+    const loadGroups = async () => {
+      try {
+        const { data: adminGroups } = await fetchGroups({ role: "admin" });
+        if (adminGroups) {
+          setGroupsData(adminGroups);
+        }
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      }
+    };
+    loadGroups();
+  }, []);
+
   // Keep local state in sync when parent metadata changes (e.g. after a save or initial load)
   useEffect(() => {
     setLocal(metadata);
@@ -47,6 +52,17 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
   const handleChange = useCallback((field, value) => {
     setLocal((prev) => ({ ...prev, [field]: value }));
   }, []);
+
+  const toggleGroup = (groupId) => {
+    setLocal((prev) => {
+      const currentIds = prev.groupIds || [];
+      const isSelected = currentIds.includes(groupId);
+      const newGroupIds = isSelected
+        ? currentIds.filter((id) => id !== groupId)
+        : [...currentIds, groupId];
+      return { ...prev, groupIds: newGroupIds };
+    });
+  };
 
   // UI for quiz metadata editing, including title, description, group assignment, and instant result toggle
   return (
@@ -83,24 +99,31 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
 
       <Text style={styles.sectionLabel}>Access & Results</Text>
 
-      <Text style={styles.inputLabel}>Assign to Group</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={
-            local.groupIds && local.groupIds.length > 0 ? local.groupIds[0] : ""
-          }
-          onValueChange={(itemValue) => handleChange("groupIds", [itemValue])}
-          style={styles.picker}
-        >
-          <Picker.Item label="Select a group..." value={null} />
-          {groupsData?.map((group) => (
-            <Picker.Item
-              key={group.id || group._id}
-              label={group.name}
-              value={group.id || group._id}
-            />
-          ))}
-        </Picker>
+      <Text style={styles.inputLabel}>Assign to Groups</Text>
+      <View style={styles.groupsList}>
+        {groupsData.map((g) => {
+          const groupId = g.id || g._id;
+          const isSelected = local.groupIds?.includes(groupId);
+          return (
+            <TouchableOpacity
+              key={groupId}
+              style={[styles.groupChip, isSelected && styles.groupChipSelected]}
+              onPress={() => toggleGroup(groupId)}
+            >
+              <Text
+                style={[
+                  styles.groupChipText,
+                  isSelected && styles.groupChipTextSelected,
+                ]}
+              >
+                {g.name}
+              </Text>
+              {isSelected && (
+                <MaterialIcons name="check" size={14} color="#fff" />
+              )}
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       <View style={styles.switchContainer}>
@@ -162,17 +185,33 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   textArea: { height: 80, textAlignVertical: "top" },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 4,
+  groupsList: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
     marginBottom: 16,
-    backgroundColor: "#f8f9fa",
-    overflow: "hidden",
   },
-  picker: {
-    height: 50,
-    width: "100%",
+  groupChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#007bff",
+    backgroundColor: "#fff",
+    gap: 4,
+  },
+  groupChipSelected: {
+    backgroundColor: "#007bff",
+  },
+  groupChipText: {
+    color: "#007bff",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  groupChipTextSelected: {
+    color: "#fff",
   },
   switchContainer: {
     flexDirection: "row",

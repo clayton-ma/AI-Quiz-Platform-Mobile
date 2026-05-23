@@ -40,8 +40,8 @@ export default function ListQuizScreen({ navigation }) {
       label: "Sort By",
       options: [
         { label: "All", value: "" },
-        { label: "Newest", value: "updatedAt" },
-        { label: "Oldest", value: "-updatedAt" },
+        { label: "Newest", value: "-updatedAt" },
+        { label: "Oldest", value: "updatedAt" },
         { label: "Name", value: "name" },
       ],
     },

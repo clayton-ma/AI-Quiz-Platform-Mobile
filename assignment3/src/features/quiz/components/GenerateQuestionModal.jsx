@@ -7,22 +7,52 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
+
+import { generateQuestions } from "../services/quizApi";
+import ShowNotification from "../../../components/ui/ShowNotification";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+import { useCallback } from "react";
 
 /**
  * GenerateQuestionModal provides an interface for users to input topics
  * and specify the number of questions they want the AI to generate for a quiz.
  */
-export default function GenerateQuestionModal({
-  opened,
-  onClose,
-  topics,
-  setTopics,
-  numQuestions,
-  setNumQuestions,
-  onGenerate,
-  loading,
-}) {
+export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
+  const [numQuestions, setNumQuestions] = React.useState(1);
+  const [topics, setTopics] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+
+  const onGenerate = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const res = await generateQuestions(topics, numQuestions);
+
+      if (!res || !res.questions) {
+        throw new Error("Failed to generate questions. Please try again.");
+      }
+
+      dispatch({
+        type: "ADD_QUESTIONS",
+        payload: res.questions,
+      });
+
+      ShowNotification({
+        title: "Success",
+        message: "Questions generated successfully",
+        type: "success",
+      });
+      onClose();
+    } catch (err) {
+      ShowErrorNotification(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [topics, numQuestions, dispatch, onClose]);
+
   return (
     <Modal
       visible={opened}
@@ -30,7 +60,10 @@ export default function GenerateQuestionModal({
       animationType="slide"
       transparent={true}
     >
-      <View style={styles.overlay}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.overlay}
+      >
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Generate AI Quiz</Text>
 
@@ -79,7 +112,7 @@ export default function GenerateQuestionModal({
             </View>
           )}
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

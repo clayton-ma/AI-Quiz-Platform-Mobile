@@ -2,50 +2,81 @@ import React, { useState, useCallback, useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
+  ActivityIndicator,
+  RefreshControl,
   View,
   Text,
-  TouchableOpacity,
 } from "react-native";
-import { ListItem, Icon, Badge } from "react-native-elements";
+import QuizItem from "../components/QuizItem";
 import MainContainer from "../../../components/layout/MainContainer";
 import SearchBar from "../../../components/ui/SearchBar";
 import FilterBar from "../../../components/ui/FilterBar";
-import { BackgroundColor } from "../../../../constants";
-import ListQuiz from "../components/ListQuiz";
 import { fetchQuizzes } from "../services/quizApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
-import { ActivityIndicator, RefreshControl } from "react-native";
-import parseLinkHeader from "../../../utils/parseLinkHeader";
 import CreateButton from "../../../components/ui/CreateButton";
+import ListFooter from "../../../components/ui/ListFooter";
 
 export default function ListQuizScreen({ navigation }) {
-  const [search, setSearch] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState({
-    status: "All",
-    sort: "newest",
-  });
-  const [quizzes, setQuizzes] = useState([]);
+  const [keyword, setKeyword] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState({ status: "All" });
+  const [displayData, setDisplayData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
-  const [paginationLinks, setPaginationLinks] = useState({});
+  const [hasMore, setHasMore] = useState(true);
+
+  const filters = [
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { label: "All", value: "" },
+        { label: "Draft", value: "draft" },
+        { label: "Published", value: "published" },
+      ],
+    },
+    {
+      key: "sort",
+      label: "Sort By",
+      options: [
+        { label: "All", value: "" },
+        { label: "Newest", value: "updatedAt" },
+        { label: "Oldest", value: "-updatedAt" },
+        { label: "Name", value: "name" },
+      ],
+    },
+  ];
+
+  const handleFilterChange = useCallback((key, value) => {
+    setSelectedFilters((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const loadQuizzes = useCallback(
-    async (isRefresh = false) => {
+    async (pageNum, isRefresh = false) => {
       if (loading) return;
-      if (isRefresh) setRefreshing(true);
-      else setLoading(true);
 
+      setLoading(true);
       try {
         const params = {
-          search: search || undefined,
+          page: pageNum,
+          limit: 10,
+          search: keyword,
+          status:
+            selectedFilters.status !== "All"
+              ? selectedFilters.status.toLowerCase()
+              : undefined,
           sort: selectedFilters.sort,
         };
+
         const response = await fetchQuizzes(params);
         if (response) {
-          setQuizzes(response.data || []);
-          const linkHeader = response.linkHeader || "";
-          const links = parseLinkHeader(linkHeader);
-          setPaginationLinks(links);
+          const { data: newQuizzes, linkHeader } = response;
+          setDisplayData((prev) =>
+            isRefresh ? newQuizzes : [...prev, ...newQuizzes],
+          );
+          // Check if linkHeader contains 'rel="next"' to determine if more pages exist
+          setHasMore(!!linkHeader.next);
+          setPage(pageNum);
         }
       } catch (error) {
         ShowErrorNotification(error);
@@ -54,102 +85,73 @@ export default function ListQuizScreen({ navigation }) {
         setRefreshing(false);
       }
     },
-    [search, selectedFilters],
+    [keyword, selectedFilters],
   );
 
   useEffect(() => {
-    loadQuizzes();
-  }, [loadQuizzes]);
+    loadQuizzes(1, true);
+  }, [keyword, selectedFilters, loadQuizzes]);
 
   const onRefresh = useCallback(() => {
-    loadQuizzes(true);
+    setRefreshing(true);
+    loadQuizzes(1, true);
   }, [loadQuizzes]);
 
-  const filters = [
-    {
-      key: "sort",
-      label: "Sort",
-      options: [
-        { label: "Newest First", value: "newest" },
-        { label: "Oldest First", value: "oldest" },
-        { label: "Name (A-Z)", value: "name" },
-        { label: "Status", value: "status" },
-      ],
-    },
-  ];
+  const handleLoadMore = () => {
+    if (!loading && hasMore) {
+      loadQuizzes(page + 1);
+    }
+  };
 
   return (
-    <MainContainer
-      title="Quiz Management"
-      navigation={navigation}
-      isMain={true}
-    >
+    <MainContainer title="My Quizzes" navigation={navigation} isMain={true}>
       <SearchBar
         placeholder="Search quizzes..."
-        value={search}
-        onChangeText={setSearch}
+        value={keyword}
+        onChangeText={(text) => setKeyword(text)}
       />
       <FilterBar
         filters={filters}
         selectedFilters={selectedFilters}
-        onFilterChange={(key, val) =>
-          setSelectedFilters((prev) => ({ ...prev, [key]: val }))
+        onFilterChange={handleFilterChange}
+      />
+      <FlatList
+        data={displayData}
+        renderItem={(item) => <QuizItem quiz={item} />}
+        keyExtractor={(item, index) =>
+          item._id?.toString() || item.id?.toString() || index.toString()
+        }
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListEmptyComponent={
+          !loading && (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No quizzes found</Text>
+            </View>
+          )
+        }
+        ListFooterComponent={ListFooter(loading, refreshing)}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-      {loading && !refreshing ? (
-        <ActivityIndicator
-          size="large"
-          color={BackgroundColor}
-          style={{ marginTop: 20 }}
-        />
-      ) : (
-        <ListQuiz
-          quizzes={quizzes}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        />
-      )}
-
       <CreateButton handlePress={() => navigation.navigate("CreateQuiz")} />
     </MainContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 4,
+  container: {
+    flex: 1,
   },
-  quizName: {
-    fontWeight: "bold",
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 50,
+  },
+  emptyText: {
     fontSize: 16,
-    color: "#2C3E50",
-  },
-  subtitle: {
     color: "#7F8C8D",
-    fontSize: 14,
-  },
-  resultRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 2,
-  },
-  resultText: {
-    color: "#7F8C8D",
-    fontSize: 12,
-    marginLeft: 4,
-  },
-  lastUpdated: {
-    fontSize: 12,
-    color: "#95A5A6",
-    marginTop: 4,
-  },
-  actions: {
-    flexDirection: "row",
-    alignItems: "center",
   },
 });

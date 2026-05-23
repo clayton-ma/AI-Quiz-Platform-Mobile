@@ -55,7 +55,6 @@ export default function UserProfileForm() {
 
   const onSubmit = async (formData) => {
     setLoading(true);
-    console.log(formData);
     try {
       await updateUser({
         firstname: formData.firstname,

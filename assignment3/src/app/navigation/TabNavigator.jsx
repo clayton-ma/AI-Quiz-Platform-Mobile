@@ -16,6 +16,7 @@ import About from "../../features/about/screens/AboutScreen";
 import QuizList from "../../features/quiz/screens/ListQuizScreen";
 import EditQuiz from "../../features/quiz/screens/EditQuizScreen";
 import UserSettingList from "../../features/user/screens/UserSettingListScreen";
+import CreateQuiz from "../../features/quiz/screens/CreateQuizScreen";
 
 // https://reactnavigation.org/docs/stack-navigator/
 const QuizStack = createStackNavigator();
@@ -32,6 +33,7 @@ function QuizScreen() {
     <QuizStack.Navigator screenOptions={stackScreenOptions}>
       <QuizStack.Screen name="QuizList" component={QuizList} />
       <QuizStack.Screen name="EditQuiz" component={EditQuiz} />
+      <QuizStack.Screen name="CreateQuiz" component={CreateQuiz} />
     </QuizStack.Navigator>
   );
 }

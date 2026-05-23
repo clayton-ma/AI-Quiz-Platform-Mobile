@@ -7,12 +7,13 @@ import {
   Switch,
 } from "react-native";
 import { Input, Button, Text, Icon, CheckBox } from "react-native-elements";
-import MultiSelect from "react-native-multiple-select";
-import { createQuiz } from "../api";
-import { fetchGroups } from "../../group/api";
-import ShowErrorNotification from "@/components/ui/ShowErrorNotification";
+// import MultiSelect from "react-native-multiple-select";
+import { createQuiz } from "../services/quizApi";
+import { fetchGroups } from "../../group/services/groupApi";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import MainContainer from "../../../components/layout/MainContainer";
 import { BackgroundColor } from "../../../../constants";
+import EditQuizMetadata from "../components/EditQuizMetadata";
 
 /**
  * CreateQuiz component provides a form for users to initialize a new quiz.
@@ -76,79 +77,19 @@ export default function CreateQuiz({ navigation }) {
   return (
     <MainContainer title="Create New Quiz" navigation={navigation}>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.formCard}>
-          <Input
-            label="Quiz Title *"
-            placeholder="Initial Quiz Title"
-            value={formData.name}
-            onChangeText={(val) => setFormData({ ...formData, name: val })}
-            leftIcon={<Icon name="info-outline" size={20} color="#7F8C8D" />}
-            disabled={loading}
-          />
-
-          <Input
-            label="Description"
-            placeholder="Description of the quiz"
-            value={formData.description}
-            onChangeText={(val) =>
-              setFormData({ ...formData, description: val })
-            }
-            multiline
-            numberOfLines={3}
-            disabled={loading}
-          />
-
-          <View style={styles.multiSelectContainer}>
-            <Text style={styles.label}>Assign to Groups *</Text>
-            <MultiSelect
-              items={groupsData}
-              uniqueKey="id"
-              onSelectedItemsChange={(val) =>
-                setFormData({ ...formData, groupIds: val })
-              }
-              selectedItems={formData.groupIds}
-              selectText="Select one or more groups"
-              searchInputPlaceholderText="Search Groups..."
-              tagRemoveIconColor={BackgroundColor}
-              tagBorderColor={BackgroundColor}
-              tagTextColor={BackgroundColor}
-              selectedItemTextColor={BackgroundColor}
-              selectedItemIconColor={BackgroundColor}
-              itemTextColor="#000"
-              displayKey="label"
-              searchInputStyle={{ color: "#CCC" }}
-              submitButtonColor={BackgroundColor}
-              submitButtonText="Confirm"
-            />
-          </View>
-
-          <View style={styles.switchRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.switchLabel}>
-                Show instant results to students
-              </Text>
-              <Text style={styles.switchSub}>
-                Students will see their score immediately after submission
-              </Text>
-            </View>
-            <Switch
-              value={formData.instant_result}
-              onValueChange={(val) =>
-                setFormData({ ...formData, instant_result: val })
-              }
-              trackColor={{ false: "#767577", true: BackgroundColor }}
-              disabled={loading}
-            />
-          </View>
-
-          <Button
-            title="Create Quiz"
-            loading={loading}
-            onPress={handleSubmit}
-            buttonStyle={styles.submitBtn}
-            icon={<Icon name="add" color="white" style={{ marginRight: 10 }} />}
-          />
-        </View>
+        <EditQuizMetadata
+          metadata={formData}
+          dispatch={setFormData}
+          groupsData={groupsData}
+        />
+        <Button
+          title="Create Quiz"
+          loading={loading}
+          onPress={handleSubmit}
+          buttonStyle={styles.submitBtn}
+          containerStyle={{ marginTop: 20 }}
+          icon={<Icon name="add" color="white" style={{ marginRight: 10 }} />}
+        />
       </ScrollView>
     </MainContainer>
   );

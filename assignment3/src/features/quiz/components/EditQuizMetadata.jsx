@@ -1,14 +1,26 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, StyleSheet, Switch } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { MaterialIcons } from "@expo/vector-icons";
 
 /**
  * EditQuizMetadata component handles the quiz settings.
  * Optimized with local state and debounced dispatch to prevent parent re-renders on every keystroke.
  */
-export default function EditQuizMetadata({ metadata, dispatch, groupsData }) {
+export default function EditQuizMetadata({ metadata, dispatch }) {
   const [local, setLocal] = useState(metadata);
-
+  const groupsData = [
+    { id: "1", name: "Computer Science 101" },
+    { id: "2", name: "Advanced Mathematics" },
+    { id: "3", name: "History of Art" },
+  ];
   // Keep local state in sync when parent metadata changes (e.g. after a save or initial load)
   useEffect(() => {
     setLocal(metadata);
@@ -71,6 +83,26 @@ export default function EditQuizMetadata({ metadata, dispatch, groupsData }) {
 
       <Text style={styles.sectionLabel}>Access & Results</Text>
 
+      <Text style={styles.inputLabel}>Assign to Group</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={
+            local.groupIds && local.groupIds.length > 0 ? local.groupIds[0] : ""
+          }
+          onValueChange={(itemValue) => handleChange("groupIds", [itemValue])}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select a group..." value={null} />
+          {groupsData?.map((group) => (
+            <Picker.Item
+              key={group.id || group._id}
+              label={group.name}
+              value={group.id || group._id}
+            />
+          ))}
+        </Picker>
+      </View>
+
       <View style={styles.switchContainer}>
         <View style={styles.switchTextContainer}>
           <Text style={styles.switchLabel}>Show instant results</Text>
@@ -130,6 +162,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   textArea: { height: 80, textAlignVertical: "top" },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 4,
+    marginBottom: 16,
+    backgroundColor: "#f8f9fa",
+    overflow: "hidden",
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+  },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",

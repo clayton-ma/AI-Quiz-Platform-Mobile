@@ -7,7 +7,6 @@ import ShowNotification from "./ShowNotification";
  * @param {Object} errors - The error object containing message and cause.
  */
 export default function ShowErrorNotification(errors) {
-  console.log(errors);
   if (!errors || typeof errors !== "object") return;
   // {
   //    message: string

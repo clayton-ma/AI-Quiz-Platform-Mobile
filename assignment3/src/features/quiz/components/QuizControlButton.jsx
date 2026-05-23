@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "react-native-elements";
@@ -10,10 +10,13 @@ export default function QuizControlButton({
   instantResult,
 }) {
   const navigation = useNavigation();
+  const [localInstantResult, setLocalInstantResult] = useState(instantResult);
 
   const handleToggleInstantResult = async () => {
+    const newValue = !localInstantResult;
     try {
-      await toggleInstantResult({ quizId, instant_result: !instantResult });
+      await toggleInstantResult({ quizId, instant_result: newValue });
+      setLocalInstantResult(newValue);
     } catch (error) {
       console.error("Error toggling instant result:", error);
     }
@@ -41,9 +44,13 @@ export default function QuizControlButton({
             onPress={handleToggleInstantResult}
           >
             <View style={styles.publishAction}>
-              <Icon name="settings-backup-restore" color="#2980B9" size={24} />
+              <Icon
+                name={localInstantResult ? "visibility" : "visibility-off"}
+                color="#2980B9"
+                size={24}
+              />
               <Text style={[styles.actionLabel, { color: "#2980B9" }]}>
-                Toggle Result
+                {localInstantResult ? "Results On" : "Results Off"}
               </Text>
             </View>
           </TouchableOpacity>

@@ -252,7 +252,7 @@ export const publishQuiz = async (quizId) => {
  * @param {string} quizId - The ID of the quiz to release results for.
  * @returns {Promise<string>} Success message.
  */
-export const toggleInstantResult = async (quizId, instant_result) => {
+export const toggleInstantResult = async ({ quizId, instant_result }) => {
   // Call api
   const response = await fetch(
     `${API_BASE_URL}/quiz/${quizId}/toggle-release-results`,

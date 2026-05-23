@@ -22,16 +22,7 @@ export default function QuizItem({ quiz }) {
         <ListItem.Subtitle style={styles.subtitle}>
           Group: {item.groups?.length > 0 ? item.groups[0].name : "No Group"}
         </ListItem.Subtitle>
-        <View style={styles.resultRow}>
-          <Icon
-            name={item.instant_result ? "visibility" : "visibility-off"}
-            size={14}
-            color="#7F8C8D"
-          />
-          <Text style={styles.resultText}>
-            Instant Results: {item.instant_result ? "On" : "Off"}
-          </Text>
-        </View>
+
         <Text style={styles.lastUpdated}>
           Last Updated: {new Date(item.updatedAt).toLocaleDateString()}
         </Text>

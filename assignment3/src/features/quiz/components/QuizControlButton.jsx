@@ -29,8 +29,9 @@ export default function QuizControlButton({
           <TouchableOpacity
             style={styles.attemptButton}
             onPress={() =>
-              navigation.navigate("AttemptQuiz", {
-                quizId: quizId,
+              navigation.navigate("Attempt", {
+                screen: "ListAttempt",
+                params: { quizId: quizId },
               })
             }
           >

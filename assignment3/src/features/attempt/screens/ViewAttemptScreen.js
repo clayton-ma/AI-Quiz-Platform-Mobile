@@ -1,31 +1,20 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  Container,
-  Stack,
-  Paper,
-  Title,
-  Text,
-  Group,
-  Badge,
-  Divider,
-  Button,
-} from "@mantine/core";
-import { IconArrowLeft, IconCheck, IconLock } from "@tabler/icons-react";
-import { fetchAttemptById } from "../api";
-import { fetchQuizByIdForEdit, fetchQuizMetadata } from "../../quiz/api";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { Text, Badge, Divider, Card } from "react-native-elements";
+import { fetchAttemptById } from "../services/attemptApi";
+import { fetchQuizById, fetchQuizMetadata } from "../../quiz/services/quizApi";
 import ViewQuestionList from "../components/ViewQuestionList";
-import LoadingState from "../../../components/ui/LoadingState";
-import ShowErrorNotification from "@/components/ui/ShowErrorNotification";
-import PageTitle from "../../../components/ui/PageTitle";
+// import LoadingState from "../../../components/ui/LoadingState";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+import MainContainer from "../../../components/layout/MainContainer";
+import { BackgroundColor } from "../../../../constants";
 
 /**
  * ViewAttemptPage component displays the results and details of a specific quiz attempt.
  * It shows the score, timestamps, and a detailed review of questions and answers.
  */
-export default function ViewAttemptPage() {
-  const { attemptId } = useParams();
-  const navigate = useNavigate();
+export default function ViewAttemptScreen({ route, navigation }) {
+  const { attemptId } = route.params;
 
   const [quiz, setQuiz] = useState(null);
   const [attempt, setAttempt] = useState(null);
@@ -42,7 +31,7 @@ export default function ViewAttemptPage() {
         let quizData = await fetchQuizMetadata(attemptData.quiz_id);
 
         if (quizData.instant_result) {
-          quizData = await fetchQuizByIdForEdit(attemptData.quiz_id);
+          quizData = await fetchQuizById(attemptData.quiz_id);
         }
         setQuiz(quizData);
       } catch (errors) {
@@ -55,86 +44,126 @@ export default function ViewAttemptPage() {
   }, [attemptId]);
 
   // Show loading state while fetching data, and return null if attempt or quiz data is not available
-  if (loading) return <LoadingState />;
+  // if (loading) return <LoadingState />;
   if (!attempt || !quiz) return null;
 
   return (
-    <Container size="md" py="xl">
-      <Stack gap="lg">
-        <PageTitle
-          title="Attempt Details"
-          backLink={`/attempt/quiz/${quiz._id}`}
-        />
-
+    <MainContainer title="Attempt Details" navigation={navigation}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         {/* Attempt Summary Header */}
-        <Paper withBorder p="lg" radius="md" shadow="sm">
-          <Stack gap="xs">
-            <Group justify="space-between" align="flex-start">
-              <Stack gap={2}>
-                <Title order={2}>{quiz.name}</Title>
-                <Text size="sm" c="dimmed">
-                  Submitted on: {new Date(attempt.updatedAt).toLocaleString()}
-                </Text>
-                <Text size="xs" c="dimmed">
-                  Started on: {new Date(attempt.createdAt).toLocaleString()}
-                </Text>
-              </Stack>
+        <Card containerStyle={styles.card}>
+          <View style={styles.headerRow}>
+            <View style={styles.titleContainer}>
+              <Text h4 style={styles.quizName}>
+                {quiz.name}
+              </Text>
+              <Text style={styles.dateText}>
+                Submitted: {new Date(attempt.updatedAt).toLocaleString()}
+              </Text>
+            </View>
+            <Badge
+              value={attempt.status?.toUpperCase()}
+              status="primary"
+              badgeStyle={styles.statusBadge}
+            />
+          </View>
 
-              <Stack align="flex-end" gap="xs">
-                <Badge size="xl" variant="filled" color="blue">
-                  {attempt.status?.toUpperCase()}
-                </Badge>
-                <Badge
-                  variant="light"
-                  color={quiz.instant_result ? "green" : "orange"}
-                  size="lg"
-                  leftSection={
-                    quiz.instant_result ? (
-                      <IconCheck size={14} />
-                    ) : (
-                      <IconLock size={14} />
-                    )
-                  }
-                >
-                  {quiz.instant_result
-                    ? "Results Released Instantly"
-                    : "Results Hidden"}
-                </Badge>
-                {/* Display score if the attempt has been graded/submitted */}
-                {attempt.status === "submitted" && (
-                  <Paper withBorder px="md" py="xs" radius="md" bg="gray.0">
-                    <Group gap="xs">
-                      {quiz.instant_result ? (
-                        <>
-                          <Title order={4}>Score:</Title>
-                          <Text fw={700} size="xl" c="blue">
-                            {attempt.score !== null
-                              ? attempt.score
-                              : "Not Released"}
-                          </Text>
-                        </>
-                      ) : (
-                        <Text fw={500}>Score Hidden by Instructor</Text>
-                      )}
-                    </Group>
-                  </Paper>
-                )}
-              </Stack>
-            </Group>
-          </Stack>
-        </Paper>
+          <Divider style={styles.divider} />
+
+          <View style={styles.scoreContainer}>
+            {attempt.status === "submitted" &&
+              (quiz.instant_result ? (
+                <View style={styles.scoreBox}>
+                  <Text style={styles.scoreLabel}>Final Score</Text>
+                  <Text style={styles.scoreValue}>
+                    {attempt.score !== null ? attempt.score : "N/A"}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.hiddenScoreText}>
+                  Score Hidden by Instructor
+                </Text>
+              ))}
+          </View>
+        </Card>
 
         {/* Detailed Question Review Section */}
         {quiz.instant_result && quiz.questions && quiz.questions.length > 0 && (
           <>
-            <Divider label="Question Review" labelPosition="center" />
+            <Text style={styles.sectionTitle}>Question Review</Text>
             <ViewQuestionList
               questions={quiz.questions}
               selectedAnswers={attempt.answers}
             />
           </>
         )}
-      </Stack>
-    </Container>
+      </ScrollView>
+    </MainContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    padding: 10,
+  },
+  card: {
+    borderRadius: 10,
+    marginHorizontal: 0,
+    marginBottom: 20,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  quizName: {
+    color: "#2C3E50",
+    marginBottom: 5,
+  },
+  dateText: {
+    color: "#7F8C8D",
+    fontSize: 12,
+  },
+  statusBadge: {
+    height: 30,
+    paddingHorizontal: 10,
+  },
+  divider: {
+    marginVertical: 15,
+  },
+  scoreContainer: {
+    alignItems: "center",
+  },
+  scoreBox: {
+    alignItems: "center",
+  },
+  scoreLabel: {
+    fontSize: 14,
+    color: "#7F8C8D",
+  },
+  scoreValue: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: BackgroundColor,
+  },
+  hiddenScoreText: {
+    fontStyle: "italic",
+    color: "#95A5A6",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2C3E50",
+    marginVertical: 15,
+    marginLeft: 5,
+  },
+});

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Container, Stack } from "@mantine/core";
-import { fetchAttemptById, updateAttempt } from "../api";
-import { fetchQuizById } from "../../quiz/api";
+import { ScrollView, StyleSheet } from "react-native";
+import { fetchAttemptById, updateAttempt } from "../services/attemptApi";
+import { fetchQuizById } from "../../quiz/services/quizApi";
 import AttemptDetails from "../components/AttemptDetails";
 import AttemptQuestionList from "../components/AttemptQuestionList";
-import LoadingState from "../../../components/ui/LoadingState";
-import ShowErrorNotification from "@/components/ui/ShowErrorNotification";
+// import LoadingState from "../../../components/ui/LoadingState";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import ShowNotification from "../../../components/ui/ShowNotification";
 
 /**
@@ -14,8 +13,7 @@ import ShowNotification from "../../../components/ui/ShowNotification";
  * It handles real-time answer state, saving progress, and final submission.
  */
 export default function TakeAttemptPage() {
-  const { quizId, attemptId } = useParams();
-  const navigate = useNavigate();
+  const { quizId, attemptId } = route.params;
 
   const [quiz, setQuiz] = useState(null);
   const [attempt, setAttempt] = useState(null);
@@ -97,34 +95,41 @@ export default function TakeAttemptPage() {
       });
 
       // Redirect to the view page to see results/score
-      navigate(`/attempt/view-attempt/${attemptId}`);
+      navigation.navigate("ViewAttempt", { attemptId });
     } finally {
       setActionLoading(false);
     }
   };
 
-  if (loading) return <LoadingState />;
+  // if (loading) return <LoadingState />;
 
   return (
-    <Container size="md" py="xl">
-      <Stack gap="lg">
-        {/* Header with Quiz info and Action buttons */}
-        <AttemptDetails
-          quiz={quiz}
-          attempt={attempt}
-          onSave={handleSave}
-          onSubmit={handleSubmit}
-          loading={actionLoading}
-        />
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      {/* Header with Quiz info and Action buttons */}
+      <AttemptDetails
+        quiz={quiz}
+        attempt={attempt}
+        onSave={handleSave}
+        onSubmit={handleSubmit}
+        loading={actionLoading}
+      />
 
-        {/* List of interactive questions */}
-        <AttemptQuestionList
-          questions={quiz?.questions}
-          answers={answers}
-          onAnswerChange={handleAnswerChange}
-          disabled={actionLoading}
-        />
-      </Stack>
-    </Container>
+      {/* List of interactive questions */}
+      <AttemptQuestionList
+        questions={quiz?.questions}
+        answers={answers}
+        onAnswerChange={handleAnswerChange}
+        disabled={actionLoading}
+      />
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    padding: 16,
+  },
+});

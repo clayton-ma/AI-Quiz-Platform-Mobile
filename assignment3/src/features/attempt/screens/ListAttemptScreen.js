@@ -1,75 +1,71 @@
-import ShowErrorNotification from "@/components/ui/ShowErrorNotification";
-import { useEffect, useState } from "react";
-import {
-  Container,
-  Group,
-  Paper,
-  Stack,
-  ScrollArea,
-  Button,
-  Divider,
-} from "@mantine/core";
-import Pagination from "../../../components/ui/Pagination";
-import { IconArrowLeft, IconPlayerPlay } from "@tabler/icons-react";
-import LoadingState from "../../../components/ui/LoadingState";
-import parseLinkHeader from "../../../utils/parseLinkHeader";
-import { useNavigate, useParams } from "react-router-dom";
-import ListAttemptTable from "../components/ListAttemptTable";
-import { fetchAttemptsByQuizId, createAttempt } from "../api";
-import { fetchQuizById } from "../../quiz/api";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, StyleSheet, FlatList, RefreshControl, Text } from "react-native";
+import { Button, Icon, Divider } from "react-native-elements";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+// import LoadingState from "../../../components/ui/LoadingState";
+import MainContainer from "../../../components/layout/MainContainer";
+import { fetchAttemptsByQuizId, createAttempt } from "../services/attemptApi";
+import { fetchQuizById } from "../../quiz/services/quizApi";
+// import QuizDetails from "../components/QuizDetails";
+import AttemptItem from "../components/ListAttemptRow";
+import ListFooter from "../../../components/ui/ListFooter";
+import { BackgroundColor } from "../../../../constants";
 import QuizDetails from "../components/QuizDetails";
-import PageTitle from "../../../components/ui/PageTitle";
+import ListAttemptTable from "../components/ListAttemptTable";
 
 /**
- * ListAttemptPage component displays all attempts made by the user for a specific quiz.
- * It provides metadata about the quiz and the option to start a new attempt.
+ * ListAttemptScreen component displays all attempts made by the user for a specific quiz.
  */
-export default function ListAttemptPage() {
+export default function ListAttemptScreen({ route, navigation }) {
+  const { quizId } = route.params;
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-  const [sortBy, setSortBy] = useState("-updatedAt");
-  const [filterStatus, setFilterStatus] = useState("All");
   const [quiz, setQuiz] = useState(null);
   const [page, setPage] = useState(1);
-  const [paginationLinks, setPaginationLinks] = useState({});
-
-  const { quizId } = useParams();
-  const navigate = useNavigate();
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   /**
    * Fetches the list of attempts and quiz metadata from the API.
    */
-  const initAttempts = async () => {
-    setLoading(true);
-    try {
-      const params = {
-        page: page,
-        limit: 10,
-        sort: sortBy || "-updatedAt",
-        status:
-          filterStatus && filterStatus !== "All"
-            ? filterStatus.toLowerCase()
-            : undefined,
-      };
+  const loadAttempts = useCallback(
+    async (pageNum, isRefresh = false) => {
+      if (loading && !isRefresh) return;
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
 
-      const response = await fetchAttemptsByQuizId(quizId, params);
-      if (response) {
-        setAttempts(response.data || []);
-        const quiz = await fetchQuizById(quizId);
-        setQuiz(quiz);
+      try {
+        const params = {
+          page: pageNum,
+          limit: 10,
+          sort: "-updatedAt",
+        };
 
-        const linkHeader = response.linkHeader || "";
-        const links = parseLinkHeader(linkHeader);
-        setPaginationLinks(links);
+        const response = await fetchAttemptsByQuizId(quizId, params);
+        if (response) {
+          const { data: newAttempts, linkHeader } = response;
+          setAttempts((prev) =>
+            isRefresh ? newAttempts : [...prev, ...newAttempts],
+          );
+          setHasMore(!!linkHeader.next);
+          setPage(pageNum);
+
+          if (!quiz) {
+            const quizData = await fetchQuizById(quizId);
+            setQuiz(quizData);
+          }
+        }
+      } catch (errors) {
+        ShowErrorNotification(errors);
+        navigation.goBack();
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } catch (errors) {
-      ShowErrorNotification(errors);
-      navigate("/quiz");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [quizId, quiz, loading],
+  );
 
   /**
    * Creates a new attempt for the current quiz and navigates to the attempt interface.
@@ -78,7 +74,7 @@ export default function ListAttemptPage() {
     setActionLoading(true);
     try {
       const newAttempt = await createAttempt(quizId);
-      navigate(`/attempt/take/${quizId}/${newAttempt._id}`);
+      navigation.navigate("TakeAttempt", { quizId, attemptId: newAttempt._id });
     } catch (errors) {
       ShowErrorNotification(errors);
     } finally {
@@ -86,59 +82,57 @@ export default function ListAttemptPage() {
     }
   };
 
-  // Re-fetch attempts when page or search criteria change
   useEffect(() => {
-    initAttempts();
-  }, [page, sortBy, filterStatus]);
+    loadAttempts(1, true);
+  }, []);
+
+  const onRefresh = () => loadAttempts(1, true);
+
+  const handleLoadMore = () => {
+    if (!loading && hasMore) {
+      loadAttempts(page + 1);
+    }
+  };
+
+  // if (loading && page === 1 && !refreshing) return <LoadingState />;
 
   return (
-    <Container size="lg" py="xl">
-      <Stack gap="md">
-        <PageTitle title="Attempts of this Quiz" backLink="/quiz">
-          <Button
-            color="blue"
-            leftSection={<IconPlayerPlay size={16} />}
-            onClick={handleStartNewAttempt}
-            loading={actionLoading}
-            disabled={loading}
-          >
-            Start New Attempt
-          </Button>
-        </PageTitle>
+    <MainContainer title="Quiz Attempts" navigation={navigation}>
+      <QuizDetails quiz={quiz} />
+      <Button
+        title="Start New Attempt"
+        icon={
+          <Icon name="play-arrow" color="white" style={{ marginRight: 5 }} />
+        }
+        onPress={handleStartNewAttempt}
+        loading={actionLoading}
+        buttonStyle={styles.startBtn}
+      />
 
-        {/* Quiz Metadata Section */}
-        <Stack gap={4}>
-          <QuizDetails quiz={quiz} />
-        </Stack>
-
-        <Divider label="All attempts for this quiz" labelPosition="center" />
-
-        {/* Attempts Data Table */}
-        <Paper withBorder radius="md">
-          <ScrollArea>
-            {loading ? (
-              <LoadingState py="xl" size="lg" />
-            ) : (
-              <ListAttemptTable
-                attempts={attempts}
-                filterStatus={filterStatus}
-                setFilterStatus={setFilterStatus}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-              />
-            )}
-          </ScrollArea>
-        </Paper>
-
-        {/* Pagination Controls */}
-        <Group justify="center" mt="md">
-          <Pagination
-            paginationLinks={paginationLinks}
-            page={page}
-            setPage={setPage}
-          />
-        </Group>
-      </Stack>
-    </Container>
+      <ListAttemptTable />
+    </MainContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    padding: 15,
+  },
+  startBtn: {
+    backgroundColor: BackgroundColor,
+    borderRadius: 8,
+    marginTop: 15,
+  },
+  divider: {
+    marginVertical: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2C3E50",
+    marginBottom: 10,
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+});

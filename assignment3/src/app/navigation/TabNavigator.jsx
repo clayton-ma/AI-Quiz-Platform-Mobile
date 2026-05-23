@@ -17,12 +17,16 @@ import QuizList from "../../features/quiz/screens/ListQuizScreen";
 import EditQuiz from "../../features/quiz/screens/EditQuizScreen";
 import UserSettingList from "../../features/user/screens/UserSettingListScreen";
 import CreateQuiz from "../../features/quiz/screens/CreateQuizScreen";
+import ListAttempt from "../../features/attempt/screens/ListAttemptScreen";
+import TakeAttempt from "../../features/attempt/screens/TakeAttemptScreen";
+import ViewAttempt from "../../features/attempt/screens/ViewAttemptScreen";
 
 // https://reactnavigation.org/docs/stack-navigator/
 const QuizStack = createStackNavigator();
 const GroupStack = createStackNavigator();
 const UserStack = createStackNavigator();
 const AboutStack = createStackNavigator();
+const AttemptStack = createStackNavigator();
 const stackScreenOptions = {
   headerShown: false,
   gestureEnabled: true,
@@ -35,6 +39,16 @@ function QuizScreen() {
       <QuizStack.Screen name="EditQuiz" component={EditQuiz} />
       <QuizStack.Screen name="CreateQuiz" component={CreateQuiz} />
     </QuizStack.Navigator>
+  );
+}
+
+function AttemptScreen() {
+  return (
+    <AttemptStack.Navigator screenOptions={stackScreenOptions}>
+      <AttemptStack.Screen name="ListAttempt" component={ListAttempt} />
+      <AttemptStack.Screen name="TakeAttempt" component={TakeAttempt} />
+      <AttemptStack.Screen name="ViewAttempt" component={ViewAttempt} />
+    </AttemptStack.Navigator>
   );
 }
 
@@ -88,6 +102,7 @@ export default function TabNavigator() {
         <Tab.Screen name="Quiz" component={QuizScreen} />
         <Tab.Screen name="Group" component={GroupScreen} />
         <Tab.Screen name="User" component={UserScreen} />
+        <Tab.Screen name="Attempt" component={AttemptScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

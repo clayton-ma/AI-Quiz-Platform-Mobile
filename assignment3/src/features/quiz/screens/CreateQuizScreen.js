@@ -14,6 +14,7 @@ import ShowErrorNotification from "../../../components/ui/ShowErrorNotification"
 import MainContainer from "../../../components/layout/MainContainer";
 import { BackgroundColor } from "../../../../constants";
 import EditQuizMetadata from "../components/EditQuizMetadata";
+import CreateQuizForm from "../components/CreateQuizForm";
 
 /**
  * CreateQuiz component provides a form for users to initialize a new quiz.
@@ -77,19 +78,7 @@ export default function CreateQuiz({ navigation }) {
   return (
     <MainContainer title="Create New Quiz" navigation={navigation}>
       <ScrollView contentContainerStyle={styles.container}>
-        <EditQuizMetadata
-          metadata={formData}
-          dispatch={setFormData}
-          groupsData={groupsData}
-        />
-        <Button
-          title="Create Quiz"
-          loading={loading}
-          onPress={handleSubmit}
-          buttonStyle={styles.submitBtn}
-          containerStyle={{ marginTop: 20 }}
-          icon={<Icon name="add" color="white" style={{ marginRight: 10 }} />}
-        />
+        <CreateQuizForm formData={formData} setFormData={setFormData} />
       </ScrollView>
     </MainContainer>
   );

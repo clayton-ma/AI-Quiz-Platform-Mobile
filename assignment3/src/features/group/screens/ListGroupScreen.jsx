@@ -1,12 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-  View,
-  Text,
-} from "react-native";
+import { FlatList, StyleSheet, RefreshControl, View, Text } from "react-native";
 import Group from "../components/Group";
 import MainContainer from "../../../components/layout/MainContainer";
 import SearchBar from "../../../components/ui/SearchBar";
@@ -16,10 +9,12 @@ import ShowErrorNotification from "../../../components/ui/ShowErrorNotification"
 import CreateButton from "../../../components/ui/CreateButton";
 import ListFooter from "../../../components/ui/ListFooter";
 import CreateGroupModal from "../components/CreateGroupModal";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 export default function ListGroupScreen({ navigation }) {
   const [keyword, setKeyword] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({ role: "All" });
+  const { theme } = useTheme();
   const [displayData, setDisplayData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -35,16 +30,6 @@ export default function ListGroupScreen({ navigation }) {
         { label: "All", value: "" },
         { label: "Admin", value: "Admin" },
         { label: "Member", value: "Member" },
-      ],
-    },
-    {
-      key: "sort",
-      label: "Sort By",
-      options: [
-        { label: "All", value: "" },
-        { label: "Newest", value: "updatedAt" },
-        { label: "Oldest", value: "-updatedAt" },
-        { label: "Name", value: "name" },
       ],
     },
   ];
@@ -129,19 +114,25 @@ export default function ListGroupScreen({ navigation }) {
             }
           />
         )}
-        keyExtractor={(item, index) =>
-          item._id?.toString() || item.id?.toString() || index.toString()
-        }
+        keyExtractor={(item, index) => item._id || `group-idx-${index}`}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={
-          !loading && (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No groups found</Text>
+          !loading &&
+          !refreshing && (
+            <View
+              style={[
+                styles.emptyContainer,
+                { backgroundColor: theme.colors.background },
+              ]}
+            >
+              <Text style={[styles.emptyText, { color: theme.colors.text }]}>
+                No groups found
+              </Text>
             </View>
           )
         }
-        ListFooterComponent={ListFooter(loading, refreshing)}
+        ListFooterComponent={() => ListFooter(loading, refreshing)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -157,9 +148,6 @@ export default function ListGroupScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   emptyContainer: {
     flex: 1,
     alignItems: "center",

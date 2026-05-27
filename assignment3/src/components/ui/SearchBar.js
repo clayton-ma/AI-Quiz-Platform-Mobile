@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { SearchBar as RNElementsSearchBar } from "react-native-elements";
+import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
  * A reusable SearchBar component styled for the application.
@@ -14,17 +15,24 @@ export default function SearchBar({
   onChangeText,
   placeholder = "Search...",
 }) {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
       <RNElementsSearchBar
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        lightTheme
+        lightTheme={!theme.dark}
         round
         containerStyle={styles.searchContainer}
-        inputContainerStyle={styles.searchInput}
-        inputStyle={styles.text}
+        inputContainerStyle={[
+          styles.searchInput,
+          { backgroundColor: theme.colors.card },
+        ]}
+        inputStyle={[styles.text, { color: theme.colors.text }]}
+        placeholderTextColor={theme.dark ? "#909296" : "#666"}
+        searchIcon={{ color: theme.dark ? "#909296" : "#666" }}
       />
     </View>
   );
@@ -42,9 +50,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   searchInput: {
-    backgroundColor: "#e9e9e9",
-  },
-  text: {
-    color: "#2C3E50",
+    elevation: 2,
   },
 });

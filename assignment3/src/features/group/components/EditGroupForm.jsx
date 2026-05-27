@@ -178,6 +178,7 @@ export default function EditGroupForm({ groupId, navigation }) {
       // Reset form values
       setMembersToDelete([]);
       setMembersToMerge([]);
+      navigation.goBack();
     } catch (errors) {
       ShowErrorNotification(errors);
     } finally {
@@ -311,7 +312,14 @@ export default function EditGroupForm({ groupId, navigation }) {
             <TouchableOpacity
               onPress={() => handleRemoveUser(admin.email, true)}
             >
-              <Text style={styles.removeText}>Remove</Text>
+              <Text
+                style={[
+                  styles.removeText,
+                  { color: theme.colors.error || "#fa5252" },
+                ]}
+              >
+                Remove
+              </Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -335,7 +343,12 @@ export default function EditGroupForm({ groupId, navigation }) {
               <TouchableOpacity
                 onPress={() => handleRemoveUser(member.email, false)}
               >
-                <Text style={[styles.removeText, { marginLeft: 10 }]}>
+                <Text
+                  style={[
+                    styles.removeText,
+                    { marginLeft: 10, color: theme.colors.error || "#fa5252" },
+                  ]}
+                >
                   Remove
                 </Text>
               </TouchableOpacity>
@@ -344,8 +357,26 @@ export default function EditGroupForm({ groupId, navigation }) {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
-        <Text style={styles.deleteButtonText}>Delete Group</Text>
+      <TouchableOpacity
+        style={[
+          styles.deleteButton,
+          {
+            backgroundColor: theme.dark ? "rgba(250, 82, 82, 0.1)" : "#fff0f0",
+            borderColor: theme.colors.error || "#fa5252",
+          },
+        ]}
+        onPress={confirmDelete}
+      >
+        <Text
+          style={[
+            styles.deleteButtonText,
+            {
+              color: theme.colors.alertButtonText,
+            },
+          ]}
+        >
+          Delete Group
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -398,16 +429,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: "#ccc",
   },
-  removeText: { color: "#fa5252", fontWeight: "500" },
+  removeText: { fontWeight: "500" },
   promoteText: { fontWeight: "500" },
   deleteButton: {
-    backgroundColor: "#fff0f0",
-    borderColor: "#fa5252",
     borderWidth: 1,
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 40,
   },
-  deleteButtonText: { color: "#fa5252", fontWeight: "bold" },
+  deleteButtonText: { fontWeight: "bold" },
 });

@@ -15,8 +15,10 @@ import { fetchQuizzes } from "../services/quizApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import CreateButton from "../../../components/ui/CreateButton";
 import ListFooter from "../../../components/ui/ListFooter";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 export default function ListQuizScreen({ navigation }) {
+  const { theme } = useTheme();
   const [keyword, setKeyword] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({ status: "All" });
   const [displayData, setDisplayData] = useState([]);
@@ -126,11 +128,13 @@ export default function ListQuizScreen({ navigation }) {
         ListEmptyComponent={
           !loading && (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No quizzes found</Text>
+              <Text style={[styles.emptyText, { color: theme.colors.text }]}>
+                No quizzes found
+              </Text>
             </View>
           )
         }
-        ListFooterComponent={ListFooter(loading, refreshing)}
+        ListFooterComponent={() => ListFooter(loading, refreshing)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

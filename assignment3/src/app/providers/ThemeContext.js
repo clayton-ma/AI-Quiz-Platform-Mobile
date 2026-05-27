@@ -65,6 +65,8 @@ export const ThemeProvider = ({ children }) => {
       textInputBackground: isDark ? "#25262B" : "#F8F9FA",
       textInputBorder: isDark ? "#373A40" : "#DEE2E6",
       textInputText: isDark ? "#C1C2C5" : "#2C3E50",
+      alertButtonBackground: isDark ? "rgba(250, 82, 82, 0.1)" : "#fff0f0",
+      alertButtonText: isDark ? "#fa5252" : "#fa5252",
     },
   };
 

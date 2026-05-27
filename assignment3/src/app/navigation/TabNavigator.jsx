@@ -89,8 +89,8 @@ export default function TabNavigator() {
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={tabScreenOptions}>
-        {/* <Tab.Screen name="Quiz" component={QuizScreen} /> */}
-        {/* <Tab.Screen name="Group" component={GroupScreen} /> */}
+        <Tab.Screen name="Quiz" component={QuizScreen} />
+        <Tab.Screen name="Group" component={GroupScreen} />
         <Tab.Screen name="User" component={UserScreen} />
       </Tab.Navigator>
     </NavigationContainer>

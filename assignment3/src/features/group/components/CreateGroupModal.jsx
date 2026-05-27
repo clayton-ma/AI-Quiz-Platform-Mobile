@@ -17,7 +17,6 @@ import { createGroup } from "../services/groupApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import ShowNotification from "../../../components/ui/ShowNotification";
 import { useTheme } from "../../../app/providers/ThemeContext";
-import { BackgroundColor } from "../../../../constants";
 
 /**
  * CreateGroupScreen component provides a form for users to create a new group.
@@ -90,10 +89,20 @@ export default function CreateGroupScreen({ navigation, visible, onClose }) {
 
             <ScrollView contentContainerStyle={styles.container}>
               <View>
-                <Text style={styles.label}>Group Name</Text>
-                <View style={styles.inputWrapper}>
+                <Text style={[styles.label, { color: theme.colors.text }]}>
+                  Group Name
+                </Text>
+                <View
+                  style={[
+                    styles.inputWrapper,
+                    {
+                      backgroundColor: theme.colors.background,
+                      borderColor: theme.colors.border,
+                    },
+                  ]}
+                >
                   <Icon
-                    name="group"
+                    name="groups"
                     type="material"
                     color="#7F8C8D"
                     size={20}
@@ -104,6 +113,7 @@ export default function CreateGroupScreen({ navigation, visible, onClose }) {
                     placeholder="Enter group name (e.g. CS101 Section A)"
                     value={name}
                     onChangeText={setName}
+                    placeholderTextColor={theme.colors.textInput}
                     editable={!loading}
                   />
                 </View>
@@ -112,7 +122,10 @@ export default function CreateGroupScreen({ navigation, visible, onClose }) {
                   title="Create Group"
                   loading={loading}
                   onPress={handleCreate}
-                  buttonStyle={styles.button}
+                  buttonStyle={[
+                    styles.button,
+                    { backgroundColor: theme.colors.primary },
+                  ]}
                   containerStyle={styles.buttonContainer}
                 />
               </View>
@@ -148,7 +161,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     letterSpacing: 0.5,
     fontWeight: "bold",
-    color: "#2C3E50",
   },
   container: {
     padding: 20,
@@ -156,18 +168,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#2C3E50",
     marginBottom: 10,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.1)",
     borderRadius: 12,
     paddingHorizontal: 10,
     marginBottom: 24,
-    backgroundColor: "#fff",
   },
   inputIcon: {
     marginRight: 10,
@@ -176,7 +185,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     fontSize: 16,
-    color: "#2C3E50",
   },
   buttonContainer: {
     marginTop: 8,

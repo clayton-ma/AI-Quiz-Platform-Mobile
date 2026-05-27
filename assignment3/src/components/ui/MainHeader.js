@@ -24,15 +24,13 @@ export default function MainHeader({ navigation, isMain, title }) {
           backgroundColor: theme.colors.primary,
           borderBottomWidth: 0,
         }}
-        leftComponent={
-          <Icon
-            type="material"
-            name="arrow-back"
-            color="#fff"
-            size={30}
-            onPress={() => navigation.goBack()}
-          />
-        }
+        leftComponent={{
+          icon: "arrow-back",
+          type: "material",
+          color: "#fff",
+          size: 30,
+          onPress: () => navigation.goBack(),
+        }}
         centerComponent={{
           text: title,
           style: { color: "#fff", fontWeight: "bold" },

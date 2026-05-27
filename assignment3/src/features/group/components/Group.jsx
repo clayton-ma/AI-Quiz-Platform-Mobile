@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 export default function ListGroup({
   id,
@@ -10,16 +11,39 @@ export default function ListGroup({
   onActionPress,
 }) {
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.card,
+          borderBottomColor: theme.colors.border,
+        },
+      ]}
+    >
       <View style={styles.info}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.count}>{memberCount} members</Text>
+        <Text style={[styles.name, { color: theme.colors.text }]}>{name}</Text>
+        <Text
+          style={[styles.count, { color: theme.dark ? "#909296" : "#666" }]}
+        >
+          {memberCount} members
+        </Text>
       </View>
-      {isAdmin && (
-        <TouchableOpacity style={styles.button} onPress={onActionPress}>
+      {isAdmin ? (
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          onPress={onActionPress}
+        >
           <Text style={styles.buttonText}>Manage</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={[styles.button, styles.disabledButton]}
+          disabled={true}
+        >
+          <Text style={styles.buttonText}>View Only</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -30,14 +54,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     padding: 16,
-    backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
     alignItems: "center",
     justifyContent: "space-between",
   },
   name: { fontSize: 18, fontWeight: "bold" },
-  count: { color: "#666" },
-  button: { backgroundColor: "#000", padding: 8, borderRadius: 4 },
+  count: { fontSize: 14 },
+  button: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 6 },
+  disabledButton: { backgroundColor: "#adb5bd" },
   buttonText: { color: "#fff" },
 });

@@ -29,21 +29,13 @@ export default function ListQuizScreen({ navigation }) {
 
   const filters = [
     {
-      key: "status",
-      label: "Status",
-      options: [
-        { label: "All", value: "" },
-        { label: "Draft", value: "draft" },
-        { label: "Published", value: "published" },
-      ],
-    },
-    {
       key: "sort",
       label: "Sort By",
       options: [
         { label: "All", value: "" },
         { label: "Newest", value: "-updatedAt" },
         { label: "Oldest", value: "updatedAt" },
+        { label: "Status", value: "status" },
         { label: "Name", value: "name" },
       ],
     },

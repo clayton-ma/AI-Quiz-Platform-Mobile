@@ -18,8 +18,10 @@ export default function ListGroup({
       style={[
         styles.container,
         {
-          backgroundColor: theme.colors.card,
-          borderBottomColor: theme.colors.border,
+          backgroundColor: theme.dark
+            ? "rgba(255, 255, 255, 0.05)"
+            : "rgba(255, 255, 255, 0.8)",
+          borderColor: theme.colors.border,
         },
       ]}
     >
@@ -53,10 +55,18 @@ export default function ListGroup({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    padding: 16,
-    borderBottomWidth: 1,
+    padding: 20,
+    marginHorizontal: 12,
+    marginVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
     alignItems: "center",
     justifyContent: "space-between",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
   },
   name: { fontSize: 18, fontWeight: "bold" },
   count: { fontSize: 14 },

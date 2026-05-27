@@ -1,9 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Image, View } from "react-native";
 import { Icon } from "react-native-elements";
 
 import Login from "../../features/auth/screens/LoginScreen";
@@ -13,6 +11,9 @@ import { useTheme } from "../providers/ThemeContext";
 
 import About from "../../features/about/screens/AboutScreen";
 
+/**
+ * Shared stack navigator configuration for authentication screens.
+ */
 const AuthStack = createStackNavigator();
 const stackScreenOptions = {
   headerShown: false,
@@ -43,9 +44,20 @@ function AboutScreen() {
   );
 }
 
-// https://reactnavigation.org/docs/bottom-tab-navigator/
 const Tab = createBottomTabNavigator();
 
+const TAB_ICONS = {
+  Login: "login",
+  Register: "person-add",
+  About: "psychology",
+};
+
+/**
+ * AuthNavigator component provides the navigation structure for unauthenticated users.
+ * It includes a bottom tab navigator for About, Login, and Register screens.
+ *
+ * @returns {JSX.Element} The authentication navigation container.
+ */
 export default function AuthNavigator() {
   const colors = useTheme();
   const tabScreenOptions = ({ route }) => ({
@@ -55,13 +67,7 @@ export default function AuthNavigator() {
     tabBarIcon: ({ color, size }) => {
       return (
         <Icon
-          name={
-            route.name === "Login"
-              ? "login"
-              : route.name === "Register"
-                ? "person-add"
-                : "info"
-          }
+          name={TAB_ICONS[route.name] || "help-outline"}
           type="material"
           size={size}
           color={color}

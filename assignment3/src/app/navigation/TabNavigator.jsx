@@ -74,26 +74,27 @@ function UserScreen() {
 // https://reactnavigation.org/docs/bottom-tab-navigator/
 const Tab = createBottomTabNavigator();
 
+const TAB_ICONS = {
+  Quiz: "quiz",
+  Group: "group",
+  User: "person",
+  Attempt: "assignment",
+};
+
 export default function TabNavigator() {
   const colors = useTheme();
   const tabScreenOptions = ({ route }) => ({
     headerShown: false,
     tabBarActiveTintColor: colors.tabActiveColor,
     tabBarInactiveTintColor: colors.tabInactiveColor,
-    tabBarIcon: ({ color, size }) => {
-      let iconName;
-      if (route.name === "Quiz") {
-        iconName = "quiz";
-      } else if (route.name === "Group") {
-        iconName = "group";
-      } else if (route.name === "User") {
-        iconName = "person";
-      } else {
-        iconName = "info";
-      }
-
-      return <Icon name={iconName} type="material" size={size} color={color} />;
-    },
+    tabBarIcon: ({ color, size }) => (
+      <Icon
+        name={TAB_ICONS[route.name] || "info"}
+        type="material"
+        size={size}
+        color={color}
+      />
+    ),
   });
 
   return (

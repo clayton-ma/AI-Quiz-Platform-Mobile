@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
+  Dimensions,
+  Animated,
 } from "react-native";
 import MainHeader from "../../../components/ui/MainHeader";
-import { Icon } from "react-native-elements";
+import { Icon, Card } from "react-native-elements";
 import { BackgroundColor } from "../../../../constants";
 
 const features = [
+  {
+    icon: "psychology",
+    title: "AI Question Generation",
+    description:
+      "Generate high-quality quiz questions instantly using AI tailored to your topics and difficulty levels.",
+  },
   {
     icon: "book",
     title: "Interactive Quizzes",
@@ -24,12 +31,6 @@ const features = [
       "Join study groups, manage members, and collaborate with peers to achieve collective learning goals.",
   },
   {
-    icon: "psychology",
-    title: "AI Question Generation",
-    description:
-      "Generate high-quality quiz questions instantly using AI tailored to your topics and difficulty levels.",
-  },
-  {
     icon: "replay",
     title: "Multiple Attempts",
     description:
@@ -37,49 +38,82 @@ const features = [
   },
 ];
 
+const { width } = Dimensions.get("window");
+
 export default function About({ navigation }) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
     <View style={styles.container}>
       <MainHeader title="About" isMain={true} navigation={navigation} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.heroSection}>
+        <Animated.View
+          style={[
+            styles.heroSection,
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
+          ]}
+        >
           <Text style={styles.title}>
             Master Your Skills with{" "}
             <Text style={styles.highlight}>QuizApp</Text>
           </Text>
-
           <Text style={styles.subtitle}>
             The all-in-one platform for creating quizzes, managing study groups,
             and tracking your academic progress in real-time.
           </Text>
-        </View>
+        </Animated.View>
 
-        <View style={styles.featuresGrid}>
+        <Animated.View style={[styles.featuresGrid, { opacity: fadeAnim }]}>
           {features.map((feature, index) => (
             <View key={index} style={styles.featureCard}>
-              <View style={styles.iconContainer}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  feature.title === "AI Question Generation" && {
+                    backgroundColor: "#E67E22",
+                  },
+                ]}
+              >
                 <Icon name={feature.icon} color="#fff" size={26} />
               </View>
-              <Text style={styles.featureTitle}>{feature.title}</Text>
-              <Text style={styles.featureDescription}>
-                {feature.description}
-              </Text>
+              <View style={styles.textContainer}>
+                <Text style={styles.featureTitle}>{feature.title}</Text>
+                <Text style={styles.featureDescription}>
+                  {feature.description}
+                </Text>
+              </View>
             </View>
           ))}
-        </View>
+        </Animated.View>
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: "#F8F9FA" },
   scrollContent: { padding: 20, paddingBottom: 40 },
   heroSection: { alignItems: "center", marginBottom: 40, marginTop: 20 },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "900",
-    textAlign: "center",
+    textAlign: "left",
     color: "#2C3E50",
     marginBottom: 15,
   },
@@ -87,20 +121,24 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: "#7f8c8d",
-    textAlign: "center",
+    textAlign: "left",
     lineHeight: 24,
-    paddingHorizontal: 10,
   },
   featuresGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    flexDirection: "column",
   },
   featureCard: {
-    width: "100%",
-    marginBottom: 30,
-    padding: 10,
+    marginHorizontal: 0,
+    marginBottom: 15,
+    padding: 20,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    flexDirection: "row",
+    backdropFilter: "blur(10px)",
   },
+  textContainer: { flex: 1, marginLeft: 15 },
   iconContainer: {
     width: 44,
     height: 44,
@@ -108,11 +146,10 @@ const styles = StyleSheet.create({
     backgroundColor: BackgroundColor,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 12,
   },
   featureTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 17,
+    fontWeight: "700",
     color: "#2C3E50",
     marginBottom: 8,
   },

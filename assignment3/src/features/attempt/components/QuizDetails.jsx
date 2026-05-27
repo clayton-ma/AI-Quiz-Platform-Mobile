@@ -1,6 +1,8 @@
-import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Icon, Badge } from "react-native-elements";
+import { useCallback, useEffect, useState } from "react";
+import { fetchQuizMetadata } from "../../quiz/services/quizApi";
+
 
 /**
  * QuizDetails component displays the static metadata of a quiz.
@@ -8,19 +10,33 @@ import { Icon, Badge } from "react-native-elements";
  *
  * @param {Object} props.quiz - The quiz object containing name and description.
  */
-export default function QuizDetails({ quiz }) {
+export default function QuizDetails({ quizId }) {
   // Prevent rendering if quiz data hasn't loaded yet
-  if (!quiz) return null;
+  if (!quizId) return null;
+  const [quizMetaData, setQuizMetaData] = useState(null);
+
+  const loadQuizMetaData = useCallback(async () => {
+    try {
+      const response = await fetchQuizMetadata(quizId);
+      setQuiz(response);
+    } catch (error) {
+      console.error("Error fetching quiz metadata:", error);
+    }
+  }, [quizId])
+
+  useEffect(() => {
+    loadQuizMetaData();
+  }, [loadQuizMetaData]);
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{quiz.name || "Untitled Quiz"}</Text>
+          <Text style={styles.title}>{quizMetaData?.name || "Untitled Quiz"}</Text>
         </View>
         <Badge
-          value={quiz.instant_result ? "Results Released" : "Results Hidden"}
-          status={quiz.instant_result ? "success" : "warning"}
+          value={quizMetaData?.instant_result ? "Results Released" : "Results Hidden"}
+          status={quizMetaData?.instant_result ? "success" : "warning"}
           badgeStyle={styles.badge}
           textStyle={styles.badgeText}
         />
@@ -37,7 +53,7 @@ export default function QuizDetails({ quiz }) {
           containerStyle={styles.infoIcon}
         />
         <Text style={styles.description}>
-          {quiz.description || "No description provided for this quiz."}
+          {quizMetaData?.description || "No description provided for this quiz."}
         </Text>
       </View>
     </View>

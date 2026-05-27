@@ -26,46 +26,7 @@ export default function ListAttemptScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  /**
-   * Fetches the list of attempts and quiz metadata from the API.
-   */
-  const loadAttempts = useCallback(
-    async (pageNum, isRefresh = false) => {
-      if (loading && !isRefresh) return;
-      if (isRefresh) setRefreshing(true);
-      else setLoading(true);
 
-      try {
-        const params = {
-          page: pageNum,
-          limit: 10,
-          sort: "-updatedAt",
-        };
-
-        const response = await fetchAttemptsByQuizId(quizId, params);
-        if (response) {
-          const { data: newAttempts, linkHeader } = response;
-          setAttempts((prev) =>
-            isRefresh ? newAttempts : [...prev, ...newAttempts],
-          );
-          setHasMore(!!linkHeader.next);
-          setPage(pageNum);
-
-          if (!quiz) {
-            const quizData = await fetchQuizById(quizId);
-            setQuiz(quizData);
-          }
-        }
-      } catch (errors) {
-        ShowErrorNotification(errors);
-        navigation.goBack();
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [quizId, quiz, loading],
-  );
 
   /**
    * Creates a new attempt for the current quiz and navigates to the attempt interface.
@@ -82,23 +43,21 @@ export default function ListAttemptScreen({ route, navigation }) {
     }
   };
 
-  useEffect(() => {
-    loadAttempts(1, true);
-  }, []);
 
-  const onRefresh = () => loadAttempts(1, true);
-
-  const handleLoadMore = () => {
-    if (!loading && hasMore) {
-      loadAttempts(page + 1);
+  const loadQuizDetails=useCallback(async () => {
+    try {
+      const quizData = await fetchQuizById(quizId);
+      setQuiz(quizData);
+    } catch (errors) {
+      ShowErrorNotification(errors);
     }
-  };
+  }, [quizId]);
 
-  // if (loading && page === 1 && !refreshing) return <LoadingState />;
+
 
   return (
     <MainContainer title="Quiz Attempts" navigation={navigation}>
-      <QuizDetails quiz={quiz} />
+      <QuizDetails quizId={quizId} />
       <Button
         title="Start New Attempt"
         icon={
@@ -109,7 +68,7 @@ export default function ListAttemptScreen({ route, navigation }) {
         buttonStyle={styles.startBtn}
       />
 
-      <ListAttemptTable />
+      {/* <ListAttemptTable /> */}
     </MainContainer>
   );
 }

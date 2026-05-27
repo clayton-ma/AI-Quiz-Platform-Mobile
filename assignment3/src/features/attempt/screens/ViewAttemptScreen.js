@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text, Badge, Divider, Card } from "react-native-elements";
 import { fetchAttemptById } from "../services/attemptApi";
-import { fetchQuizById, fetchQuizMetadata } from "../../quiz/services/quizApi";
+import {
+  fetchQuizByIdForEdit,
+  fetchQuizMetadata,
+} from "../../quiz/services/quizApi";
 import ViewQuestionList from "../components/ViewQuestionList";
 // import LoadingState from "../../../components/ui/LoadingState";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
@@ -31,7 +34,7 @@ export default function ViewAttemptScreen({ route, navigation }) {
         let quizData = await fetchQuizMetadata(attemptData.quiz_id);
 
         if (quizData.instant_result) {
-          quizData = await fetchQuizById(attemptData.quiz_id);
+          quizData = await fetchQuizByIdForEdit(attemptData.quiz_id);
         }
         setQuiz(quizData);
       } catch (errors) {

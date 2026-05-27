@@ -10,27 +10,24 @@ import { Badge, Icon } from "react-native-elements";
  * @param {string} selectedOptionId - The ID of the option selected by the user
  */
 export default function ViewQuestion({ question, index, selectedOptionId }) {
-  // Prevent rendering if question data is missing
-  if (!question) return null;
+  // Prevent rendering if question data or options are missing
+  if (!question || !question.options) return null;
+
+  const selectedOption = question.options.find(
+    (o) => o._id === selectedOptionId,
+  );
+  const hasCorrectAnswerInfo = question.options.some(
+    (o) => o.is_correct !== undefined,
+  );
 
   return (
     <View style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Question {index + 1}</Text>
-        {selectedOptionId && (
+        {selectedOptionId && hasCorrectAnswerInfo && (
           <Badge
-            value={
-              question.options.find((o) => o._id === selectedOptionId)
-                ?.is_correct
-                ? "Correct"
-                : "Incorrect"
-            }
-            status={
-              question.options.find((o) => o._id === selectedOptionId)
-                ?.is_correct
-                ? "success"
-                : "error"
-            }
+            value={selectedOption?.is_correct ? "Correct" : "Incorrect"}
+            status={selectedOption?.is_correct ? "success" : "error"}
             badgeStyle={styles.badge}
           />
         )}
@@ -41,11 +38,11 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
       <View style={styles.optionsContainer}>
         {question.options?.map((option) => {
           const isSelected = option._id === selectedOptionId;
-          const isCorrect = option.is_correct;
+          const isCorrect = hasCorrectAnswerInfo && option.is_correct;
 
           const optionStyle = [
             styles.optionItem,
-            isCorrect && styles.optionCorrect,
+            hasCorrectAnswerInfo && isCorrect && styles.optionCorrect,
             isSelected && !isCorrect && styles.optionIncorrect,
           ];
 
@@ -63,7 +60,13 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
                 {isSelected && (
                   <Badge
                     value="Your Answer"
-                    status={isCorrect ? "success" : "error"}
+                    status={
+                      hasCorrectAnswerInfo
+                        ? isCorrect
+                          ? "success"
+                          : "error"
+                        : "primary"
+                    }
                     badgeStyle={styles.smallBadge}
                     textStyle={styles.smallBadgeText}
                   />

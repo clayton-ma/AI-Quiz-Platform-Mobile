@@ -7,12 +7,13 @@ import AttemptQuestionList from "../components/AttemptQuestionList";
 // import LoadingState from "../../../components/ui/LoadingState";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import ShowNotification from "../../../components/ui/ShowNotification";
+import MainContainer from "../../../components/layout/MainContainer";
 
 /**
  * TakeAttemptPage component allows users to answer questions in a quiz attempt.
  * It handles real-time answer state, saving progress, and final submission.
  */
-export default function TakeAttemptPage() {
+export default function TakeAttemptPage({ route, navigation }) {
   const { quizId, attemptId } = route.params;
 
   const [quiz, setQuiz] = useState(null);
@@ -104,24 +105,29 @@ export default function TakeAttemptPage() {
   // if (loading) return <LoadingState />;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header with Quiz info and Action buttons */}
-      <AttemptDetails
-        quiz={quiz}
-        attempt={attempt}
-        onSave={handleSave}
-        onSubmit={handleSubmit}
-        loading={actionLoading}
-      />
+    <MainContainer title="Take Attempt" navigation={navigation}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
+        {/* Header with Quiz info and Action buttons */}
+        <AttemptDetails
+          quiz={quiz}
+          attempt={attempt}
+          onSave={handleSave}
+          onSubmit={handleSubmit}
+          loading={actionLoading}
+        />
 
-      {/* List of interactive questions */}
-      <AttemptQuestionList
-        questions={quiz?.questions}
-        answers={answers}
-        onAnswerChange={handleAnswerChange}
-        disabled={actionLoading}
-      />
-    </ScrollView>
+        {/* List of interactive questions */}
+        <AttemptQuestionList
+          questions={quiz?.questions}
+          answers={answers}
+          onAnswerChange={handleAnswerChange}
+          disabled={actionLoading}
+        />
+      </ScrollView>
+    </MainContainer>
   );
 }
 

@@ -10,6 +10,7 @@ import ViewQuestion from "./ViewQuestion";
  */
 export default function ViewQuestionList({ questions, selectedAnswers }) {
   if (!questions || questions.length === 0) return null;
+  console.log("Rendering ViewQuestionList with questions:", questions);
 
   // Convert answers array to map if it's not already
   const answersMap = Array.isArray(selectedAnswers)

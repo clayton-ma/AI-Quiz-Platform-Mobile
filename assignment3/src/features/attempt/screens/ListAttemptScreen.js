@@ -26,8 +26,6 @@ export default function ListAttemptScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-
-
   /**
    * Creates a new attempt for the current quiz and navigates to the attempt interface.
    */
@@ -43,8 +41,7 @@ export default function ListAttemptScreen({ route, navigation }) {
     }
   };
 
-
-  const loadQuizDetails=useCallback(async () => {
+  const loadQuizDetails = useCallback(async () => {
     try {
       const quizData = await fetchQuizById(quizId);
       setQuiz(quizData);
@@ -52,8 +49,6 @@ export default function ListAttemptScreen({ route, navigation }) {
       ShowErrorNotification(errors);
     }
   }, [quizId]);
-
-
 
   return (
     <MainContainer title="Quiz Attempts" navigation={navigation}>
@@ -68,7 +63,7 @@ export default function ListAttemptScreen({ route, navigation }) {
         buttonStyle={styles.startBtn}
       />
 
-      {/* <ListAttemptTable /> */}
+      <ListAttemptTable quizId={quizId} />
     </MainContainer>
   );
 }

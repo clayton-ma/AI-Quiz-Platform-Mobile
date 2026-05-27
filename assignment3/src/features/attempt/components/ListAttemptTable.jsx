@@ -1,107 +1,136 @@
-import React, { useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  RefreshControl,
   View,
   Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
 } from "react-native";
-import { Icon } from "react-native-elements";
-import { fetchAttempts } from "../services/attemptApi";
 import ListAttemptRow from "./ListAttemptRow";
+import { fetchAttemptsByQuizId } from "../services/attemptApi";
+import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+import ListFooter from "../../../components/ui/ListFooter";
+import FilterBar from "../../../components/ui/FilterBar";
 
 /**
- * ListAttemptTable component renders a list of quiz attempts for mobile.
- * Includes sorting functionality by date.
+ * ListAttemptTable component displays a paginated list of quiz attempts.
  *
- * @param {Object[]} attempts - Array of attempt objects.
- * @param {Function} setAttempts - Callback to update attempts state.
- * @param {Object} params - Current query parameters (sort, filter).
- * @param {Function} onParamsChange - Callback to update query parameters.
+ * @param {string} quizId - The ID of the quiz to filter attempts for
  */
-export default function ListAttemptTable({
-  attempts,
-  setAttempts,
-  params,
-  onParamsChange,
-}) {
-  const sortOrder = params.sort === "updatedAt" ? "desc" : "asc";
+export default function ListAttemptTable({ quizId }) {
+  const [displayData, setDisplayData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [selectedFilters, setSelectedFilters] = useState({
+    sort: "-updatedAt",
+    status: "",
+  });
+
+  const filters = [
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { label: "All", value: "" },
+        { label: "Submitted", value: "submitted" },
+        { label: "Saved", value: "saved" },
+      ],
+    },
+    {
+      key: "sort",
+      label: "Sort By",
+      options: [
+        { label: "Newest", value: "-updatedAt" },
+        { label: "Oldest", value: "updatedAt" },
+        { label: "Highest Score", value: "-score" },
+        { label: "Lowest Score", value: "score" },
+      ],
+    },
+  ];
+
+  const handleFilterChange = (key, value) => {
+    setSelectedFilters((prev) => ({ ...prev, [key]: value }));
+    loadAttempts(1, true);
+  };
+
+  const loadAttempts = useCallback(
+    async (pageNum, isRefresh = false) => {
+      if (loading && !isRefresh) return;
+
+      setLoading(true);
+      try {
+        const params = {
+          page: pageNum,
+          limit: 10,
+          sort: selectedFilters.sort,
+        };
+
+        if (selectedFilters.status) params.status = selectedFilters.status;
+
+        const response = await fetchAttemptsByQuizId(quizId, params);
+        if (response) {
+          const { data: newAttempts, linkHeader } = response;
+          setDisplayData((prev) =>
+            isRefresh ? newAttempts : [...prev, ...newAttempts],
+          );
+          setHasMore(!!linkHeader?.next);
+          setPage(pageNum);
+        }
+      } catch (error) {
+        ShowErrorNotification(error, "Failed to load attempts");
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [quizId, selectedFilters],
+  );
 
   useEffect(() => {
-    const loadAttempts = async () => {
-      try {
-        const data = await fetchAttempts(params);
-        setAttempts(data);
-      } catch (error) {
-        console.error("Error fetching attempts:", error);
-      }
-    };
-    loadAttempts();
-  }, [params]);
+    loadAttempts(1, true);
+  }, [quizId, selectedFilters]);
 
-  const filter = params.status || "all";
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadAttempts(1, true);
+  }, [loadAttempts]);
 
-  const toggleSort = () => {
-    onParamsChange({
-      ...params,
-      sort: sortOrder === "desc" ? "-updatedAt" : "updatedAt",
-    });
+  const handleLoadMore = () => {
+    if (!loading && hasMore) {
+      loadAttempts(page + 1);
+    }
   };
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={styles.headerTitle}>Recent Attempts</Text>
-          <TouchableOpacity style={styles.sortButton} onPress={toggleSort}>
-            <Text style={styles.sortText}>
-              Date {sortOrder === "desc" ? "Newest" : "Oldest"}
-            </Text>
-            <Icon
-              name={sortOrder === "desc" ? "arrow-downward" : "arrow-upward"}
-              size={16}
-              color="#2980B9"
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.filterContainer}>
-          {["all", "saved", "submitted"].map((f) => (
-            <TouchableOpacity
-              key={f}
-              style={[
-                styles.filterChip,
-                filter === f && styles.filterChipActive,
-              ]}
-              onPress={() =>
-                onParamsChange({
-                  ...params,
-                  status: f === "all" ? undefined : f,
-                })
-              }
-            >
-              <Text
-                style={[
-                  styles.filterChipText,
-                  filter === f && styles.filterChipTextActive,
-                ]}
-              >
-                {f.toUpperCase()}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
+      <FilterBar
+        filters={filters}
+        selectedFilters={selectedFilters}
+        onFilterChange={handleFilterChange}
+      />
       <FlatList
-        data={attempts}
-        keyExtractor={(item) => item._id}
+        data={displayData}
         renderItem={({ item }) => <ListAttemptRow {...item} />}
+        keyExtractor={(item, index) =>
+          item._id?.toString() || item.id?.toString() || index.toString()
+        }
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              No attempts found matching your criteria.
-            </Text>
-          </View>
+          !loading && (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>
+                No attempts found for this quiz.
+              </Text>
+            </View>
+          )
+        }
+        ListFooterComponent={() => ListFooter(loading, refreshing)}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
     </View>
@@ -112,57 +141,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#F8F9FA",
-    gap: 12,
-  },
-  headerTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#7F8C8D",
-    textTransform: "uppercase",
-  },
-  sortButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  sortText: { fontSize: 12, color: "#2980B9", fontWeight: "600" },
-  filterContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  filterChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 16,
-    backgroundColor: "#E5E7E9",
-  },
-  filterChipActive: {
-    backgroundColor: "#2980B9",
-  },
-  filterChipText: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: "#7F8C8D",
-  },
-  filterChipTextActive: {
-    color: "#FFFFFF",
-  },
   emptyContainer: {
-    padding: 40,
+    flex: 1,
     alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 50,
   },
   emptyText: {
-    color: "#7F8C8D",
     fontSize: 16,
-    textAlign: "center",
+    color: "#7F8C8D",
   },
 });

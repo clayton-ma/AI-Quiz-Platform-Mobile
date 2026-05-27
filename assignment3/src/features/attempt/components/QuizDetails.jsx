@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Icon, Badge } from "react-native-elements";
 import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { fetchQuizMetadata } from "../../quiz/services/quizApi";
-
 
 /**
  * QuizDetails component displays the static metadata of a quiz.
@@ -18,24 +18,30 @@ export default function QuizDetails({ quizId }) {
   const loadQuizMetaData = useCallback(async () => {
     try {
       const response = await fetchQuizMetadata(quizId);
-      setQuiz(response);
+      setQuizMetaData(response);
     } catch (error) {
       console.error("Error fetching quiz metadata:", error);
     }
-  }, [quizId])
+  }, [quizId]);
 
-  useEffect(() => {
-    loadQuizMetaData();
-  }, [loadQuizMetaData]);
+  useFocusEffect(
+    useCallback(() => {
+      loadQuizMetaData();
+    }, [loadQuizMetaData]),
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{quizMetaData?.name || "Untitled Quiz"}</Text>
+          <Text style={styles.title}>
+            {quizMetaData?.name || "Untitled Quiz"}
+          </Text>
         </View>
         <Badge
-          value={quizMetaData?.instant_result ? "Results Released" : "Results Hidden"}
+          value={
+            quizMetaData?.instant_result ? "Results Released" : "Results Hidden"
+          }
           status={quizMetaData?.instant_result ? "success" : "warning"}
           badgeStyle={styles.badge}
           textStyle={styles.badgeText}
@@ -53,7 +59,8 @@ export default function QuizDetails({ quizId }) {
           containerStyle={styles.infoIcon}
         />
         <Text style={styles.description}>
-          {quizMetaData?.description || "No description provided for this quiz."}
+          {quizMetaData?.description ||
+            "No description provided for this quiz."}
         </Text>
       </View>
     </View>

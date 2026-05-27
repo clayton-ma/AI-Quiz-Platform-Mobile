@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
-  View,
   StyleSheet,
   ScrollView,
   Alert,
   TextInput,
   Text,
-  TouchableOpacity,
-  ActivityIndicator,
+  View,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import UserAvatar from "../../../components/ui/UserAvatar";
@@ -17,7 +15,6 @@ import { useAuth } from "../../../app/providers/AuthContext";
 import { updateUser } from "../services/userApi";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../../../app/providers/ThemeContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FormContainer from "../../../components/ui/FormContainer";
 
 /**
@@ -34,6 +31,7 @@ export default function UserProfileForm() {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -42,6 +40,10 @@ export default function UserProfileForm() {
       email: user?.email || "",
     },
   });
+
+  // Watch fields to update avatar in real-time
+  const watchedFirstName = watch("firstname");
+  const watchedLastName = watch("lastname");
 
   useEffect(() => {
     if (user) {
@@ -80,8 +82,8 @@ export default function UserProfileForm() {
     >
       <View style={styles.avatarContainer}>
         <UserAvatar
-          firstname={user?.firstname}
-          lastname={user?.lastname}
+          firstname={watchedFirstName}
+          lastname={watchedLastName}
           size={100}
         />
       </View>
@@ -110,7 +112,7 @@ export default function UserProfileForm() {
                 },
                 errors.firstname && styles.inputError,
               ]}
-              placeholderTextColor={theme.dark ? "#666" : "#999"}
+              placeholderTextColor={theme.colors.textInputBackground}
             />
           )}
         />
@@ -163,11 +165,11 @@ export default function UserProfileForm() {
               style={[
                 styles.input,
                 {
-                  color: theme.dark ? "#888" : "#666",
+                  color: theme.dark ? "#909296" : "#868e96",
                   borderColor: theme.colors.border,
-                  backgroundColor: theme.dark ? "#2c2e33" : "#f0f0f0",
+                  backgroundColor: theme.dark ? "#2c2e33" : "#e9ecef",
                 },
-                styles.disabledInput,
+                { opacity: 0.8 },
               ]}
             />
           )}
@@ -193,8 +195,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    marginBottom: 4,
-    color: "#333",
+    marginBottom: 8,
   },
   input: {
     borderWidth: 1,
@@ -206,14 +207,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   inputError: {
-    borderColor: "#B00020",
-  },
-  disabledInput: {
-    backgroundColor: "#f0f0f0",
-    color: "#888",
+    borderColor: "#fa5252",
   },
   errorText: {
-    color: "#B00020",
+    color: "#fa5252",
     fontSize: 12,
     marginBottom: 8,
   },

@@ -13,9 +13,9 @@ import { useTheme } from "../../app/providers/ThemeContext";
 export default function UserAvatar({ firstname, lastname, size = 50 }) {
   const { theme } = useTheme();
   const getInitials = () => {
-    const f = firstname ? firstname.charAt(0).toUpperCase() : "A";
-    const l = lastname ? lastname.charAt(0).toUpperCase() : "I";
-    return `${f}${l}` || "?";
+    const f = firstname ? firstname.charAt(0).toUpperCase() : "";
+    const l = lastname ? lastname.charAt(0).toUpperCase() : "";
+    return `${f}${l}` || "AI";
   };
 
   return (

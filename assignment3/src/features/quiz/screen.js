@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SearchBar, ListItem, Icon } from "react-native-elements";
-import MainHeader from "../../components/ui/MainHeader";
 import { BackgroundColor } from "../../../constants";
 import { debounce } from "lodash";
 import MainContainer from "../../components/layout/MainContainer";

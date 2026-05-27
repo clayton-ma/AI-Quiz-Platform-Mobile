@@ -1,10 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Image, View, TouchableOpacity } from "react-native";
-import { Icon, Text } from "react-native-elements";
+import { Icon } from "react-native-elements";
 
 import { useAuth } from "../providers/AuthContext";
 import { useTheme } from "../providers/ThemeContext";
@@ -21,11 +19,9 @@ import ListAttempt from "../../features/attempt/screens/ListAttemptScreen";
 import TakeAttempt from "../../features/attempt/screens/TakeAttemptScreen";
 import ViewAttempt from "../../features/attempt/screens/ViewAttemptScreen";
 
-// https://reactnavigation.org/docs/stack-navigator/
 const QuizStack = createStackNavigator();
 const GroupStack = createStackNavigator();
 const UserStack = createStackNavigator();
-const AboutStack = createStackNavigator();
 const AttemptStack = createStackNavigator();
 const stackScreenOptions = {
   headerShown: false,
@@ -39,16 +35,6 @@ function QuizScreen() {
       <QuizStack.Screen name="EditQuiz" component={EditQuiz} />
       <QuizStack.Screen name="CreateQuiz" component={CreateQuiz} />
     </QuizStack.Navigator>
-  );
-}
-
-function AttemptScreen() {
-  return (
-    <AttemptStack.Navigator screenOptions={stackScreenOptions}>
-      <AttemptStack.Screen name="ListAttempt" component={ListAttempt} />
-      <AttemptStack.Screen name="TakeAttempt" component={TakeAttempt} />
-      <AttemptStack.Screen name="ViewAttempt" component={ViewAttempt} />
-    </AttemptStack.Navigator>
   );
 }
 
@@ -78,15 +64,18 @@ const TAB_ICONS = {
   Quiz: "quiz",
   Group: "group",
   User: "person",
-  Attempt: "assignment",
 };
 
 export default function TabNavigator() {
-  const colors = useTheme();
+  const { theme } = useTheme();
   const tabScreenOptions = ({ route }) => ({
     headerShown: false,
-    tabBarActiveTintColor: colors.tabActiveColor,
-    tabBarInactiveTintColor: colors.tabInactiveColor,
+    tabBarActiveTintColor: theme.colors.tabActiveColor,
+    tabBarInactiveTintColor: theme.colors.tabInactiveColor,
+    tabBarStyle: {
+      backgroundColor: theme.colors.tabBarBackground,
+      borderTopColor: theme.colors.tabBarBorder,
+    },
     tabBarIcon: ({ color, size }) => (
       <Icon
         name={TAB_ICONS[route.name] || "info"}
@@ -100,10 +89,9 @@ export default function TabNavigator() {
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={tabScreenOptions}>
-        <Tab.Screen name="Quiz" component={QuizScreen} />
-        <Tab.Screen name="Group" component={GroupScreen} />
+        {/* <Tab.Screen name="Quiz" component={QuizScreen} /> */}
+        {/* <Tab.Screen name="Group" component={GroupScreen} /> */}
         <Tab.Screen name="User" component={UserScreen} />
-        <Tab.Screen name="Attempt" component={AttemptScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

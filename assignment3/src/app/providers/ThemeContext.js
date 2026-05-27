@@ -41,10 +41,12 @@ export const ThemeProvider = ({ children }) => {
   };
 
   // Determine the active theme based on mode and device settings
-  const isDark =
-    themeMode === "system"
-      ? deviceColorScheme === "dark"
-      : themeMode === "dark";
+  // const isDark =
+  //   themeMode === "system"
+  //     ? deviceColorScheme === "dark"
+  //     : themeMode === "dark";
+
+  const isDark = true;
 
   const theme = {
     dark: isDark,
@@ -55,9 +57,14 @@ export const ThemeProvider = ({ children }) => {
       border: isDark ? "#373A40" : "#DEE2E6",
       primary: "#228be6",
       tabActiveColor: "#228be6",
+      tabBarBackground: isDark ? "#1A1B1E" : "#FFFFFF",
+      tabBarText: isDark ? "#C1C2C5" : "#2C3E50",
       tabInactiveColor: isDark ? "#909296" : "#adb5bd",
       avatarBackground: isDark ? "#228be6" : "#000000",
       avatarText: "#FFFFFF",
+      textInputBackground: isDark ? "#25262B" : "#F8F9FA",
+      textInputBorder: isDark ? "#373A40" : "#DEE2E6",
+      textInputText: isDark ? "#C1C2C5" : "#2C3E50",
     },
   };
 

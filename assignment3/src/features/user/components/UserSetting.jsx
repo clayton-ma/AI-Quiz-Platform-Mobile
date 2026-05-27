@@ -1,16 +1,11 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
 import { ListItem, Icon, Divider } from "react-native-elements";
 import { useAuth } from "../../../app/providers/AuthContext";
 import { useTheme } from "../../../app/providers/ThemeContext";
 import UserAvatar from "../../../components/ui/UserAvatar";
 import { useNavigation } from "@react-navigation/native";
+import SettingListItem from "./SettingListItem";
 
 /**
  * UserSettingList component displays a list of user settings and actions.
@@ -36,9 +31,15 @@ export default function UserSettingList() {
     },
   ];
 
-  const handleLogout = async () => {
-    await clearUser();
-    // Navigation to Login is usually handled by the Auth stack listener
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => await clearUser(),
+      },
+    ]);
   };
 
   return (
@@ -58,25 +59,12 @@ export default function UserSettingList() {
         </View>
       </View>
 
-      <Divider />
+      <Divider style={{ backgroundColor: theme.colors.border }} />
 
       {/* Settings Options */}
       <View style={styles.listContainer}>
         {settingsOptions.map((item) => (
-          <ListItem
-            key={`setting-${item.key}`}
-            onPress={item.onPress}
-            containerStyle={{ backgroundColor: theme.colors.background }}
-            bottomDivider
-          >
-            <Icon name={item.icon} color={theme.colors.primary} />
-            <ListItem.Content>
-              <ListItem.Title style={{ color: theme.colors.text }}>
-                {item.title}
-              </ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
+          <SettingListItem key={`setting-${item.key}`} item={item} />
         ))}
 
         {/* Logout Button */}
@@ -105,8 +93,6 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ececec",
   },
   userInfo: {
     marginTop: 15,

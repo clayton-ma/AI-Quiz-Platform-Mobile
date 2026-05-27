@@ -7,8 +7,9 @@ import {
   Dimensions,
   Animated,
 } from "react-native";
-import MainHeader from "../../../components/ui/MainHeader";
+import MainContainer from "../../../components/layout/MainContainer";
 import { Icon, Card } from "react-native-elements";
+import { useTheme } from "../../../app/providers/ThemeContext";
 import { BackgroundColor } from "../../../../constants";
 
 const features = [
@@ -43,6 +44,7 @@ const { width } = Dimensions.get("window");
 export default function About({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const { theme } = useTheme();
 
   useEffect(() => {
     Animated.parallel([
@@ -60,8 +62,7 @@ export default function About({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <MainHeader title="About" isMain={true} navigation={navigation} />
+    <MainContainer title="About" isMain={true} navigation={navigation}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Animated.View
           style={[
@@ -69,11 +70,18 @@ export default function About({ navigation }) {
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
           ]}
         >
-          <Text style={styles.title}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>
             Master Your Skills with{" "}
-            <Text style={styles.highlight}>QuizApp</Text>
+            <Text style={[styles.highlight, { color: theme.colors.primary }]}>
+              QuizApp
+            </Text>
           </Text>
-          <Text style={styles.subtitle}>
+          <Text
+            style={[
+              styles.subtitle,
+              { color: theme.dark ? "#909296" : "#7f8c8d" },
+            ]}
+          >
             The all-in-one platform for creating quizzes, managing study groups,
             and tracking your academic progress in real-time.
           </Text>
@@ -82,27 +90,54 @@ export default function About({ navigation }) {
         <Animated.View style={[styles.featuresGrid, { opacity: fadeAnim }]}>
           {features.map((feature, index) => (
             <View key={index} style={styles.featureCard}>
-              <View
-                style={[
-                  styles.iconContainer,
-                  feature.title === "AI Question Generation" && {
-                    backgroundColor: "#E67E22",
+              <Card
+                containerStyle={[
+                  styles.cardOverride,
+                  {
+                    backgroundColor: theme.colors.card,
+                    borderColor: theme.colors.border,
                   },
                 ]}
               >
-                <Icon name={feature.icon} color="#fff" size={26} />
-              </View>
-              <View style={styles.textContainer}>
-                <Text style={styles.featureTitle}>{feature.title}</Text>
-                <Text style={styles.featureDescription}>
-                  {feature.description}
-                </Text>
-              </View>
+                <View style={styles.cardContent}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      {
+                        backgroundColor:
+                          feature.title === "AI Question Generation"
+                            ? "#E67E22"
+                            : theme.colors.primary,
+                      },
+                    ]}
+                  >
+                    <Icon name={feature.icon} color="#fff" size={26} />
+                  </View>
+                  <View style={styles.textContainer}>
+                    <Text
+                      style={[
+                        styles.featureTitle,
+                        { color: theme.colors.text },
+                      ]}
+                    >
+                      {feature.title}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.featureDescription,
+                        { color: theme.dark ? "#909296" : "#95a5a6" },
+                      ]}
+                    >
+                      {feature.description}
+                    </Text>
+                  </View>
+                </View>
+              </Card>
             </View>
           ))}
         </Animated.View>
       </ScrollView>
-    </View>
+    </MainContainer>
   );
 }
 
@@ -127,14 +162,15 @@ const styles = StyleSheet.create({
   featuresGrid: {
     flexDirection: "column",
   },
-  featureCard: {
+  featureCard: { marginBottom: 15 },
+  cardOverride: {
     marginHorizontal: 0,
-    marginBottom: 15,
-    padding: 20,
+    marginVertical: 0,
+    padding: 15,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
+  },
+  cardContent: {
     flexDirection: "row",
     backdropFilter: "blur(10px)",
   },
@@ -143,7 +179,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 8,
-    backgroundColor: BackgroundColor,
     justifyContent: "center",
     alignItems: "center",
   },

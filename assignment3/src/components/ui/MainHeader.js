@@ -1,22 +1,27 @@
 import React from "react";
 import { Header, Icon } from "react-native-elements";
-import { BackgroundColor } from "../../../constants";
+import { useTheme } from "../../app/providers/ThemeContext";
 
 export default function MainHeader({ navigation, isMain, title }) {
+  const { theme } = useTheme();
+
   if (isMain) {
     return (
       <Header
         containerStyle={{
-          backgroundColor: BackgroundColor,
+          backgroundColor: theme.colors.primary,
         }}
-        centerComponent={{ text: title, style: { color: "#fff" } }}
+        centerComponent={{
+          text: title,
+          style: { color: "#fff", fontWeight: "bold" },
+        }}
       />
     );
   } else {
     return (
       <Header
         containerStyle={{
-          backgroundColor: BackgroundColor,
+          backgroundColor: theme.colors.primary,
           borderBottomWidth: 0,
         }}
         leftComponent={
@@ -28,7 +33,10 @@ export default function MainHeader({ navigation, isMain, title }) {
             onPress={() => navigation.goBack()}
           />
         }
-        centerComponent={{ text: title, style: { color: "#fff" } }}
+        centerComponent={{
+          text: title,
+          style: { color: "#fff", fontWeight: "bold" },
+        }}
       />
     );
   }

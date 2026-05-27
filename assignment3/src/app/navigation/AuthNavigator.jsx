@@ -59,11 +59,15 @@ const TAB_ICONS = {
  * @returns {JSX.Element} The authentication navigation container.
  */
 export default function AuthNavigator() {
-  const colors = useTheme();
+  const { theme } = useTheme();
   const tabScreenOptions = ({ route }) => ({
     headerShown: false,
-    tabBarActiveTintColor: colors.tabActiveColor,
-    tabBarInactiveTintColor: colors.tabInactiveColor,
+    tabBarActiveTintColor: theme.colors.tabActiveColor,
+    tabBarInactiveTintColor: theme.colors.tabInactiveColor,
+    tabBarStyle: {
+      backgroundColor: theme.colors.tabBarBackground,
+      borderTopColor: theme.colors.tabBarBorder,
+    },
     tabBarIcon: ({ color, size }) => {
       return (
         <Icon

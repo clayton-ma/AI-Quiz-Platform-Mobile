@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Icon, Badge } from "react-native-elements";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * AttemptDetails component displays the header information for a quiz attempt
@@ -25,15 +26,25 @@ export default function AttemptDetails({
   onSubmit,
   loading,
 }) {
+  const { theme } = useTheme();
+
   // Return null if essential data is missing to prevent rendering errors
   if (!quiz || !attempt) return null;
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.card,
+          borderColor: theme.colors.border,
+        },
+      ]}
+    >
       <View style={styles.headerRow}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{quiz.name || "Quiz Attempt"}</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{quiz.name || "Quiz Attempt"}</Text>
+          <Text style={[styles.subtitle, { color: theme.dark ? "#999" : "#7F8C8D" }]}>
             Started: {new Date(attempt.createdAt).toLocaleString()}
           </Text>
         </View>
@@ -45,20 +56,27 @@ export default function AttemptDetails({
         />
       </View>
 
-      <View style={styles.divider} />
+      <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
 
       <View style={styles.buttonGroup}>
         <TouchableOpacity
-          style={[styles.button, styles.saveButton]}
+          style={[
+            styles.button,
+            styles.saveButton,
+            {
+              backgroundColor: theme.dark ? "rgba(41, 128, 185, 0.1)" : "#EBF5FB",
+              borderColor: theme.colors.primary,
+            },
+          ]}
           onPress={onSave}
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator size="small" color="#2980B9" />
+            <ActivityIndicator size="small" color={theme.colors.primary} />
           ) : (
             <>
-              <Icon name="save" size={18} color="#2980B9" />
-              <Text style={styles.saveButtonText}>Save</Text>
+              <Icon name="save" size={18} color={theme.colors.primary} />
+              <Text style={[styles.saveButtonText, { color: theme.colors.primary }]}>Save</Text>
             </>
           )}
         </TouchableOpacity>
@@ -93,6 +111,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    borderWidth: 1,
   },
   headerRow: {
     flexDirection: "row",

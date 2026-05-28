@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * AttemptQuestion component renders a single question and its options for a quiz attempt.
@@ -17,15 +18,24 @@ export default function AttemptQuestion({
   onSelect,
   disabled,
 }) {
+  const { theme } = useTheme();
   if (!question) return null;
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.colors.card,
+          borderColor: theme.colors.border,
+        },
+      ]}
+    >
       {/* Question Header */}
-      <Text style={styles.headerText}>Question {index + 1}</Text>
+      <Text style={[styles.headerText, { color: theme.colors.text }]}>Question {index + 1}</Text>
 
       {/* Question Content */}
-      <Text style={styles.content}>{question.content}</Text>
+      <Text style={[styles.content, { color: theme.dark ? "#ccc" : "#34495E" }]}>{question.content}</Text>
 
       {/* Options List */}
       <View style={styles.optionsContainer}>
@@ -37,18 +47,35 @@ export default function AttemptQuestion({
               style={[
                 styles.optionButton,
                 isSelected && styles.optionSelected,
+                isSelected && {
+                  borderColor: theme.colors.primary,
+                  backgroundColor: theme.dark ? "rgba(41, 128, 185, 0.1)" : "#EBF5FB",
+                },
                 disabled && styles.disabledOption,
+                {
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#FDFEFE",
+                },
               ]}
               onPress={() => onSelect(option._id)}
               disabled={disabled}
             >
-              <View style={[styles.radio, isSelected && styles.radioSelected]}>
-                {isSelected && <View style={styles.radioInner} />}
+              <View
+                style={[
+                  styles.radio,
+                  { borderColor: theme.dark ? "#555" : "#BDC3C7" },
+                  isSelected && { borderColor: theme.colors.primary },
+                ]}
+              >
+                {isSelected && (
+                  <View style={[styles.radioInner, { backgroundColor: theme.colors.primary }]} />
+                )}
               </View>
               <Text
                 style={[
                   styles.optionText,
-                  isSelected && styles.optionTextSelected,
+                  { color: theme.colors.text },
+                  isSelected && [styles.optionTextSelected, { color: theme.colors.primary }],
                 ]}
               >
                 {option.content}
@@ -67,6 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
+    borderWidth: 1,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -129,6 +157,5 @@ const styles = StyleSheet.create({
   },
   optionTextSelected: {
     fontWeight: "600",
-    color: "#2980B9",
   },
 });

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Icon, Badge, ListItem } from "react-native-elements";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * ListAttemptRow component renders a single row within the ListAttemptTable.
@@ -11,6 +12,7 @@ import { Icon, Badge, ListItem } from "react-native-elements";
  */
 export default function ListAttemptRow(attempt) {
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   // Configuration for status badges to ensure visual consistency across the UI
   const statusConfig = {
@@ -33,22 +35,31 @@ export default function ListAttemptRow(attempt) {
         : `${attempt.score}`;
 
   return (
-    <ListItem bottomDivider containerStyle={styles.container}>
+    <ListItem
+      bottomDivider
+      containerStyle={[
+        styles.container,
+        { backgroundColor: theme.colors.card, borderBottomColor: theme.colors.border },
+      ]}
+    >
       <ListItem.Content>
         <View style={styles.header}>
           <Badge
             value={attempt.status?.replace("_", " ").toUpperCase() || "UNKNOWN"}
             status={config.status}
             badgeStyle={styles.badge}
+            textStyle={styles.badgeText}
           />
-          <Text style={styles.date}>
+          <Text style={[styles.date, { color: theme.dark ? "#999" : "#7F8C8D" }]}>
             {new Date(attempt.updatedAt).toLocaleString()}
           </Text>
         </View>
 
         <View style={styles.scoreRow}>
           <Text style={styles.scoreLabel}>Score: </Text>
-          <Text style={styles.scoreValue}>{scoreText}</Text>
+          <Text style={[styles.scoreValue, { color: theme.colors.text }]}>
+            {scoreText}
+          </Text>
         </View>
       </ListItem.Content>
 
@@ -90,6 +101,9 @@ const styles = StyleSheet.create({
   },
   badge: {
     paddingHorizontal: 6,
+  },
+  badgeText: {
+    fontSize: 10,
   },
   date: {
     fontSize: 12,

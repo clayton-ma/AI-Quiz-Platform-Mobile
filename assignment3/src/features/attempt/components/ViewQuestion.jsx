@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Badge, Icon } from "react-native-elements";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * ViewQuestion component displays a question with the user's answer and the correct answer.
@@ -10,6 +11,7 @@ import { Badge, Icon } from "react-native-elements";
  * @param {string} selectedOptionId - The ID of the option selected by the user
  */
 export default function ViewQuestion({ question, index, selectedOptionId }) {
+  const { theme } = useTheme();
   // Prevent rendering if question data or options are missing
   if (!question || !question.options) return null;
 
@@ -21,9 +23,19 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
   );
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.colors.card,
+          borderColor: theme.colors.border,
+        },
+      ]}
+    >
       <View style={styles.header}>
-        <Text style={styles.headerText}>Question {index + 1}</Text>
+        <Text style={[styles.headerText, { color: theme.colors.text }]}>
+          Question {index + 1}
+        </Text>
         {selectedOptionId && hasCorrectAnswerInfo && (
           <Badge
             value={selectedOption?.is_correct ? "Correct" : "Incorrect"}
@@ -33,7 +45,11 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
         )}
       </View>
 
-      <Text style={styles.content}>{question.content}</Text>
+      <Text
+        style={[styles.content, { color: theme.dark ? "#ccc" : "#34495E" }]}
+      >
+        {question.content}
+      </Text>
 
       <View style={styles.optionsContainer}>
         {question.options?.map((option) => {
@@ -44,6 +60,16 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
             styles.optionItem,
             hasCorrectAnswerInfo && isCorrect && styles.optionCorrect,
             isSelected && !isCorrect && styles.optionIncorrect,
+            {
+              borderColor: theme.colors.border,
+              backgroundColor: theme.dark
+                ? "rgba(255,255,255,0.05)"
+                : "#FDFEFE",
+            },
+            hasCorrectAnswerInfo &&
+            isCorrect && {
+              backgroundColor: theme.dark ? "rgba(39, 174, 96, 0.1)" : "#F1F9F4",
+            },
           ];
 
           return (
@@ -51,7 +77,11 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
               <Text
                 style={[
                   styles.optionText,
-                  (isSelected || isCorrect) && styles.optionTextBold,
+                  { color: theme.colors.text },
+                  (isSelected || isCorrect) && [
+                    styles.optionTextBold,
+                    isCorrect && { color: "#27AE60" },
+                  ],
                 ]}
               >
                 {option.content}
@@ -94,6 +124,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    borderWidth: 1,
   },
   header: {
     flexDirection: "row",

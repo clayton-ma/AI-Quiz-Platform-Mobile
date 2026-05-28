@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import ViewQuestion from "./ViewQuestion";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * ViewQuestionList component renders a list of questions with their results.
@@ -9,21 +10,22 @@ import ViewQuestion from "./ViewQuestion";
  * @param {Object} answers - Map of questionId to selectedOptionId
  */
 export default function ViewQuestionList({ questions, selectedAnswers }) {
+  const { theme } = useTheme();
   if (!questions || questions.length === 0) return null;
   console.log("Rendering ViewQuestionList with questions:", questions);
 
   // Convert answers array to map if it's not already
   const answersMap = Array.isArray(selectedAnswers)
     ? selectedAnswers.reduce(
-        (acc, curr) => ({
-          ...acc,
-          [curr.question_id]: curr.selected_option_id,
-        }),
-        {},
-      )
+      (acc, curr) => ({
+        ...acc,
+        [curr.question_id]: curr.selected_option_id,
+      }),
+      {},
+    )
     : selectedAnswers || {};
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Map through questions to display the result for each */}
       {questions.map((question, index) => (
         <ViewQuestion

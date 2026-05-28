@@ -3,6 +3,7 @@ import { Icon, Badge } from "react-native-elements";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { fetchQuizMetadata } from "../../quiz/services/quizApi";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * QuizDetails component displays the static metadata of a quiz.
@@ -14,6 +15,7 @@ export default function QuizDetails({ quizId }) {
   // Prevent rendering if quiz data hasn't loaded yet
   if (!quizId) return null;
   const [quizMetaData, setQuizMetaData] = useState(null);
+  const { theme } = useTheme();
 
   const loadQuizMetaData = useCallback(async () => {
     try {
@@ -31,10 +33,20 @@ export default function QuizDetails({ quizId }) {
   );
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.dark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.7)",
+          borderColor: theme.colors.border,
+          borderWidth: 1,
+        },
+      ]}
+    >
       <View style={styles.headerRow}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>
+          <Text
+            style={[styles.title, { color: theme.colors.primary }]}>
             {quizMetaData?.name || "Untitled Quiz"}
           </Text>
         </View>
@@ -48,17 +60,20 @@ export default function QuizDetails({ quizId }) {
         />
       </View>
 
-      <View style={styles.divider} />
+      <View
+        style={[styles.divider, { backgroundColor: theme.colors.border }]}
+      />
 
       <View style={styles.descriptionRow}>
         <Icon
           name="info-outline"
           type="material"
           size={18}
-          color="#7F8C8D"
+          color={theme.dark ? "#999" : "#7F8C8D"}
           containerStyle={styles.infoIcon}
         />
-        <Text style={styles.description}>
+        <Text
+          style={[styles.description, { color: theme.colors.text }]}>
           {quizMetaData?.description ||
             "No description provided for this quiz."}
         </Text>
@@ -69,13 +84,11 @@ export default function QuizDetails({ quizId }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,
-    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },

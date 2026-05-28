@@ -38,6 +38,16 @@ function QuizScreen() {
   );
 }
 
+function AttemptScreen() {
+  return (
+    <AttemptStack.Navigator screenOptions={stackScreenOptions}>
+      <AttemptStack.Screen name="ListAttempt" component={ListAttempt} />
+      <AttemptStack.Screen name="TakeAttempt" component={TakeAttempt} />
+      <AttemptStack.Screen name="ViewAttempt" component={ViewAttempt} />
+    </AttemptStack.Navigator>
+  );
+}
+
 function GroupScreen() {
   return (
     <GroupStack.Navigator screenOptions={stackScreenOptions}>
@@ -92,6 +102,11 @@ export default function TabNavigator() {
         <Tab.Screen name="Quiz" component={QuizScreen} />
         <Tab.Screen name="Group" component={GroupScreen} />
         <Tab.Screen name="User" component={UserScreen} />
+        <Tab.Screen
+          name="Attempt"
+          component={AttemptScreen}
+          options={{ tabBarButton: () => null }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );

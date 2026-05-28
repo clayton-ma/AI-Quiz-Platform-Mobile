@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Alert, Switch } from "react-native";
 import { ListItem, Icon, Divider } from "react-native-elements";
 import { useAuth } from "../../../app/providers/AuthContext";
 import { useTheme } from "../../../app/providers/ThemeContext";
@@ -13,7 +13,7 @@ import SettingListItem from "./SettingListItem";
  */
 export default function UserSettingList() {
   const { user, clearUser } = useAuth();
-  const { theme } = useTheme();
+  const { theme, updateThemeMode } = useTheme();
   const navigation = useNavigation();
 
   const settingsOptions = [
@@ -66,6 +66,28 @@ export default function UserSettingList() {
         {settingsOptions.map((item) => (
           <SettingListItem key={`setting-${item.key}`} item={item} />
         ))}
+
+        {/* Theme Toggle Button */}
+        <ListItem
+          key="toggle-theme"
+          containerStyle={{
+            backgroundColor: theme.colors.background,
+            borderBottomColor: theme.colors.border,
+          }}
+          bottomDivider
+        >
+          <Icon name="brightness-medium" color={theme.colors.primary} />
+          <ListItem.Content>
+            <ListItem.Title style={{ color: theme.colors.text }}>
+              Dark Mode
+            </ListItem.Title>
+          </ListItem.Content>
+          <Switch
+            value={theme.dark}
+            onValueChange={() => updateThemeMode(theme.dark ? "light" : "dark")}
+            trackColor={{ false: "#ddd", true: theme.colors.primary }}
+          />
+        </ListItem>
 
         {/* Logout Button */}
         <ListItem

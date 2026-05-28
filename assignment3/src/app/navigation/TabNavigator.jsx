@@ -102,9 +102,9 @@ export default function TabNavigator() {
         <Tab.Screen name="Quiz" component={QuizScreen} />
         <Tab.Screen name="Group" component={GroupScreen} />
         <Tab.Screen name="User" component={UserScreen} />
-        <Tab.Screen
-          name="Attempt"
-          component={AttemptScreen}
+        <Tab.Screen 
+          name="Attempt" 
+          component={AttemptScreen} 
           options={{ tabBarButton: () => null }}
         />
       </Tab.Navigator>

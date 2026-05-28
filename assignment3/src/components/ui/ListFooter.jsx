@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityIndicator } from "react-native";
-import { useTheme } from "../../app/providers/ThemeContext";
+import { useTheme } from "../../app/providers/ThemeContext"
 
 export default function ListFooter({ loading, refreshing }) {
   const { theme } = useTheme();

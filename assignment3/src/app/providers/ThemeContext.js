@@ -41,12 +41,12 @@ export const ThemeProvider = ({ children }) => {
   };
 
   // Determine the active theme based on mode and device settings
-  // const isDark =
-  //   themeMode === "system"
-  //     ? deviceColorScheme === "dark"
-  //     : themeMode === "dark";
+  const isDark =
+    themeMode === "system"
+      ? deviceColorScheme === "dark"
+      : themeMode === "dark";
 
-  const isDark = true;
+  // const isDark = true;
 
   const theme = {
     dark: isDark,

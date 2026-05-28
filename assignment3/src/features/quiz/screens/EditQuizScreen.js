@@ -23,7 +23,7 @@ import ShowNotification from "../../../components/ui/ShowNotification";
 import EditQuestionCard from "../components/EditQuestionCard";
 import EditQuizMetadata from "../components/EditQuizMetadata";
 import GenerateQuestionModal from "../components/GenerateQuestionModal";
-import { BackgroundColor } from "../../../../constants";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * Initial state structure for the quiz being edited.
@@ -158,6 +158,8 @@ export default function EditQuiz({ route, navigation }) {
   const [groupsData, setGroupsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generateOpen, setGenerateOpen] = useState(false);
+  const { theme } = useTheme();
+  const BackgroundColor = theme.colors.primary;
   const { quizId } = route.params;
 
   // Load quiz and group data on component mount
@@ -283,7 +285,7 @@ export default function EditQuiz({ route, navigation }) {
 
   return (
     <MainContainer title="Edit Quiz" navigation={navigation}>
-      <View style={styles.topActionsContainer}>
+      <View style={[styles.topActionsContainer, { backgroundColor: theme.colors.card, borderBottomColor: theme.colors.border }]}>
         <View style={styles.headerActionsRow}>
           <Button
             title="Publish Quiz"
@@ -338,7 +340,7 @@ export default function EditQuiz({ route, navigation }) {
         <Divider style={styles.divider} />
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
             Questions ({state.questions.length})
           </Text>
           <TouchableOpacity
@@ -408,6 +410,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#2C3E50" },
   aiButton: { flexDirection: "row", alignItems: "center" },
-  aiButtonText: { color: BackgroundColor, marginLeft: 5, fontWeight: "600" },
+  aiButtonText: { color: "red", marginLeft: 5, fontWeight: "600" },
   addBtnContainer: { marginTop: 20 },
 });

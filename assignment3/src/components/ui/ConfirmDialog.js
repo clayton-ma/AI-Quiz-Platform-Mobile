@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Button } from "react-native-elements";
-import { BackgroundColor } from "../../../constants";
+import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
  * A reusable confirmation dialog component.
@@ -23,12 +23,15 @@ export default function ConfirmDialog({
   confirmText = "Confirm",
   cancelText = "Cancel",
 }) {
+  const { theme } = useTheme();
+  const BackgroundColor = theme.colors.primary;
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
-        <View style={styles.dialog}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.message}>{message}</Text>
+        <View style={[styles.dialog, { backgroundColor: theme.colors.card }]}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
+          <Text style={[styles.message, { color: theme.dark ? "#909296" : "#7F8C8D" }]}>{message}</Text>
           <View style={styles.actions}>
             <Button
               title={cancelText}

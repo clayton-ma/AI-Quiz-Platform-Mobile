@@ -8,12 +8,15 @@ import {
   StatusBar,
 } from "react-native";
 import { Icon } from "react-native-elements";
-import { BackgroundColor } from "../../../constants";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 const { height } = Dimensions.get("window");
 
-export default function SplashScreen({ navigation }) {
+export default function SplashScreen({ onFinish }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { theme } = useTheme();
+  const BackgroundColor = theme.colors.primary;
+
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
@@ -38,11 +41,13 @@ export default function SplashScreen({ navigation }) {
 
     // Simulate a delay before navigating to the main app
     const timer = setTimeout(() => {
-      // navigation.replace("Home"); // Uncomment and adjust route name as needed
+      if (onFinish) {
+        onFinish();
+      }
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [onFinish]);
 
   return (
     <View style={styles.container}>
@@ -90,7 +95,7 @@ export default function SplashScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BackgroundColor,
+    backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
   },

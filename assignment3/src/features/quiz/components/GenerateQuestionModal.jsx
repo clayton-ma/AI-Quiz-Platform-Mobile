@@ -15,6 +15,7 @@ import { generateQuestions } from "../services/quizApi";
 import ShowNotification from "../../../components/ui/ShowNotification";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import { useCallback } from "react";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * GenerateQuestionModal provides an interface for users to input topics
@@ -24,6 +25,7 @@ export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
   const [numQuestions, setNumQuestions] = React.useState(1);
   const [topics, setTopics] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const { theme } = useTheme();
 
   const onGenerate = useCallback(async () => {
     try {
@@ -64,22 +66,31 @@ export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.overlay}
       >
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>Generate AI Quiz</Text>
+        <View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>Generate AI Quiz</Text>
 
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#000" />
-              <Text style={styles.loadingText}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <Text style={[styles.loadingText, { color: theme.dark ? "#999" : "#666" }]}>
                 AI is generating your questions...
               </Text>
             </View>
           ) : (
             <View style={styles.form}>
-              <Text style={styles.label}>Topic</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Topic</Text>
               <TextInput
-                style={[styles.input, styles.textArea]}
+                style={[
+                  styles.input,
+                  styles.textArea,
+                  {
+                    color: theme.colors.text,
+                    borderColor: theme.colors.border,
+                    backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+                  },
+                ]}
                 placeholder="e.g. Quantum Physics basics or React Hooks"
+                placeholderTextColor={theme.dark ? "#666" : "#999"}
                 multiline
                 numberOfLines={4}
                 maxLength={500}
@@ -87,24 +98,32 @@ export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
                 onChangeText={setTopics}
               />
 
-              <Text style={styles.label}>Number of Questions (Max 10)</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Number of Questions (Max 10)</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    color: theme.colors.text,
+                    borderColor: theme.colors.border,
+                    backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+                  },
+                ]}
                 keyboardType="numeric"
                 placeholder="1-10"
+                placeholderTextColor={theme.dark ? "#666" : "#999"}
                 value={numQuestions?.toString() || ""}
                 onChangeText={(val) => setNumQuestions(parseInt(val) || 0)}
               />
 
               <View style={styles.buttonGroup}>
                 <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                  <Text style={[styles.cancelButtonText, { color: theme.dark ? "#999" : "#666" }]}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.generateButton}
+                  style={[styles.generateButton, { backgroundColor: theme.colors.primary }]}
                   onPress={() => topics.trim() && onGenerate()}
                 >
-                  <Text style={styles.generateButtonText}>
+                  <Text style={[styles.generateButtonText, { color: "#fff" }]}>
                     Generate Questions
                   </Text>
                 </TouchableOpacity>

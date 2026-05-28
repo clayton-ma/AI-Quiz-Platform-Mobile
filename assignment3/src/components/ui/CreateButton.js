@@ -1,10 +1,13 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
-import { BackgroundColor } from "../../../constants";
+import { useTheme } from "../../app/providers/ThemeContext";
 
 export default function CreateButton({ handlePress }) {
+  const { theme } = useTheme();
+  const BackgroundColor = theme.colors.primary;
+
   return (
-    <TouchableOpacity style={styles.fab} onPress={handlePress}>
+    <TouchableOpacity style={[styles.fab, { backgroundColor: BackgroundColor }]} onPress={handlePress}>
       <Icon name="add" color="#fff" size={30} />
     </TouchableOpacity>
   );
@@ -15,7 +18,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 20,
     bottom: 20,
-    backgroundColor: BackgroundColor,
     width: 56,
     height: 56,
     borderRadius: 28,

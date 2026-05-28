@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
 } from "react-native";
+import { useTheme } from "../../../app/providers/ThemeContext";
 import EditOptionCard from "./EditOptionCard";
 
 /**
@@ -20,6 +21,7 @@ import EditOptionCard from "./EditOptionCard";
 export default function EditQuestionCard({ q, index, dispatch }) {
   // Local state to manage question data before syncing to parent
   const [local, setLocal] = useState(q);
+  const { theme } = useTheme();
 
   // Keep local state in sync with props (important for initial load and AI generation)
   useEffect(() => {
@@ -94,9 +96,16 @@ export default function EditQuestionCard({ q, index, dispatch }) {
 
   // UI for editing a question, its options, and managing correct answers and deletions
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: theme.colors.card, borderColor: theme.colors.border },
+      ]}
+    >
       <View style={styles.header}>
-        <Text style={styles.title}>Question {index + 1}</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>
+          Question {index + 1}
+        </Text>
 
         {/* Delete Question Button */}
         <TouchableOpacity
@@ -111,14 +120,24 @@ export default function EditQuestionCard({ q, index, dispatch }) {
 
       {/* Question Content Input */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            color: theme.colors.text,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+          },
+        ]}
         value={local.content}
         onChangeText={updateContent}
         placeholder="Enter question text"
+        placeholderTextColor={theme.dark ? "#666" : "#999"}
         multiline
       />
 
-      <Text style={styles.label}>Options</Text>
+      <Text style={[styles.label, { color: theme.dark ? "#999" : "#666" }]}>
+        Options
+      </Text>
 
       {/* Option Cards */}
       <View style={styles.optionsList}>
@@ -141,7 +160,9 @@ export default function EditQuestionCard({ q, index, dispatch }) {
         disabled={local.options.length >= 4}
         onPress={addOption}
       >
-        <Text style={styles.addButtonText}>+ Add Option</Text>
+        <Text style={[styles.addButtonText, { color: theme.colors.primary }]}>
+          + Add Option
+        </Text>
       </TouchableOpacity>
     </View>
   );

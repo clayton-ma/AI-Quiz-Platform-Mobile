@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, Switch } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import { fetchGroups } from "../../group/services/groupApi";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * EditQuizMetadata component handles the quiz settings.
@@ -11,6 +12,7 @@ import { fetchGroups } from "../../group/services/groupApi";
 export default function EditQuizMetadata({ metadata, dispatch }) {
   const [local, setLocal] = useState(metadata);
   const [groupsData, setGroupsData] = useState([]);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const loadGroups = async () => {
@@ -66,31 +68,53 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
 
   // UI for quiz metadata editing, including title, description, group assignment, and instant result toggle
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.card, borderColor: theme.colors.border },
+      ]}
+    >
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <MaterialIcons name="settings" size={20} color="#007bff" />
-          <Text style={styles.headerTitle}>Quiz Configuration</Text>
+          <MaterialIcons name="settings" size={20} color={theme.colors.primary} />
+          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
+            Quiz Configuration
+          </Text>
         </View>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{local.status || "Draft"}</Text>
+        <View style={[styles.badge, { backgroundColor: theme.dark ? "#1a365d" : "#e6f7ff" }]}>
+          <Text style={[styles.badgeText, { color: theme.colors.primary }]}>
+            {local.status || "Draft"}
+          </Text>
         </View>
       </View>
 
       <Text style={styles.sectionLabel}>General Information</Text>
 
-      <Text style={styles.inputLabel}>Quiz Title</Text>
+      <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+        Quiz Title
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            color: theme.colors.text,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+          },
+        ]}
         placeholder="Enter quiz title"
+        placeholderTextColor={theme.dark ? "#666" : "#999"}
         value={local.name || ""}
         onChangeText={(val) => handleChange("name", val)}
       />
 
-      <Text style={styles.inputLabel}>Description</Text>
+      <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+        Description
+      </Text>
       <TextInput
-        style={[styles.input, styles.textArea]}
+        style={[styles.input, styles.textArea, { color: theme.colors.text, borderColor: theme.colors.border, backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff" }]}
         placeholder="Enter quiz description"
+        placeholderTextColor={theme.dark ? "#666" : "#999"}
         value={local.description || ""}
         onChangeText={(val) => handleChange("description", val)}
         multiline
@@ -99,7 +123,9 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
 
       <Text style={styles.sectionLabel}>Access & Results</Text>
 
-      <Text style={styles.inputLabel}>Assign to Groups</Text>
+      <Text style={[styles.inputLabel, { color: theme.colors.text }]}>
+        Assign to Groups
+      </Text>
       <View style={styles.groupsList}>
         {groupsData.map((g) => {
           const groupId = g.id || g._id;
@@ -107,7 +133,11 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
           return (
             <TouchableOpacity
               key={groupId}
-              style={[styles.groupChip, isSelected && styles.groupChipSelected]}
+              style={[
+                styles.groupChip,
+                { borderColor: theme.colors.primary },
+                isSelected && { backgroundColor: theme.colors.primary },
+              ]}
               onPress={() => toggleGroup(groupId)}
             >
               <Text
@@ -128,15 +158,17 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
 
       <View style={styles.switchContainer}>
         <View style={styles.switchTextContainer}>
-          <Text style={styles.switchLabel}>Show instant results</Text>
-          <Text style={styles.switchDescription}>
+          <Text style={[styles.switchLabel, { color: theme.colors.text }]}>
+            Show instant results
+          </Text>
+          <Text style={[styles.switchDescription, { color: theme.dark ? "#999" : "#666" }]}>
             Students see scores immediately after submission
           </Text>
         </View>
         <Switch
           value={!!local.instant_result}
           onValueChange={(val) => handleChange("instant_result", val)}
-          trackColor={{ false: "#ddd", true: "#007bff" }}
+          trackColor={{ false: "#ddd", true: theme.colors.primary }}
         />
       </View>
     </View>

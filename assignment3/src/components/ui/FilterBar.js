@@ -8,7 +8,7 @@ import {
   Text,
 } from "react-native";
 import { Button, Icon, ListItem } from "react-native-elements";
-import { BackgroundColor } from "../../../constants";
+import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
  * A reusable FilterBar component with dropdown support and multi-field filtering.
@@ -23,6 +23,8 @@ export default function FilterBar({
   onFilterChange,
 }) {
   const [visibleModal, setVisibleModal] = useState(null);
+  const { theme } = useTheme();
+  const BackgroundColor = theme.colors.primary;
 
   const handleSelect = (key, value) => {
     onFilterChange(key, value);
@@ -79,15 +81,27 @@ export default function FilterBar({
                   style={styles.modalOverlay}
                   onPress={() => setVisibleModal(null)}
                 >
-                  <View style={styles.modalContent}>
+                  <View style={[
+                    styles.modalContent, 
+                    { backgroundColor: theme.colors.card }
+                  ]}>
                     {filter.options.map(({ value, label }) => (
                       <ListItem
                         key={value}
                         bottomDivider
                         onPress={() => handleSelect(filter.key, value)}
+                        containerStyle={{ backgroundColor: theme.colors.card }}
                       >
                         <ListItem.Content>
-                          <ListItem.Title>{label}</ListItem.Title>
+                          <ListItem.Title
+                            style={{
+                              color: theme.colors.text,
+                              fontWeight:
+                                currentValue === value ? "bold" : "normal",
+                            }}
+                          >
+                            {label}
+                          </ListItem.Title>
                         </ListItem.Content>
                         {currentValue === value && (
                           <Icon name="check" color={BackgroundColor} />
@@ -118,13 +132,9 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 20,
     paddingHorizontal: 20,
-    borderColor: BackgroundColor,
   },
   activeTitle: {
     color: "#fff",
-  },
-  inactiveTitle: {
-    color: BackgroundColor,
   },
   title: {
     fontSize: 14,
@@ -137,7 +147,6 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "80%",
-    backgroundColor: "#fff",
     borderRadius: 10,
     overflow: "hidden",
     maxHeight: "60%",

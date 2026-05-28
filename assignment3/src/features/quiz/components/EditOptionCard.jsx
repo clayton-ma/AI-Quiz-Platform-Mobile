@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * EditOptionCard component handles the individual option within a question.
@@ -20,6 +21,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 export default function EditOptionCard({ opt, onChange, onDelete, onCorrect }) {
   // Local state for the option's text to prevent excessive updates to the parent reducer on every keystroke
   const [text, setText] = useState(opt.content);
+  const { theme } = useTheme();
 
   // Sync local text state with prop changes (e.g., when loading existing question data)
   useEffect(() => {
@@ -41,17 +43,26 @@ export default function EditOptionCard({ opt, onChange, onDelete, onCorrect }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={[styles.radio, opt.is_correct && styles.radioSelected]}
+        style={[
+          styles.radio,
+          { borderColor: theme.colors.primary },
+          opt.is_correct && styles.radioSelected,
+        ]}
         onPress={onCorrect}
       >
-        {opt.is_correct && <View style={styles.radioInner} />}
+        {opt.is_correct && (
+          <View
+            style={[styles.radioInner, { backgroundColor: theme.colors.primary }]}
+          />
+        )}
       </TouchableOpacity>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border, backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff" }]}
         value={text}
         onChangeText={setText}
         placeholder="Option text"
+        placeholderTextColor={theme.dark ? "#666" : "#999"}
       />
 
       <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>

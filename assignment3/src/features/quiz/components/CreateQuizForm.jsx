@@ -13,11 +13,13 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { createQuiz } from "../services/quizApi";
 import { fetchGroups } from "../../group/services/groupApi";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 export default function CreateQuizForm() {
   const [loading, setLoading] = useState(false); // Controls loading state for API calls
   const [groupsData, setGroupsData] = useState([]);
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -76,21 +78,38 @@ export default function CreateQuizForm() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.label}>Quiz Title</Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+        <Text style={[styles.label, { color: theme.colors.text }]}>Quiz Title</Text>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              color: theme.colors.text,
+              borderColor: theme.colors.border,
+              backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+            },
+          ]}
           placeholder="Enter quiz title"
+          placeholderTextColor={theme.dark ? "#666" : "#999"}
           value={formData.name}
           onChangeText={(val) => setFormData({ ...formData, name: val })}
           disabled={loading}
         />
 
-        <Text style={styles.label}>Description</Text>
+        <Text style={[styles.label, { color: theme.colors.text }]}>Description</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={[
+            styles.input,
+            styles.textArea,
+            {
+              color: theme.colors.text,
+              borderColor: theme.colors.border,
+              backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+            },
+          ]}
           placeholder="Description of the quiz"
+          placeholderTextColor={theme.dark ? "#666" : "#999"}
           multiline
           numberOfLines={3}
           value={formData.description}
@@ -98,7 +117,7 @@ export default function CreateQuizForm() {
           disabled={loading}
         />
 
-        <Text style={styles.label}>Assign to Groups</Text>
+        <Text style={[styles.label, { color: theme.colors.text }]}>Assign to Groups</Text>
         <View style={styles.groupsList}>
           {groupsData.map((g) => {
             const isSelected = formData.groupIds.includes(g._id || g.id);
@@ -107,7 +126,8 @@ export default function CreateQuizForm() {
                 key={g._id || g.id}
                 style={[
                   styles.groupChip,
-                  isSelected && styles.groupChipSelected,
+                  { borderColor: theme.colors.primary },
+                  isSelected && { backgroundColor: theme.colors.primary },
                 ]}
                 onPress={() => toggleGroup(g._id)}
                 disabled={loading}
@@ -115,6 +135,7 @@ export default function CreateQuizForm() {
                 <Text
                   style={[
                     styles.groupChipText,
+                    { color: theme.colors.primary },
                     isSelected && styles.groupChipTextSelected,
                   ]}
                 >
@@ -130,8 +151,8 @@ export default function CreateQuizForm() {
 
         <View style={styles.switchContainer}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.switchLabel}>Show instant results</Text>
-            <Text style={styles.switchDesc}>
+            <Text style={[styles.switchLabel, { color: theme.colors.text }]}>Show instant results</Text>
+            <Text style={[styles.switchDesc, { color: theme.dark ? "#999" : "#666" }]}>
               Students see scores immediately
             </Text>
           </View>
@@ -140,12 +161,13 @@ export default function CreateQuizForm() {
             onValueChange={(val) =>
               setFormData({ ...formData, instant_result: val })
             }
+            trackColor={{ false: "#ddd", true: theme.colors.primary }}
             disabled={loading}
           />
         </View>
 
         <TouchableOpacity
-          style={[styles.submitButton, loading && styles.disabledButton]}
+          style={[styles.submitButton, { backgroundColor: theme.colors.primary }, loading && styles.disabledButton]}
           onPress={handleSubmit}
           disabled={loading}
         >

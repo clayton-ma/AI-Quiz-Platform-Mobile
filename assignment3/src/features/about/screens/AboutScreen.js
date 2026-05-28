@@ -11,6 +11,9 @@ import MainContainer from "../../../components/layout/MainContainer";
 import { Icon, Card } from "react-native-elements";
 import { useTheme } from "../../../app/providers/ThemeContext";
 import { BackgroundColor } from "../../../../constants";
+import DeviceNotification from "../../../components/ui/DeviceNotification";
+import { Pressable } from "react-native";
+import { schedulePushNotification } from "../../../components/ui/DeviceNotification";
 
 const features = [
   {
@@ -46,6 +49,7 @@ export default function About({ navigation }) {
   const slideAnim = useRef(new Animated.Value(30)).current;
   const { theme } = useTheme();
 
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -64,6 +68,9 @@ export default function About({ navigation }) {
   return (
     <MainContainer title="About" isMain={true} navigation={navigation}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Pressable onPress={() => schedulePushNotification('Hello!', 'This is an instant notification',{"url":"google.com"})}>
+          <Text style={{ color: theme.colors.text, padding: 10, textAlign: 'center' }}>Test Notification</Text>
+        </Pressable>
         <Animated.View
           style={[
             styles.heroSection,

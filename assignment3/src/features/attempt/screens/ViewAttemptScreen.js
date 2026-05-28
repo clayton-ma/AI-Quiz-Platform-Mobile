@@ -10,7 +10,7 @@ import ViewQuestionList from "../components/ViewQuestionList";
 // import LoadingState from "../../../components/ui/LoadingState";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import MainContainer from "../../../components/layout/MainContainer";
-import { BackgroundColor } from "../../../../constants";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * ViewAttemptPage component displays the results and details of a specific quiz attempt.
@@ -22,6 +22,7 @@ export default function ViewAttemptScreen({ route, navigation }) {
   const [quiz, setQuiz] = useState(null);
   const [attempt, setAttempt] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   /**
    * Loads the attempt data and associated quiz metadata on component mount.
@@ -57,13 +58,22 @@ export default function ViewAttemptScreen({ route, navigation }) {
         contentContainerStyle={styles.content}
       >
         {/* Attempt Summary Header */}
-        <Card containerStyle={styles.card}>
+        <Card
+          containerStyle={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.card,
+              borderColor: theme.colors.border,
+            },
+          ]}
+        >
           <View style={styles.headerRow}>
             <View style={styles.titleContainer}>
-              <Text h4 style={styles.quizName}>
+              <Text h4 style={[styles.quizName, { color: theme.colors.text }]}>
                 {quiz.name}
               </Text>
-              <Text style={styles.dateText}>
+              <Text
+                style={[styles.dateText, { color: theme.dark ? "#909296" : "#7F8C8D" }]}>
                 Submitted: {new Date(attempt.updatedAt).toLocaleString()}
               </Text>
             </View>
@@ -71,6 +81,7 @@ export default function ViewAttemptScreen({ route, navigation }) {
               value={attempt.status?.toUpperCase()}
               status="primary"
               badgeStyle={styles.statusBadge}
+              containerStyle={{ backgroundColor: theme.colors.primary }}
             />
           </View>
 
@@ -80,13 +91,18 @@ export default function ViewAttemptScreen({ route, navigation }) {
             {attempt.status === "submitted" &&
               (quiz.instant_result ? (
                 <View style={styles.scoreBox}>
-                  <Text style={styles.scoreLabel}>Final Score</Text>
-                  <Text style={styles.scoreValue}>
+                  <Text
+                    style={[styles.scoreLabel, { color: theme.dark ? "#909296" : "#7F8C8D" }]}>
+                    Final Score
+                  </Text>
+                  <Text
+                    style={[styles.scoreValue, { color: theme.colors.primary }]}>
                     {attempt.score !== null ? attempt.score : "N/A"}
                   </Text>
                 </View>
               ) : (
-                <Text style={styles.hiddenScoreText}>
+                <Text
+                  style={[styles.hiddenScoreText, { color: theme.dark ? "#909296" : "#95A5A6" }]}>
                   Score Hidden by Instructor
                 </Text>
               ))}
@@ -96,7 +112,9 @@ export default function ViewAttemptScreen({ route, navigation }) {
         {/* Detailed Question Review Section */}
         {quiz.instant_result && quiz.questions && quiz.questions.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>Question Review</Text>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+              Question Review
+            </Text>
             <ViewQuestionList
               questions={quiz.questions}
               selectedAnswers={attempt.answers}
@@ -156,7 +174,6 @@ const styles = StyleSheet.create({
   scoreValue: {
     fontSize: 32,
     fontWeight: "bold",
-    color: BackgroundColor,
   },
   hiddenScoreText: {
     fontStyle: "italic",

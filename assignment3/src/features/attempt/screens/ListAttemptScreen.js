@@ -9,7 +9,7 @@ import { fetchQuizById } from "../../quiz/services/quizApi";
 // import QuizDetails from "../components/QuizDetails";
 import AttemptItem from "../components/ListAttemptRow";
 import ListFooter from "../../../components/ui/ListFooter";
-import { BackgroundColor } from "../../../../constants";
+import { useTheme } from "../../../app/providers/ThemeContext";
 import QuizDetails from "../components/QuizDetails";
 import ListAttemptTable from "../components/ListAttemptTable";
 
@@ -25,6 +25,7 @@ export default function ListAttemptScreen({ route, navigation }) {
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const { theme } = useTheme();
 
   /**
    * Creates a new attempt for the current quiz and navigates to the attempt interface.
@@ -60,7 +61,7 @@ export default function ListAttemptScreen({ route, navigation }) {
         }
         onPress={handleStartNewAttempt}
         loading={actionLoading}
-        buttonStyle={styles.startBtn}
+        buttonStyle={[styles.startBtn, { backgroundColor: theme.colors.primary }]}
       />
 
       <ListAttemptTable quizId={quizId} />
@@ -73,7 +74,6 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   startBtn: {
-    backgroundColor: BackgroundColor,
     borderRadius: 8,
     marginTop: 15,
   },

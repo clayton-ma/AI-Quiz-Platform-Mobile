@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "../../app/providers/ThemeContext";
-// import { BackgroundColor } from "../../constants";
 
 /**
  * UserAvatar component displays the user's initials in a circular container.

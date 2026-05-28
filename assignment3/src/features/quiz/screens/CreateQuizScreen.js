@@ -12,15 +12,16 @@ import { createQuiz } from "../services/quizApi";
 import { fetchGroups } from "../../group/services/groupApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import MainContainer from "../../../components/layout/MainContainer";
-import { BackgroundColor } from "../../../../constants";
 import EditQuizMetadata from "../components/EditQuizMetadata";
 import CreateQuizForm from "../components/CreateQuizForm";
+import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * CreateQuiz component provides a form for users to initialize a new quiz.
  */
 export default function CreateQuiz({ navigation }) {
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
   const [groupsData, setGroupsData] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -77,7 +78,12 @@ export default function CreateQuiz({ navigation }) {
 
   return (
     <MainContainer title="Create New Quiz" navigation={navigation}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView 
+        contentContainerStyle={[
+          styles.container, 
+          { backgroundColor: theme.colors.background }
+        ]}
+      >
         <CreateQuizForm formData={formData} setFormData={setFormData} />
       </ScrollView>
     </MainContainer>
@@ -124,7 +130,6 @@ const styles = StyleSheet.create({
     color: "#7F8C8D",
   },
   submitBtn: {
-    backgroundColor: BackgroundColor,
     borderRadius: 8,
     paddingVertical: 12,
   },

@@ -10,7 +10,6 @@ import {
 import MainContainer from "../../../components/layout/MainContainer";
 import { Icon, Card } from "react-native-elements";
 import { useTheme } from "../../../app/providers/ThemeContext";
-import { BackgroundColor } from "../../../../constants";
 import DeviceNotification from "../../../components/ui/DeviceNotification";
 import { Pressable } from "react-native";
 import { schedulePushNotification } from "../../../components/ui/DeviceNotification";
@@ -159,7 +158,6 @@ const styles = StyleSheet.create({
     color: "#2C3E50",
     marginBottom: 15,
   },
-  highlight: { color: BackgroundColor },
   subtitle: {
     fontSize: 16,
     color: "#7f8c8d",

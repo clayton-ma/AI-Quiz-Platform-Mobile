@@ -1,22 +1,47 @@
 {
   "expo": {
+    "name": "assignment3",
+    "slug": "assignment3",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "scheme": "aiquizplatform",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
+      "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.assignment3",
       "associatedDomains": ["applinks:barossa02.ifn666.com"]
     },
     "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
       "package": "com.anonymous.assignment3",
       "intentFilters": [
         {
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            { "scheme": "https", "host": "barossa02.ifn666.com", "pathPrefix": "/assignment3" }
+            {
+              "scheme": "https",
+              "host": "barossa02.ifn666.com",
+              "pathPrefix": "/assignment3"
+            }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     }
   }
 }

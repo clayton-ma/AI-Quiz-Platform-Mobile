@@ -15,16 +15,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.assignment3",
+      "bundleIdentifier": "com.ifn666.barossa02",
       "associatedDomains": ["applinks:barossa02.ifn666.com"]
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.assignment3",
+      "package": "com.ifn666.barossa02",
       "intentFilters": [
         {
           "action": "VIEW",
@@ -33,7 +33,7 @@
             {
               "scheme": "https",
               "host": "barossa02.ifn666.com",
-              "pathPrefix": "/assignment3"
+              "pathPrefix": "assignment2/"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
@@ -42,6 +42,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f580abbb-54ed-4130-8b33-3c65427cf130"
+      }
     }
   }
 }

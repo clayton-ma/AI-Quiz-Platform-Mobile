@@ -8,11 +8,8 @@ import {
   Animated,
 } from "react-native";
 import MainContainer from "../../../components/layout/MainContainer";
-import { Icon, Card } from "react-native-elements";
+import { Icon } from "react-native-elements";
 import { useTheme } from "../../../app/providers/ThemeContext";
-import DeviceNotification from "../../../components/ui/DeviceNotification";
-import { Pressable } from "react-native";
-import { schedulePushNotification } from "../../../components/ui/DeviceNotification";
 
 const features = [
   {
@@ -41,8 +38,6 @@ const features = [
   },
 ];
 
-const { width } = Dimensions.get("window");
-
 export default function About({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -67,9 +62,9 @@ export default function About({ navigation }) {
   return (
     <MainContainer title="About" isMain={true} navigation={navigation}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Pressable onPress={() => schedulePushNotification('Hello!', 'This is an instant notification',{"url":"google.com"})}>
-          <Text style={{ color: theme.colors.text, padding: 10, textAlign: 'center' }}>Test Notification</Text>
-        </Pressable>
+  
+
+
         <Animated.View
           style={[
             styles.heroSection,
@@ -95,16 +90,16 @@ export default function About({ navigation }) {
 
         <Animated.View style={[styles.featuresGrid, { opacity: fadeAnim }]}>
           {features.map((feature, index) => (
-            <View key={index} style={styles.featureCard}>
-              <Card
-                containerStyle={[
-                  styles.cardOverride,
-                  {
-                    backgroundColor: theme.colors.card,
-                    borderColor: theme.colors.border,
-                  },
-                ]}
-              >
+            <View
+              key={index}
+              style={[
+                styles.glassCard,
+                {
+                  backgroundColor: theme.dark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.7)",
+                  borderColor: theme.colors.border,
+                },
+              ]}
+            >
                 <View style={styles.cardContent}>
                   <View
                     style={[
@@ -138,7 +133,6 @@ export default function About({ navigation }) {
                     </Text>
                   </View>
                 </View>
-              </Card>
             </View>
           ))}
         </Animated.View>
@@ -148,7 +142,6 @@ export default function About({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8F9FA" },
   scrollContent: { padding: 20, paddingBottom: 40 },
   heroSection: { alignItems: "center", marginBottom: 40, marginTop: 20 },
   title: {
@@ -167,17 +160,20 @@ const styles = StyleSheet.create({
   featuresGrid: {
     flexDirection: "column",
   },
-  featureCard: { marginBottom: 15 },
-  cardOverride: {
-    marginHorizontal: 0,
-    marginVertical: 0,
-    padding: 15,
-    borderRadius: 20,
+  glassCard: {
+    marginBottom: 15,
+    padding: 20,
+    borderRadius: 24,
     borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
+    elevation: 2,
   },
   cardContent: {
     flexDirection: "row",
-    backdropFilter: "blur(10px)",
+    alignItems: "center",
   },
   textContainer: { flex: 1, marginLeft: 15 },
   iconContainer: {

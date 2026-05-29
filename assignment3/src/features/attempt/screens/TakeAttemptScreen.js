@@ -105,7 +105,7 @@ export default function TakeAttemptPage({ route, navigation }) {
   // if (loading) return <LoadingState />;
 
   return (
-    <MainContainer title="Take Attempt" navigation={navigation}>
+    <MainContainer title="Take Attempt" navigation={navigation} isMain={false}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}

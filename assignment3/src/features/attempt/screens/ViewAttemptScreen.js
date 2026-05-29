@@ -52,7 +52,7 @@ export default function ViewAttemptScreen({ route, navigation }) {
   if (!attempt || !quiz) return null;
 
   return (
-    <MainContainer title="Attempt Details" navigation={navigation}>
+    <MainContainer title="Attempt Details" navigation={navigation} isMain={false}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}

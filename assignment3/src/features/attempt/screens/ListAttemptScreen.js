@@ -32,7 +32,7 @@ export default function ListAttemptScreen({ route, navigation }) {
   };
 
   return (
-    <MainContainer title="Quiz Attempts" navigation={navigation}>
+    <MainContainer title="Quiz Attempts" navigation={navigation} isMain={false}>
       <View style={styles.container}>
         <View style={styles.glassWrapper}>
           <View

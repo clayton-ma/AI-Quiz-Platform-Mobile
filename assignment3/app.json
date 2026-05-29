@@ -1,5 +1,22 @@
 {
-  "ios": {
-    "bundleIdentifier": "com.anonymous.assignment3"
+  "expo": {
+    "scheme": "aiquizplatform",
+    "ios": {
+      "bundleIdentifier": "com.anonymous.assignment3",
+      "associatedDomains": ["applinks:barossa02.ifn666.com"]
+    },
+    "android": {
+      "package": "com.anonymous.assignment3",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            { "scheme": "https", "host": "barossa02.ifn666.com", "pathPrefix": "/assignment3" }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    }
   }
 }

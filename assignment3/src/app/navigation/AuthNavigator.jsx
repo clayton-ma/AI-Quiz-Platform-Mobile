@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { Icon } from "react-native-elements";
@@ -81,12 +80,10 @@ export default function AuthNavigator() {
   });
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator screenOptions={tabScreenOptions}>
-        <Tab.Screen name="About" component={AboutScreen} />
-        <Tab.Screen name="Login" component={LoginScreen} />
-        <Tab.Screen name="Register" component={RegisterScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator screenOptions={tabScreenOptions}>
+      <Tab.Screen name="About" component={AboutScreen} />
+      <Tab.Screen name="Login" component={LoginScreen} />
+      <Tab.Screen name="Register" component={RegisterScreen} />
+    </Tab.Navigator>
   );
 }

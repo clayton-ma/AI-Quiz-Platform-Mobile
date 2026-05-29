@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import { Icon } from "react-native-elements";
@@ -19,6 +18,7 @@ import ListAttempt from "../../features/attempt/screens/ListAttemptScreen";
 import TakeAttempt from "../../features/attempt/screens/TakeAttemptScreen";
 import ViewAttempt from "../../features/attempt/screens/ViewAttemptScreen";
 
+const RootStack = createStackNavigator();
 const QuizStack = createStackNavigator();
 const GroupStack = createStackNavigator();
 const UserStack = createStackNavigator();
@@ -35,16 +35,6 @@ function QuizScreen() {
       <QuizStack.Screen name="EditQuiz" component={EditQuiz} />
       <QuizStack.Screen name="CreateQuiz" component={CreateQuiz} />
     </QuizStack.Navigator>
-  );
-}
-
-function AttemptScreen() {
-  return (
-    <AttemptStack.Navigator screenOptions={stackScreenOptions}>
-      <AttemptStack.Screen name="ListAttempt" component={ListAttempt} />
-      <AttemptStack.Screen name="TakeAttempt" component={TakeAttempt} />
-      <AttemptStack.Screen name="ViewAttempt" component={ViewAttempt} />
-    </AttemptStack.Navigator>
   );
 }
 
@@ -67,6 +57,16 @@ function UserScreen() {
   );
 }
 
+function AttemptScreen() {
+  return (
+    <AttemptStack.Navigator screenOptions={stackScreenOptions}>
+      <AttemptStack.Screen name="ListAttempt" component={ListAttempt} />
+      <AttemptStack.Screen name="TakeAttempt" component={TakeAttempt} />
+      <AttemptStack.Screen name="ViewAttempt" component={ViewAttempt} />
+    </AttemptStack.Navigator>
+  );
+}
+
 // https://reactnavigation.org/docs/bottom-tab-navigator/
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +76,7 @@ const TAB_ICONS = {
   User: "person",
 };
 
-export default function TabNavigator() {
+function MainTabs() {
   const { theme } = useTheme();
   const tabScreenOptions = ({ route }) => ({
     headerShown: false,
@@ -97,17 +97,19 @@ export default function TabNavigator() {
   });
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator screenOptions={tabScreenOptions}>
-        <Tab.Screen name="Quiz" component={QuizScreen} />
-        <Tab.Screen name="Group" component={GroupScreen} />
-        <Tab.Screen name="User" component={UserScreen} />
-        <Tab.Screen 
-          name="Attempt" 
-          component={AttemptScreen} 
-          options={{ tabBarButton: () => null }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator screenOptions={tabScreenOptions}>
+      <Tab.Screen name="Quiz" component={QuizScreen} />
+      <Tab.Screen name="Group" component={GroupScreen} />
+      <Tab.Screen name="User" component={UserScreen} />
+    </Tab.Navigator>
+  );
+}
+
+export default function TabNavigator() {
+  return (
+    <RootStack.Navigator screenOptions={stackScreenOptions}>
+      <RootStack.Screen name="MainTabs" component={MainTabs} />
+      <RootStack.Screen name="Attempt" component={AttemptScreen} />
+    </RootStack.Navigator>
   );
 }

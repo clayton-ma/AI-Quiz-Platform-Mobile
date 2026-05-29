@@ -28,10 +28,11 @@ export default function ListAttemptRow(attempt) {
   };
 
   const scoreText =
-    attempt.score === undefined
-      ? "Not Released"
-      : attempt.status !== "submitted"
-        ? "Not Submitted"
+    attempt.status !== "submitted"
+      ? "Not Submitted"
+      :
+      attempt.score === undefined
+        ? "Not Released"
         : `${attempt.score}`;
 
   return (

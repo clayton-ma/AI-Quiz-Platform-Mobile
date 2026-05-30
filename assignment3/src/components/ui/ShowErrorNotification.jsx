@@ -1,5 +1,4 @@
 import ShowNotification from "./ShowNotification";
-import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
  * A utility function to display Express Validator errors using native Alerts.
@@ -8,11 +7,6 @@ import { useTheme } from "../../app/providers/ThemeContext";
  * @param {Object} errors - The error object containing message and cause.
  */
 export default function ShowErrorNotification(errors) {
-  // Note: Since this is a utility function, it should ideally be called 
-  // within a component or hook where useTheme() is accessible.
-  // If called outside of React context, this will throw an error.
-  const { theme } = useTheme();
-
   if (!errors || typeof errors !== "object") return;
   // {
   //    message: string
@@ -27,7 +21,6 @@ export default function ShowErrorNotification(errors) {
       title: "Error",
       message: message || "An unexpected error occurred",
       type: "error",
-      color: theme.colors.alertButtonText,
     });
     return;
   }
@@ -41,7 +34,6 @@ export default function ShowErrorNotification(errors) {
       title: "Validation Error",
       message: errorMessage.replace(/\n/g, "   ||   "),
       type: "error",
-      color: theme.colors.alertButtonText,
     });
   }
 }

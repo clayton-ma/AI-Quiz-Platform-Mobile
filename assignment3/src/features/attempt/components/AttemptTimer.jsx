@@ -1,84 +1,114 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * AttemptTimer component that handles countdown logic.
+ * AttemptTimer component provides a visual countdown for the quiz attempt.
  * 
- * @param {number} questionCount - Number of questions to calculate time (1 min per question)
- * @param {Function} onTimeUp - Callback function when timer reaches zero
- * @param {number} customTimeLimit - Optional custom time in seconds
+ * @param {number} questionCount - Used to calculate default time if no limit provided
+ * @param {Function} onTimeUp - Callback triggered when the timer hits zero
+ * @param {number} customTimeLimit - Optional specific time limit in seconds
+ * @param {number} minutesPerQuestion - Default minutes allocated per question (default 2)
  */
-export default function AttemptTimer({ questionCount = 0, onTimeUp, customTimeLimit }) {
+export default function AttemptTimer({
+    questionCount = 0,
+    onTimeUp,
+    customTimeLimit,
+    minutesPerQuestion = 2
+}) {
     const { theme } = useTheme();
 
-    // Calculate initial time: custom limit OR 1 minute per question
-    const initialTime = customTimeLimit || (questionCount > 0 ? questionCount * 60 : 600);
-    const [timeLeft, setTimeLeft] = useState(initialTime);
+    // Calculate total seconds: custom limit or (questions * minutes * 60)
+    const initialSeconds = customTimeLimit || (questionCount * minutesPerQuestion * 60);
+    const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
+    const timerRef = useRef(null);
 
     useEffect(() => {
-        if (timeLeft <= 0) {
-            if (onTimeUp) onTimeUp();
-            return;
-        }
-
-        const timerId = setInterval(() => {
-            setTimeLeft((prev) => prev - 1);
+        // Start the interval
+        timerRef.current = setInterval(() => {
+            setSecondsLeft((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current);
+                    return 0;
+                }
+                return prev - 1;
+            });
         }, 1000);
 
-        return () => clearInterval(timerId);
-    }, [timeLeft, onTimeUp]);
+        // Cleanup on unmount
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, []);
 
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    // Trigger onTimeUp callback when seconds reach 0
+    useEffect(() => {
+        if (secondsLeft === 0) {
+            if (onTimeUp) onTimeUp();
+        }
+    }, [secondsLeft, onTimeUp]);
+
+    // Format seconds into HH:MM:SS
+    const formatTime = (totalSeconds) => {
+        const hrs = Math.floor(totalSeconds / 3600);
+        const mins = Math.floor((totalSeconds % 3600) / 60);
+        const secs = totalSeconds % 60;
+
+        const parts = [];
+        if (hrs > 0) parts.push(hrs.toString().padStart(2, "0"));
+        parts.push(mins.toString().padStart(2, "0"));
+        parts.push(secs.toString().padStart(2, "0"));
+
+        return parts.join(":");
     };
 
-    const isLowTime = timeLeft < 60;
+    // Determine color based on urgency
+    const getTimerColor = () => {
+        if (secondsLeft < 60) return "#E74C3C"; // Red for last minute
+        if (secondsLeft < 300) return "#F39C12"; // Orange for last 5 mins
+        return theme.colors.primary;
+    };
 
     return (
-        <View
-            style={[
-                styles.timerContainer,
-                {
-                    backgroundColor: theme.colors.card,
-                    borderColor: isLowTime ? "#E74C3C" : theme.colors.border,
-                },
-            ]}
-        >
+        <View style={[
+            styles.container,
+            {
+                backgroundColor: theme.colors.card,
+                borderColor: getTimerColor()
+            }
+        ]}>
             <Icon
                 name="timer"
                 type="material"
                 size={20}
-                color={isLowTime ? "#E74C3C" : theme.colors.primary}
+                color={getTimerColor()}
             />
-            <Text
-                style={[
-                    styles.timerText,
-                    { color: isLowTime ? "#E74C3C" : theme.colors.text },
-                ]}
-            >
-                Time Remaining: {formatTime(timeLeft)}
+            <Text style={[
+                styles.timerText,
+                { color: getTimerColor() }
+            ]}>
+                {formatTime(secondsLeft)}
             </Text>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    timerContainer: {
+    container: {
         flexDirection: "row",
         alignItems: "center",
-        padding: 12,
-        borderRadius: 8,
-        borderWidth: 1,
-        marginBottom: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        borderWidth: 2,
         gap: 8,
+        minWidth: 110,
         justifyContent: "center",
     },
     timerText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: "bold",
+        fontFamily: "Courier", // Monospaced font for stable digits
     },
 });

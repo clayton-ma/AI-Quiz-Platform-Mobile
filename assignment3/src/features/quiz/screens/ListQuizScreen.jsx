@@ -3,9 +3,9 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
-  RefreshControl,
   View,
   Text,
+  SafeAreaView,
 } from "react-native";
 import QuizItem from "../components/QuizItem";
 import MainContainer from "../../../components/layout/MainContainer";
@@ -14,14 +14,14 @@ import FilterBar from "../../../components/ui/FilterBar";
 import { fetchQuizzes } from "../services/quizApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import CreateButton from "../../../components/ui/CreateButton";
-import ListFooter from "../../../components/ui/ListFooter";
 import { useTheme } from "../../../app/providers/ThemeContext";
+import ListQuiz from "../components/ListQuiz";
 
 export default function ListQuizScreen({ navigation }) {
   const { theme } = useTheme();
   const [keyword, setKeyword] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({ status: "All" });
-  const [displayData, setDisplayData] = useState([]);
+  const [displayData, setDisplayData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
@@ -51,7 +51,7 @@ export default function ListQuizScreen({ navigation }) {
 
       setLoading(true);
       try {
-        const params = {
+        const queryParams = {
           page: pageNum,
           limit: 10,
           search: keyword,
@@ -62,14 +62,14 @@ export default function ListQuizScreen({ navigation }) {
           sort: selectedFilters.sort,
         };
 
-        const response = await fetchQuizzes(params);
+        const response = await fetchQuizzes(queryParams);
         if (response) {
           const { data: newQuizzes, linkHeader } = response;
           setDisplayData((prev) =>
-            isRefresh ? newQuizzes : [...prev, ...newQuizzes],
+            isRefresh || prev === null ? newQuizzes : [...prev, ...newQuizzes],
           );
-          // Check if linkHeader contains 'rel="next"' to determine if more pages exist
-          setHasMore(!!linkHeader.next);
+          
+          setHasMore(!!linkHeader?.next);
           setPage(pageNum);
         }
       } catch (error) {
@@ -79,7 +79,7 @@ export default function ListQuizScreen({ navigation }) {
         setRefreshing(false);
       }
     },
-    [keyword, selectedFilters],
+    [keyword, selectedFilters, loading],
   );
 
   useEffect(() => {
@@ -99,38 +99,25 @@ export default function ListQuizScreen({ navigation }) {
 
   return (
     <MainContainer title="My Quizzes" navigation={navigation} isMain={true}>
-      <SearchBar
-        placeholder="Search quizzes..."
-        value={keyword}
-        onChangeText={(text) => setKeyword(text)}
-      />
-      <FilterBar
-        filters={filters}
-        selectedFilters={selectedFilters}
-        onFilterChange={handleFilterChange}
-      />
-      <FlatList
-        data={displayData}
-        renderItem={(item) => <QuizItem quiz={item} />}
-        keyExtractor={(item, index) =>
-          item._id?.toString() || item.id?.toString() || index.toString()
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListEmptyComponent={
-          !loading && (
-            <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyText, { color: theme.colors.text }]}>
-                No quizzes found
-              </Text>
-            </View>
-          )
-        }
-        ListFooterComponent={() => ListFooter(loading, refreshing)}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+      <View style={styles.container}>
+        <SearchBar
+          placeholder="Search quizzes..."
+          value={keyword}
+          onChangeText={setKeyword}
+        />
+        <FilterBar
+          filters={filters}
+          selectedFilters={selectedFilters}
+          onFilterChange={handleFilterChange}
+        />
+        <ListQuiz
+          quizzes={displayData}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          handleLoadMore={handleLoadMore}
+          loading={loading}
+        />
+      </View>
       <CreateButton handlePress={() => navigation.navigate("CreateQuiz")} />
     </MainContainer>
   );
@@ -139,6 +126,9 @@ export default function ListQuizScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  listContent: {
+    paddingBottom: 80,
   },
   emptyContainer: {
     flex: 1,

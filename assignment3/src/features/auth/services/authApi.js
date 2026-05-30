@@ -17,14 +17,25 @@ import * as SecureStore from "expo-secure-store";
  * @throws {Error} If the registration request fails or server returns an error.
  */
 export const registerUser = async (userInfo) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3000);
+
   // Call api
-  const response = await fetch(`${API_BASE_URL}/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userInfo),
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal: controller.signal,
+      body: JSON.stringify(userInfo),
+    });
+  } catch (error) {
+    throw new Error("Server maintenance, please try again later.");
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   // Error handling
   if (!response.ok) {
@@ -46,14 +57,25 @@ export const registerUser = async (userInfo) => {
 export const loginUser = async (loginInfo) => {
   // const {}=useAuth();
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3000);
+
   // Call api
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(loginInfo),
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal: controller.signal,
+      body: JSON.stringify(loginInfo),
+    });
+  } catch (error) {
+    throw new Error("Server maintenance, please try again later.");
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   // Error handling
   if (!response.ok) {

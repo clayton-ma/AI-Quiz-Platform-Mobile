@@ -24,6 +24,7 @@ import EditQuestionCard from "../components/EditQuestionCard";
 import EditQuizMetadata from "../components/EditQuizMetadata";
 import GenerateQuestionModal from "../components/GenerateQuestionModal";
 import { useTheme } from "../../../app/providers/ThemeContext";
+import ExportQuizButton from "../components/ExportQuiz";
 
 /**
  * Initial state structure for the quiz being edited.
@@ -101,22 +102,22 @@ function reducer(state, action) {
             content: q.content || "",
             options: q.options
               ? q.options.map((o) => ({
-                  temId: Math.random().toString(36).substring(7),
-                  content: o.content || "",
-                  is_correct: o.is_correct,
-                }))
+                temId: Math.random().toString(36).substring(7),
+                content: o.content || "",
+                is_correct: o.is_correct,
+              }))
               : [
-                  {
-                    temId: Math.random().toString(36).substring(7),
-                    content: "",
-                    is_correct: false,
-                  },
-                  {
-                    temId: Math.random().toString(36).substring(7),
-                    content: "",
-                    is_correct: false,
-                  },
-                ],
+                {
+                  temId: Math.random().toString(36).substring(7),
+                  content: "",
+                  is_correct: false,
+                },
+                {
+                  temId: Math.random().toString(36).substring(7),
+                  content: "",
+                  is_correct: false,
+                },
+              ],
           })),
         ],
       };
@@ -284,7 +285,7 @@ export default function EditQuiz({ route, navigation }) {
   }
 
   return (
-    <MainContainer title="Edit Quiz" navigation={navigation}>
+    <MainContainer title="Edit Quiz" navigation={navigation} isMain={false}>
       <View style={[styles.topActionsContainer, { backgroundColor: theme.colors.card, borderBottomColor: theme.colors.border }]}>
         <View style={styles.headerActionsRow}>
           <Button
@@ -336,6 +337,7 @@ export default function EditQuiz({ route, navigation }) {
           dispatch={dispatch}
           groupsData={groupsData}
         />
+        <ExportQuizButton quiz={state.metadata} />
 
         <Divider style={styles.divider} />
 
@@ -345,10 +347,10 @@ export default function EditQuiz({ route, navigation }) {
           </Text>
           <TouchableOpacity
             onPress={() => setGenerateOpen(true)}
-            style={styles.aiButton}
+            style={[styles.aiButton, { borderColor: BackgroundColor }]}
           >
             <Icon name="auto-fix-high" color={BackgroundColor} size={20} />
-            <Text style={styles.aiButtonText}>AI Generate</Text>
+            <Text style={[styles.aiButtonText, { color: BackgroundColor }]}>AI Generate</Text>
           </TouchableOpacity>
         </View>
 
@@ -409,7 +411,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#2C3E50" },
-  aiButton: { flexDirection: "row", alignItems: "center" },
-  aiButtonText: { color: "red", marginLeft: 5, fontWeight: "600" },
+  aiButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  aiButtonText: { marginLeft: 5, fontWeight: "bold" },
   addBtnContainer: { marginTop: 20 },
 });

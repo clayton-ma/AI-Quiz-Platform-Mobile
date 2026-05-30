@@ -1,75 +1,123 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { ListItem, Badge, Icon } from "react-native-elements";
+import { View, Text, StyleSheet } from "react-native";
+import { ListItem, Icon } from "react-native-elements";
 import QuizControlButton from "./QuizControlButton";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 export default function QuizItem({ quiz }) {
-  const navigation = useNavigation();
   const { theme } = useTheme();
-  const item = quiz.item;
-  const isPublished = item.status?.toLowerCase() === "published";
+
+  const isPublished = quiz.status?.toLowerCase() === "published";
+  const quizId = quiz.id || quiz._id;
 
   return (
     <View style={styles.outerContainer}>
       <ListItem
         containerStyle={[
-          styles.listItem,
+          styles.card,
           {
             backgroundColor: theme.dark
-              ? "rgba(255, 255, 255, 0.05)"
-              : "rgba(255, 255, 255, 0.8)",
+              ? "rgba(255,255,255,0.05)"
+              : "#FFFFFF",
             borderColor: theme.colors.border,
+            borderLeftColor: isPublished ? "#27AE60" : "#F39C12",
           },
         ]}
       >
-        <ListItem.Content>
-          <View style={styles.headerRow}>
-            <ListItem.Title
-              style={[styles.name, { color: theme.colors.text }]}
-              numberOfLines={1}
-            >
-              {item.name}
-            </ListItem.Title>
-          </View>
-          <View style={styles.badgeRow}>
-            <Badge
-              value={
-                item.status?.charAt(0).toUpperCase() + item.status?.slice(1)
-              }
-              status={isPublished ? "success" : "warning"}
-              badgeStyle={styles.badgeStyle}
-            />
-          </View>
-
-          <ListItem.Subtitle
-            style={[
-              styles.subtitle,
-              { color: theme.dark ? "#909296" : "#7F8C8D" },
-            ]}
-          >
-            Group: {item.groups?.length > 0 ? item.groups[0].name : "No Group"}
-          </ListItem.Subtitle>
-
+        <ListItem.Content style={styles.content}>
+          {/* Quiz Name */}
           <Text
+            numberOfLines={2}
             style={[
-              styles.lastUpdated,
-              { color: theme.dark ? "#5c5f66" : "#BDC3C7" },
+              styles.title,
+              {
+                color: theme.colors.text,
+              },
             ]}
           >
-            Last Updated: {new Date(item.updatedAt).toLocaleDateString()}
+            {quiz.name || "Untitled Quiz"}
           </Text>
+
+          {/* Status */}
+          <View style={styles.statusRow}>
+            <View
+              style={[
+                styles.statusDot,
+                {
+                  backgroundColor: isPublished
+                    ? "#27AE60"
+                    : "#F39C12",
+                },
+              ]}
+            />
+            <Text
+              style={[
+                styles.statusText,
+                {
+                  color: isPublished
+                    ? "#27AE60"
+                    : "#F39C12",
+                },
+              ]}
+            >
+              {isPublished ? "Published" : "Draft"}
+            </Text>
+          </View>
+
+          {/* Group */}
+          <View style={styles.infoRow}>
+            <Icon
+              name="groups"
+              type="material"
+              size={16}
+              color={theme.dark ? "#A0A0A0" : "#7F8C8D"}
+            />
+            <Text
+              style={[
+                styles.infoText,
+                {
+                  color: theme.dark ? "#B0B3B8" : "#7F8C8D",
+                },
+              ]}
+            >
+              {quiz.groups?.[0]?.name || "No Group"}
+            </Text>
+          </View>
+
+          {/* Updated Date */}
+          <View style={styles.infoRow}>
+            <Icon
+              name="schedule"
+              type="material"
+              size={16}
+              color={theme.dark ? "#8A8D91" : "#95A5A6"}
+            />
+            <Text
+              style={[
+                styles.dateText,
+                {
+                  color: theme.dark ? "#8A8D91" : "#95A5A6",
+                },
+              ]}
+            >
+              Updated{" "}
+              {quiz.updatedAt
+                ? new Date(quiz.updatedAt).toLocaleDateString()
+                : "N/A"}
+            </Text>
+          </View>
         </ListItem.Content>
-        <View style={styles.actions}>
+
+        {/* Actions */}
+        <View style={styles.actionContainer}>
           <QuizControlButton
-            quizId={item.id || item._id}
+            quizId={quizId}
             isPublished={isPublished}
-            instantResult={item.instant_result}
+            instantResult={quiz.instant_result}
           />
         </View>
-      </ListItem>
-    </View>
+      </ListItem >
+    </View >
   );
 }
 
@@ -78,49 +126,72 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  listItem: {
-    paddingVertical: 16,
+
+  card: {
     borderRadius: 16,
     borderWidth: 1,
-    elevation: 3,
+    borderLeftWidth: 5,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.08,
     shadowRadius: 8,
+    elevation: 4,
   },
-  headerRow: {
+
+  content: {
+    flex: 1,
+  },
+
+  title: {
+    fontSize: 18,
+    fontWeight: "700",
+    lineHeight: 24,
+  },
+
+  statusRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 2,
+    marginTop: 6,
+    marginBottom: 8,
   },
-  name: { fontSize: 18, fontWeight: "bold", flex: 1 },
-  badgeRow: {
-    flexDirection: "row",
-    marginTop: 2,
+
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
   },
-  badgeStyle: { borderRadius: 6, height: 22 },
-  subtitle: { marginTop: 6 },
-  resultRow: {
+
+  statusText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+
+  infoRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 4,
-    gap: 4,
+    marginTop: 6,
   },
-  resultText: { fontSize: 12, color: "#7F8C8D" },
-  lastUpdated: { fontSize: 10, marginTop: 4 },
-  actions: {
-    flexDirection: "row",
+
+  infoText: {
+    marginLeft: 8,
+    fontSize: 14,
+  },
+
+  dateText: {
+    marginLeft: 8,
+    fontSize: 12,
+  },
+
+  actionContainer: {
+    justifyContent: "center",
     alignItems: "center",
+    marginLeft: 12,
   },
-  editButton: {
-    padding: 8,
-    borderRadius: 20,
-  },
-  attemptButton: {
-    padding: 4,
-  },
-  publishAction: {
-    alignItems: "center",
-  },
-  actionLabel: { fontSize: 10, color: "#27AE60", fontWeight: "bold" },
 });

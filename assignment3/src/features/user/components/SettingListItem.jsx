@@ -14,13 +14,13 @@ export default function SettingListItem({ item }) {
       }}
       bottomDivider
     >
-      <Icon name={item.icon} color={theme.colors.primary} />
-      <ListItem.Content>
+      <Icon key="icon" name={item.icon} color={theme.colors.primary} />
+      <ListItem.Content key="content">
         <ListItem.Title style={{ color: theme.colors.text }}>
           {item.title}
         </ListItem.Title>
       </ListItem.Content>
-      <ListItem.Chevron />
+      <ListItem.Chevron key="chevron" />
     </ListItem>
   );
 }

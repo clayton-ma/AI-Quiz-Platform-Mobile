@@ -92,7 +92,7 @@ export default function FilterBar({
                         onPress={() => handleSelect(filter.key, value)}
                         containerStyle={{ backgroundColor: theme.colors.card }}
                       >
-                        <ListItem.Content>
+                        <ListItem.Content key="content">
                           <ListItem.Title
                             style={{
                               color: theme.colors.text,
@@ -104,7 +104,7 @@ export default function FilterBar({
                           </ListItem.Title>
                         </ListItem.Content>
                         {currentValue === value && (
-                          <Icon name="check" color={BackgroundColor} />
+                          <Icon key="check" name="check" color={BackgroundColor} />
                         )}
                       </ListItem>
                     ))}

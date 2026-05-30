@@ -76,13 +76,14 @@ export default function UserSettingList() {
           }}
           bottomDivider
         >
-          <Icon name="brightness-medium" color={theme.colors.primary} />
-          <ListItem.Content>
+          <Icon key="icon" name="brightness-medium" color={theme.colors.primary} />
+          <ListItem.Content key="content">
             <ListItem.Title style={{ color: theme.colors.text }}>
               Dark Mode
             </ListItem.Title>
           </ListItem.Content>
           <Switch
+            key="switch"
             value={theme.dark}
             onValueChange={() => updateThemeMode(theme.dark ? "light" : "dark")}
             trackColor={{ false: "#ddd", true: theme.colors.primary }}
@@ -98,8 +99,8 @@ export default function UserSettingList() {
             { backgroundColor: theme.colors.background },
           ]}
         >
-          <Icon name="logout" color="#fa5252" />
-          <ListItem.Content>
+          <Icon key="icon" name="logout" color="#fa5252" />
+          <ListItem.Content key="content">
             <ListItem.Title style={{ color: "#fa5252", fontWeight: "600" }}>
               Logout
             </ListItem.Title>

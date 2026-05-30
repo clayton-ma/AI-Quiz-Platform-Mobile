@@ -77,7 +77,7 @@ export default function CreateQuiz({ navigation }) {
   };
 
   return (
-    <MainContainer title="Create New Quiz" navigation={navigation}>
+    <MainContainer title="Create New Quiz" navigation={navigation} isMain={false}>
       <ScrollView 
         contentContainerStyle={[
           styles.container, 

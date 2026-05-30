@@ -8,6 +8,7 @@ import AttemptQuestionList from "../components/AttemptQuestionList";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import ShowNotification from "../../../components/ui/ShowNotification";
 import MainContainer from "../../../components/layout/MainContainer";
+import TimerSetting from "../components/TimerSetting";
 
 /**
  * TakeAttemptPage component allows users to answer questions in a quiz attempt.
@@ -119,6 +120,7 @@ export default function TakeAttemptPage({ route, navigation }) {
           loading={actionLoading}
         />
 
+        <TimerSetting questionCount={quiz?.questions?.length} />
         {/* List of interactive questions */}
         <AttemptQuestionList
           questions={quiz?.questions}

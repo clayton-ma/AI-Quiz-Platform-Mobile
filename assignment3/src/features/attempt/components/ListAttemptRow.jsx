@@ -43,7 +43,7 @@ export default function ListAttemptRow(attempt) {
         { backgroundColor: theme.colors.card, borderBottomColor: theme.colors.border },
       ]}
     >
-      <ListItem.Content>
+      <ListItem.Content key="content">
         <View style={styles.header}>
           <Badge
             value={attempt.status?.replace("_", " ").toUpperCase() || "UNKNOWN"}
@@ -64,7 +64,7 @@ export default function ListAttemptRow(attempt) {
         </View>
       </ListItem.Content>
 
-      <View style={styles.actions}>
+      <View key="actions" style={styles.actions}>
         {attempt.status === "saved" ? (
           <TouchableOpacity
             onPress={() =>

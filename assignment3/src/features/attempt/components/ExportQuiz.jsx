@@ -115,7 +115,7 @@ export default function ExportQuizButton({ quizId }) {
             ) : (
                 <>
                     <Icon name="picture-as-pdf" type="material" size={20} color={theme.colors.primary} />
-                    <Text style={[styles.text, { color: theme.colors.primary }]}>Export PDF</Text>
+                    <Text style={[styles.text, { color: theme.colors.primary }]}>Export Quiz to PDF</Text>
                 </>
             )}
         </TouchableOpacity>
@@ -126,11 +126,11 @@ const styles = StyleSheet.create({
     button: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 8,
         gap: 6,
-        alignSelf: 'flex-start',
     },
     text: {
         fontSize: 14,

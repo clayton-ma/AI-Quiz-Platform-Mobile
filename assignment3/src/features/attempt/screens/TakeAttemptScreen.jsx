@@ -9,6 +9,7 @@ import ShowErrorNotification from "../../../components/ui/ShowErrorNotification"
 import ShowNotification from "../../../components/ui/ShowNotification";
 import MainContainer from "../../../components/layout/MainContainer";
 import TimerSetting from "../components/TimerSetting";
+import StabilityGuard from "../components/SensorAlert";
 
 /**
  * TakeAttemptPage component allows users to answer questions in a quiz attempt.
@@ -111,6 +112,7 @@ export default function TakeAttemptPage({ route, navigation }) {
         style={styles.container}
         contentContainerStyle={styles.content}
       >
+        <StabilityGuard />
         {/* Header with Quiz info and Action buttons */}
         <AttemptDetails
           quiz={quiz}

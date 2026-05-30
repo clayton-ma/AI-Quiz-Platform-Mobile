@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 import { toggleInstantResult } from "../services/quizApi";
 
 export default function QuizControlButton({
@@ -17,9 +17,7 @@ export default function QuizControlButton({
     try {
       await toggleInstantResult({ quizId, instant_result: newValue });
       setLocalInstantResult(newValue);
-    } catch (error) {
-      console.error("Error toggling instant result:", error);
-    }
+    } catch (error) {}
   };
 
   return (

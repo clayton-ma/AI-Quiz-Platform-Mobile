@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 import QuizControlButton from "./QuizControlButton";
 import { useTheme } from "../../../app/providers/ThemeContext";
 

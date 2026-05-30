@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   Switch,
 } from "react-native";
-import { Input, Button, Text, Icon, CheckBox } from "react-native-elements";
+import { Input, Button, Text, Icon, CheckBox } from "@rneui/themed";
 // import MultiSelect from "react-native-multiple-select";
 import { createQuiz } from "../services/quizApi";
 import { fetchGroups } from "../../group/services/groupApi";
@@ -77,11 +77,15 @@ export default function CreateQuiz({ navigation }) {
   };
 
   return (
-    <MainContainer title="Create New Quiz" navigation={navigation} isMain={false}>
-      <ScrollView 
+    <MainContainer
+      title="Create New Quiz"
+      navigation={navigation}
+      isMain={false}
+    >
+      <ScrollView
         contentContainerStyle={[
-          styles.container, 
-          { backgroundColor: theme.colors.background }
+          styles.container,
+          { backgroundColor: theme.colors.background },
         ]}
       >
         <CreateQuizForm formData={formData} setFormData={setFormData} />

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { Button } from "react-native-elements";
+import { Button } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
@@ -30,8 +30,17 @@ export default function ConfirmDialog({
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={[styles.dialog, { backgroundColor: theme.colors.card }]}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
-          <Text style={[styles.message, { color: theme.dark ? "#909296" : "#7F8C8D" }]}>{message}</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            {title}
+          </Text>
+          <Text
+            style={[
+              styles.message,
+              { color: theme.dark ? "#909296" : "#7F8C8D" },
+            ]}
+          >
+            {message}
+          </Text>
           <View style={styles.actions}>
             <Button
               title={cancelText}

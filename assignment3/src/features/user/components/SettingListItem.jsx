@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 export default function SettingListItem({ item }) {

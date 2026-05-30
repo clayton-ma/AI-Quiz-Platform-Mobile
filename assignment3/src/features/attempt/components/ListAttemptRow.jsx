@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Icon, Badge, ListItem } from "react-native-elements";
+import { Icon, Badge } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
@@ -30,20 +30,21 @@ export default function ListAttemptRow(attempt) {
   const scoreText =
     attempt.status !== "submitted"
       ? "Not Submitted"
-      :
-      attempt.score === undefined
+      : attempt.score === undefined
         ? "Not Released"
         : `${attempt.score}`;
 
   return (
-    <ListItem
-      bottomDivider
-      containerStyle={[
+    <View
+      style={[
         styles.container,
-        { backgroundColor: theme.colors.card, borderBottomColor: theme.colors.border },
+        {
+          backgroundColor: theme.colors.card,
+          borderBottomColor: theme.colors.border,
+        },
       ]}
     >
-      <ListItem.Content key="content">
+      <View style={styles.content}>
         <View style={styles.header}>
           <Badge
             value={attempt.status?.replace("_", " ").toUpperCase() || "UNKNOWN"}
@@ -51,7 +52,9 @@ export default function ListAttemptRow(attempt) {
             badgeStyle={styles.badge}
             textStyle={styles.badgeText}
           />
-          <Text style={[styles.date, { color: theme.dark ? "#999" : "#7F8C8D" }]}>
+          <Text
+            style={[styles.date, { color: theme.dark ? "#999" : "#7F8C8D" }]}
+          >
             {new Date(attempt.updatedAt).toLocaleString()}
           </Text>
         </View>
@@ -62,7 +65,7 @@ export default function ListAttemptRow(attempt) {
             {scoreText}
           </Text>
         </View>
-      </ListItem.Content>
+      </View>
 
       <View key="actions" style={styles.actions}>
         {attempt.status === "saved" ? (
@@ -86,13 +89,20 @@ export default function ListAttemptRow(attempt) {
           </TouchableOpacity>
         )}
       </View>
-    </ListItem>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    borderBottomWidth: 1,
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
   },
   header: {
     flexDirection: "row",

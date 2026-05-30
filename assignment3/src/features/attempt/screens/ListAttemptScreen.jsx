@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Icon } from "react-native-elements";
+import { Button, Icon } from "@rneui/themed";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import MainContainer from "../../../components/layout/MainContainer";
 import { createAttempt } from "../services/attemptApi";
@@ -39,7 +39,10 @@ export default function ListAttemptScreen({ route, navigation }) {
           <View
             style={[
               styles.glassContainer,
-              { borderColor: theme.colors.border, backgroundColor: theme.colors.card },
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
             ]}
           >
             <QuizDetails quizId={quizId} />
@@ -51,7 +54,11 @@ export default function ListAttemptScreen({ route, navigation }) {
             <Button
               title="Start New Attempt"
               icon={
-                <Icon name="play-arrow" color="white" style={{ marginRight: 8 }} />
+                <Icon
+                  name="play-arrow"
+                  color="white"
+                  style={{ marginRight: 8 }}
+                />
               }
               onPress={handleStartNewAttempt}
               loading={actionLoading}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Text, Badge, Divider, Card } from "react-native-elements";
+import { Text, Badge, Divider, Card } from "@rneui/themed";
 import { fetchAttemptById } from "../services/attemptApi";
 import {
   fetchQuizByIdForEdit,
@@ -52,7 +52,11 @@ export default function ViewAttemptScreen({ route, navigation }) {
   if (!attempt || !quiz) return null;
 
   return (
-    <MainContainer title="Attempt Details" navigation={navigation} isMain={false}>
+    <MainContainer
+      title="Attempt Details"
+      navigation={navigation}
+      isMain={false}
+    >
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -73,7 +77,11 @@ export default function ViewAttemptScreen({ route, navigation }) {
                 {quiz.name}
               </Text>
               <Text
-                style={[styles.dateText, { color: theme.dark ? "#909296" : "#7F8C8D" }]}>
+                style={[
+                  styles.dateText,
+                  { color: theme.dark ? "#909296" : "#7F8C8D" },
+                ]}
+              >
                 Submitted: {new Date(attempt.updatedAt).toLocaleString()}
               </Text>
             </View>
@@ -92,17 +100,26 @@ export default function ViewAttemptScreen({ route, navigation }) {
               (quiz.instant_result ? (
                 <View style={styles.scoreBox}>
                   <Text
-                    style={[styles.scoreLabel, { color: theme.dark ? "#909296" : "#7F8C8D" }]}>
+                    style={[
+                      styles.scoreLabel,
+                      { color: theme.dark ? "#909296" : "#7F8C8D" },
+                    ]}
+                  >
                     Final Score
                   </Text>
                   <Text
-                    style={[styles.scoreValue, { color: theme.colors.primary }]}>
+                    style={[styles.scoreValue, { color: theme.colors.primary }]}
+                  >
                     {attempt.score !== null ? attempt.score : "N/A"}
                   </Text>
                 </View>
               ) : (
                 <Text
-                  style={[styles.hiddenScoreText, { color: theme.dark ? "#909296" : "#95A5A6" }]}>
+                  style={[
+                    styles.hiddenScoreText,
+                    { color: theme.dark ? "#909296" : "#95A5A6" },
+                  ]}
+                >
                   Score Hidden by Instructor
                 </Text>
               ))}

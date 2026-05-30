@@ -8,7 +8,7 @@ import {
   Animated,
 } from "react-native";
 import MainContainer from "../../../components/layout/MainContainer";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 const features = [
@@ -43,7 +43,6 @@ export default function About({ navigation }) {
   const slideAnim = useRef(new Animated.Value(30)).current;
   const { theme } = useTheme();
 
-
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -62,9 +61,6 @@ export default function About({ navigation }) {
   return (
     <MainContainer title="About" isMain={true} navigation={navigation}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-  
-
-
         <Animated.View
           style={[
             styles.heroSection,
@@ -95,44 +91,43 @@ export default function About({ navigation }) {
               style={[
                 styles.glassCard,
                 {
-                  backgroundColor: theme.dark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.7)",
+                  backgroundColor: theme.dark
+                    ? "rgba(255, 255, 255, 0.05)"
+                    : "rgba(255, 255, 255, 0.7)",
                   borderColor: theme.colors.border,
                 },
               ]}
             >
-                <View style={styles.cardContent}>
-                  <View
+              <View style={styles.cardContent}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor:
+                        feature.title === "AI Question Generation"
+                          ? "#E67E22"
+                          : theme.colors.primary,
+                    },
+                  ]}
+                >
+                  <Icon name={feature.icon} color="#fff" size={26} />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text
+                    style={[styles.featureTitle, { color: theme.colors.text }]}
+                  >
+                    {feature.title}
+                  </Text>
+                  <Text
                     style={[
-                      styles.iconContainer,
-                      {
-                        backgroundColor:
-                          feature.title === "AI Question Generation"
-                            ? "#E67E22"
-                            : theme.colors.primary,
-                      },
+                      styles.featureDescription,
+                      { color: theme.dark ? "#909296" : "#95a5a6" },
                     ]}
                   >
-                    <Icon name={feature.icon} color="#fff" size={26} />
-                  </View>
-                  <View style={styles.textContainer}>
-                    <Text
-                      style={[
-                        styles.featureTitle,
-                        { color: theme.colors.text },
-                      ]}
-                    >
-                      {feature.title}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.featureDescription,
-                        { color: theme.dark ? "#909296" : "#95a5a6" },
-                      ]}
-                    >
-                      {feature.description}
-                    </Text>
-                  </View>
+                    {feature.description}
+                  </Text>
                 </View>
+              </View>
             </View>
           ))}
         </Animated.View>

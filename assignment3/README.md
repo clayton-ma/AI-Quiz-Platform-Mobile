@@ -23,32 +23,33 @@ The application follows a standard client-server architecture using a feature-ba
 ## Dependencies
 
 Key dependencies used in this assignment:
-"@expo/ngrok": "^4.1.3",
-"@expo/vector-icons": "^15.1.1",
-"@react-native-picker/picker": "^2.11.4",
-"@react-navigation/bottom-tabs": "^7.15.11",
-"@react-navigation/native": "^7.2.2",
-"@react-navigation/stack": "^7.8.11",
-"expo": "~54.0.33",
-"expo-blur": "^56.0.3",
-"expo-constants": "~18.0.13",
-"expo-device": "~8.0.10",
-"expo-linking": "~8.0.12",
-"expo-notifications": "~0.32.17",
-"expo-print": "~15.0.8",
-"expo-secure-store": "^55.0.13",
-"expo-sensors": "~15.0.8",
-"expo-sharing": "~14.0.8",
-"expo-splash-screen": "~31.0.13",
-"expo-status-bar": "~3.0.9",
-"react": "19.1.0",
-"react-hook-form": "^7.76.0",
-"react-native": "0.81.5",
-"react-native-elements": "^3.4.3",
-"react-native-gesture-handler": "^2.31.2",
-"react-native-safe-area-context": "~5.6.0",
-"react-native-screens": "~4.16.0",
-"react-native-vector-icons": "^10.3.0"
+
+- `@expo/ngrok`: `^4.1.3`
+- `@expo/vector-icons`: `^15.1.1`
+- `@react-native-picker/picker`: `^2.11.4`
+- `@react-navigation/bottom-tabs`: `^7.15.11`
+- `@react-navigation/native`: `^7.2.2`
+- `@react-navigation/stack`: `^7.8.11`
+- `expo`: `~54.0.33`
+- `expo-blur`: `^56.0.3`
+- `expo-constants`: `~18.0.13`
+- `expo-device`: `~8.0.10`
+- `expo-linking`: `~8.0.12`
+- `expo-notifications`: `~0.32.17`
+- `expo-print`: `~15.0.8`
+- `expo-secure-store`: `^55.0.13`
+- `expo-sensors`: `~15.0.8`
+- `expo-sharing`: `~14.0.8`
+- `expo-splash-screen`: `~31.0.13`
+- `expo-status-bar`: `~3.0.9`
+- `react`: `19.1.0`
+- `react-hook-form`: `^7.76.0`
+- `react-native`: `0.81.5`
+- `react-native-elements`: `^3.4.3`
+- `react-native-gesture-handler`: `^2.31.2`
+- `react-native-safe-area-context`: `~5.6.0`
+- `react-native-screens`: `~4.16.0`
+- `react-native-vector-icons`: `^10.3.0`
 
 ## Installation & Setup
 
@@ -95,3 +96,11 @@ Please use the GitHub Issue Tracker to report bugs. To ensure a fast resolution,
 - **Endpoint**: The affected API endpoint (if applicable).
 - **Payload**: The request body or data used during the action.
 - **Logs**: The specific error message or status code received.
+
+## License
+
+This project is developed for educational purposes as part of the IFN666 unit at QUT. All rights reserved.
+
+## Contact
+
+Clayton Ma - [GitHub Profile](https://github.com/clayton-ma)

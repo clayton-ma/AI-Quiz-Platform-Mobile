@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 export default function CreateButton({ handlePress }) {
@@ -7,7 +7,10 @@ export default function CreateButton({ handlePress }) {
   const BackgroundColor = theme.colors.primary;
 
   return (
-    <TouchableOpacity style={[styles.fab, { backgroundColor: BackgroundColor }]} onPress={handlePress}>
+    <TouchableOpacity
+      style={[styles.fab, { backgroundColor: BackgroundColor }]}
+      onPress={handlePress}
+    >
       <Icon name="add" color="#fff" size={30} />
     </TouchableOpacity>
   );

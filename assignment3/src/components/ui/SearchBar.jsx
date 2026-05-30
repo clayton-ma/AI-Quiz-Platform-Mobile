@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { SearchBar as RNElementsSearchBar } from "react-native-elements";
+import { SearchBar as RNElementsSearchBar } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 /**

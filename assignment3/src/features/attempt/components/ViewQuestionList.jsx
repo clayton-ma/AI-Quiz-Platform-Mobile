@@ -12,20 +12,21 @@ import { useTheme } from "../../../app/providers/ThemeContext";
 export default function ViewQuestionList({ questions, selectedAnswers }) {
   const { theme } = useTheme();
   if (!questions || questions.length === 0) return null;
-  console.log("Rendering ViewQuestionList with questions:", questions);
 
   // Convert answers array to map if it's not already
   const answersMap = Array.isArray(selectedAnswers)
     ? selectedAnswers.reduce(
-      (acc, curr) => ({
-        ...acc,
-        [curr.question_id]: curr.selected_option_id,
-      }),
-      {},
-    )
+        (acc, curr) => ({
+          ...acc,
+          [curr.question_id]: curr.selected_option_id,
+        }),
+        {},
+      )
     : selectedAnswers || {};
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {/* Map through questions to display the result for each */}
       {questions.map((question, index) => (
         <ViewQuestion

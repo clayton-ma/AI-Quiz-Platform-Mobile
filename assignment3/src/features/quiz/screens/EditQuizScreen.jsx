@@ -9,7 +9,7 @@ import {
   Text,
   KeyboardAvoidingView,
 } from "react-native";
-import { Icon, Button, Divider } from "react-native-elements";
+import { Icon, Button, Divider } from "@rneui/themed";
 import MainContainer from "../../../components/layout/MainContainer";
 import {
   fetchQuizByIdForEdit,
@@ -242,7 +242,6 @@ export default function EditQuiz({ route, navigation }) {
         ...state.metadata,
         questions: state.questions,
       };
-      console.log(payload);
       await updateQuiz(quizId, payload);
 
       ShowNotification({

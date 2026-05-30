@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { Icon, Badge } from "react-native-elements";
+import { Icon, Badge } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
@@ -43,8 +43,15 @@ export default function AttemptDetails({
     >
       <View style={styles.headerRow}>
         <View style={styles.titleContainer}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{quiz.name || "Quiz Attempt"}</Text>
-          <Text style={[styles.subtitle, { color: theme.dark ? "#999" : "#7F8C8D" }]}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            {quiz.name || "Quiz Attempt"}
+          </Text>
+          <Text
+            style={[
+              styles.subtitle,
+              { color: theme.dark ? "#999" : "#7F8C8D" },
+            ]}
+          >
             Started: {new Date(attempt.createdAt).toLocaleString()}
           </Text>
         </View>
@@ -56,7 +63,9 @@ export default function AttemptDetails({
         />
       </View>
 
-      <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+      <View
+        style={[styles.divider, { backgroundColor: theme.colors.border }]}
+      />
 
       <View style={styles.buttonGroup}>
         <TouchableOpacity
@@ -64,7 +73,9 @@ export default function AttemptDetails({
             styles.button,
             styles.saveButton,
             {
-              backgroundColor: theme.dark ? "rgba(41, 128, 185, 0.1)" : "#EBF5FB",
+              backgroundColor: theme.dark
+                ? "rgba(41, 128, 185, 0.1)"
+                : "#EBF5FB",
               borderColor: theme.colors.primary,
             },
           ]}
@@ -76,7 +87,11 @@ export default function AttemptDetails({
           ) : (
             <>
               <Icon name="save" size={18} color={theme.colors.primary} />
-              <Text style={[styles.saveButtonText, { color: theme.colors.primary }]}>Save</Text>
+              <Text
+                style={[styles.saveButtonText, { color: theme.colors.primary }]}
+              >
+                Save
+              </Text>
             </>
           )}
         </TouchableOpacity>

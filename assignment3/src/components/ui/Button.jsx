@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
-import { Button } from "react-native-elements";
+import { Button } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 /**

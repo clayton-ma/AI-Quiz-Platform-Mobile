@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import { Button, Icon, ListItem } from "react-native-elements";
+import { Button, Icon } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
@@ -81,32 +81,41 @@ export default function FilterBar({
                   style={styles.modalOverlay}
                   onPress={() => setVisibleModal(null)}
                 >
-                  <View style={[
-                    styles.modalContent, 
-                    { backgroundColor: theme.colors.card }
-                  ]}>
+                  <View
+                    style={[
+                      styles.modalContent,
+                      { backgroundColor: theme.colors.card },
+                    ]}
+                  >
                     {filter.options.map(({ value, label }) => (
-                      <ListItem
+                      <TouchableOpacity
                         key={value}
-                        bottomDivider
                         onPress={() => handleSelect(filter.key, value)}
-                        containerStyle={{ backgroundColor: theme.colors.card }}
+                        style={[
+                          styles.optionItem,
+                          { borderBottomColor: theme.colors.border },
+                        ]}
                       >
-                        <ListItem.Content key="content">
-                          <ListItem.Title
-                            style={{
+                        <Text
+                          style={[
+                            styles.optionText,
+                            {
                               color: theme.colors.text,
                               fontWeight:
                                 currentValue === value ? "bold" : "normal",
-                            }}
-                          >
-                            {label}
-                          </ListItem.Title>
-                        </ListItem.Content>
+                            },
+                          ]}
+                        >
+                          {label}
+                        </Text>
                         {currentValue === value && (
-                          <Icon key="check" name="check" color={BackgroundColor} />
+                          <Icon
+                            name="check"
+                            color={BackgroundColor}
+                            size={20}
+                          />
                         )}
-                      </ListItem>
+                      </TouchableOpacity>
                     ))}
                   </View>
                 </TouchableOpacity>
@@ -150,5 +159,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: "hidden",
     maxHeight: "60%",
+  },
+  optionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 15,
+    borderBottomWidth: 0.5,
+  },
+  optionText: {
+    fontSize: 16,
+    flex: 1,
   },
 });

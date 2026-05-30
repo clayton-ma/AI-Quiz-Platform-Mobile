@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/themed";
 
 import Login from "../../features/auth/screens/LoginScreen";
 import Register from "../../features/auth/screens/RegisterScreen";

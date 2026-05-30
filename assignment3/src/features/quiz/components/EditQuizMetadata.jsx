@@ -21,9 +21,7 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
         if (adminGroups) {
           setGroupsData(adminGroups);
         }
-      } catch (error) {
-        console.error("Error fetching groups:", error);
-      }
+      } catch (error) {}
     };
     loadGroups();
   }, []);
@@ -71,17 +69,29 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
     <View
       style={[
         styles.container,
-        { backgroundColor: theme.colors.card, borderColor: theme.colors.border },
+        {
+          backgroundColor: theme.colors.card,
+          borderColor: theme.colors.border,
+        },
       ]}
     >
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <MaterialIcons name="settings" size={20} color={theme.colors.primary} />
+          <MaterialIcons
+            name="settings"
+            size={20}
+            color={theme.colors.primary}
+          />
           <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
             Quiz Configuration
           </Text>
         </View>
-        <View style={[styles.badge, { backgroundColor: theme.dark ? "#1a365d" : "#e6f7ff" }]}>
+        <View
+          style={[
+            styles.badge,
+            { backgroundColor: theme.dark ? "#1a365d" : "#e6f7ff" },
+          ]}
+        >
           <Text style={[styles.badgeText, { color: theme.colors.primary }]}>
             {local.status || "Draft"}
           </Text>
@@ -112,7 +122,15 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
         Description
       </Text>
       <TextInput
-        style={[styles.input, styles.textArea, { color: theme.colors.text, borderColor: theme.colors.border, backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff" }]}
+        style={[
+          styles.input,
+          styles.textArea,
+          {
+            color: theme.colors.text,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+          },
+        ]}
         placeholder="Enter quiz description"
         placeholderTextColor={theme.dark ? "#666" : "#999"}
         value={local.description || ""}
@@ -161,7 +179,12 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
           <Text style={[styles.switchLabel, { color: theme.colors.text }]}>
             Show instant results
           </Text>
-          <Text style={[styles.switchDescription, { color: theme.dark ? "#999" : "#666" }]}>
+          <Text
+            style={[
+              styles.switchDescription,
+              { color: theme.dark ? "#999" : "#666" },
+            ]}
+          >
             Students see scores immediately after submission
           </Text>
         </View>

@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Platform,
 } from "react-native";
-import { Button, Icon } from "react-native-elements";
+import { Button, Icon } from "@rneui/themed";
 import MainContainer from "../../../components/layout/MainContainer";
 import FormContainer from "../../../components/ui/FormContainer";
 import { createGroup } from "../services/groupApi";

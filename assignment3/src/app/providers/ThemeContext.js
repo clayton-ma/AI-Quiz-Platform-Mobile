@@ -20,9 +20,7 @@ export const ThemeProvider = ({ children }) => {
         if (savedTheme) {
           setThemeMode(savedTheme);
         }
-      } catch (error) {
-        console.error("Failed to load theme preference", error);
-      }
+      } catch (error) {}
     };
     loadTheme();
   }, []);
@@ -35,9 +33,7 @@ export const ThemeProvider = ({ children }) => {
     setThemeMode(mode);
     try {
       await SecureStore.setItemAsync("theme_preference", mode);
-    } catch (error) {
-      console.error("Failed to save theme preference", error);
-    }
+    } catch (error) {}
   };
 
   // Determine the active theme based on mode and device settings

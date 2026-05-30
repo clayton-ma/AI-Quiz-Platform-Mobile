@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, Icon } from "react-native-elements";
+import { Header, Icon } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 export default function MainHeader({ navigation, isMain, title }) {

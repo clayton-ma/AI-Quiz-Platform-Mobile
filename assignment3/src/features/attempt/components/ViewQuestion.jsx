@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Badge, Icon } from "react-native-elements";
+import { Badge, Icon } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
@@ -67,9 +67,11 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
                 : "#FDFEFE",
             },
             hasCorrectAnswerInfo &&
-            isCorrect && {
-              backgroundColor: theme.dark ? "rgba(39, 174, 96, 0.1)" : "#F1F9F4",
-            },
+              isCorrect && {
+                backgroundColor: theme.dark
+                  ? "rgba(39, 174, 96, 0.1)"
+                  : "#F1F9F4",
+              },
           ];
 
           return (

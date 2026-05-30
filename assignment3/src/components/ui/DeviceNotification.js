@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { Platform, Linking } from 'react-native';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-import * as Device from 'expo-device';
+import { useEffect } from "react";
+import { Platform, Linking } from "react-native";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import * as Device from "expo-device";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -15,16 +15,16 @@ Notifications.setNotificationHandler({
 
 export function useNotificationObserver() {
   useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const { data } = response.notification.request.content;
-      
-      // Example: Handle deep linking or internal navigation based on data
-      if (data.url) {
-        Linking.openURL(data.url);
-      }
-      
-      console.log('Notification clicked with data:', data);
-    });
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const { data } = response.notification.request.content;
+
+        // Example: Handle deep linking or internal navigation based on data
+        if (data.url) {
+          Linking.openURL(data.url);
+        }
+      },
+    );
 
     return () => {
       subscription.remove();
@@ -32,41 +32,50 @@ export function useNotificationObserver() {
   }, []);
 }
 
-export async function schedulePushNotification(title, body, delay = 0, data = {}) {
+export async function schedulePushNotification(
+  title,
+  body,
+  delay = 0,
+  data = {},
+) {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
       body: body,
       data: data,
     },
-    trigger: delay > 0 ? {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: delay,
-    } : null,
+    trigger:
+      delay > 0
+        ? {
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+            seconds: delay,
+          }
+        : null,
   });
 }
 
 export async function registerForPushNotificationsAsync() {
   let token;
 
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('myNotificationChannel', {
-      name: 'A channel is needed for the permissions prompt to appear',
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("myNotificationChannel", {
+      name: "A channel is needed for the permissions prompt to appear",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
+      lightColor: "#FF231F7C",
     });
   }
 
   if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
       return;
     }
     // Learn more about projectId:
@@ -74,27 +83,27 @@ export async function registerForPushNotificationsAsync() {
     // EAS projectId is used here.
     try {
       const projectId =
-        Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+        Constants?.expoConfig?.extra?.eas?.projectId ??
+        Constants?.easConfig?.projectId;
       if (!projectId) {
-        throw new Error('Project ID not found');
+        throw new Error("Project ID not found");
       }
       token = (
         await Notifications.getExpoPushTokenAsync({
           projectId,
         })
       ).data;
-      console.log(token);
     } catch (e) {
       token = `${e}`;
     }
   } else {
-    // Simulator/Emulator doesn't support Expo push tokens, 
+    // Simulator/Emulator doesn't support Expo push tokens,
     // but we can still request local notification permissions.
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    if (existingStatus !== 'granted') {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    if (existingStatus !== "granted") {
       await Notifications.requestPermissionsAsync();
     }
-    console.log('Must use physical device for Push Notifications');
   }
 
   return token;

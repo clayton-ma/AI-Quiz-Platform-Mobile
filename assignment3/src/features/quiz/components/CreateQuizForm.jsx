@@ -37,7 +37,6 @@ export default function CreateQuizForm() {
           setGroupsData(adminGroups);
         }
       } catch (error) {
-        console.error("Error fetching groups:", error);
       } finally {
         setLoading(false);
       }
@@ -61,7 +60,6 @@ export default function CreateQuizForm() {
       const quizId = response._id || response.id;
       navigation.navigate("EditQuiz", { quizId });
     } catch (error) {
-      console.error("Error creating quiz:", error);
     } finally {
       setLoading(false);
     }
@@ -78,9 +76,21 @@ export default function CreateQuizForm() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-        <Text style={[styles.label, { color: theme.colors.text }]}>Quiz Title</Text>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor: theme.colors.card,
+            borderColor: theme.colors.border,
+          },
+        ]}
+      >
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Quiz Title
+        </Text>
         <TextInput
           style={[
             styles.input,
@@ -97,7 +107,9 @@ export default function CreateQuizForm() {
           disabled={loading}
         />
 
-        <Text style={[styles.label, { color: theme.colors.text }]}>Description</Text>
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Description
+        </Text>
         <TextInput
           style={[
             styles.input,
@@ -117,7 +129,9 @@ export default function CreateQuizForm() {
           disabled={loading}
         />
 
-        <Text style={[styles.label, { color: theme.colors.text }]}>Assign to Groups</Text>
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Assign to Groups
+        </Text>
         <View style={styles.groupsList}>
           {groupsData.map((g) => {
             const isSelected = formData.groupIds.includes(g._id || g.id);
@@ -151,8 +165,15 @@ export default function CreateQuizForm() {
 
         <View style={styles.switchContainer}>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.switchLabel, { color: theme.colors.text }]}>Show instant results</Text>
-            <Text style={[styles.switchDesc, { color: theme.dark ? "#999" : "#666" }]}>
+            <Text style={[styles.switchLabel, { color: theme.colors.text }]}>
+              Show instant results
+            </Text>
+            <Text
+              style={[
+                styles.switchDesc,
+                { color: theme.dark ? "#999" : "#666" },
+              ]}
+            >
               Students see scores immediately
             </Text>
           </View>
@@ -167,7 +188,11 @@ export default function CreateQuizForm() {
         </View>
 
         <TouchableOpacity
-          style={[styles.submitButton, { backgroundColor: theme.colors.primary }, loading && styles.disabledButton]}
+          style={[
+            styles.submitButton,
+            { backgroundColor: theme.colors.primary },
+            loading && styles.disabledButton,
+          ]}
           onPress={handleSubmit}
           disabled={loading}
         >

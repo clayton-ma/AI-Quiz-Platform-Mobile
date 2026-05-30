@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import { Icon, Badge } from "react-native-elements";
+import { Icon, Badge } from "@rneui/themed";
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { fetchQuizMetadata } from "../../quiz/services/quizApi";
@@ -21,9 +21,7 @@ export default function QuizDetails({ quizId }) {
     try {
       const response = await fetchQuizMetadata(quizId);
       setQuizMetaData(response);
-    } catch (error) {
-      console.error("Error fetching quiz metadata:", error);
-    }
+    } catch (error) {}
   }, [quizId]);
 
   useFocusEffect(
@@ -37,7 +35,9 @@ export default function QuizDetails({ quizId }) {
       style={[
         styles.container,
         {
-          backgroundColor: theme.dark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.7)",
+          backgroundColor: theme.dark
+            ? "rgba(255, 255, 255, 0.05)"
+            : "rgba(255, 255, 255, 0.7)",
           borderColor: theme.colors.border,
           borderWidth: 1,
         },
@@ -45,8 +45,7 @@ export default function QuizDetails({ quizId }) {
     >
       <View style={styles.headerRow}>
         <View style={styles.titleContainer}>
-          <Text
-            style={[styles.title, { color: theme.colors.primary }]}>
+          <Text style={[styles.title, { color: theme.colors.primary }]}>
             {quizMetaData?.name || "Untitled Quiz"}
           </Text>
         </View>
@@ -72,8 +71,7 @@ export default function QuizDetails({ quizId }) {
           color={theme.dark ? "#999" : "#7F8C8D"}
           containerStyle={styles.infoIcon}
         />
-        <Text
-          style={[styles.description, { color: theme.colors.text }]}>
+        <Text style={[styles.description, { color: theme.colors.text }]}>
           {quizMetaData?.description ||
             "No description provided for this quiz."}
         </Text>

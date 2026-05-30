@@ -8,7 +8,7 @@ import {
   Switch,
   TouchableOpacity,
 } from "react-native";
-import { Icon, Divider } from "react-native-elements";
+import { Icon, Divider } from "@rneui/themed";
 import { useAuth } from "../../../app/providers/AuthContext";
 import { useTheme } from "../../../app/providers/ThemeContext";
 import UserAvatar from "../../../components/ui/UserAvatar";

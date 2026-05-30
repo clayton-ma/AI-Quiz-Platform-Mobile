@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { ListItem, Icon } from "react-native-elements";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Icon } from "react-native-elements";
 import QuizControlButton from "./QuizControlButton";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
@@ -12,19 +12,17 @@ export default function QuizItem({ quiz }) {
 
   return (
     <View style={styles.outerContainer}>
-      <ListItem
-        containerStyle={[
+      <View
+        style={[
           styles.card,
           {
-            backgroundColor: theme.dark
-              ? "rgba(255,255,255,0.05)"
-              : "#FFFFFF",
+            backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#FFFFFF",
             borderColor: theme.colors.border,
             borderLeftColor: isPublished ? "#27AE60" : "#F39C12",
           },
         ]}
       >
-        <ListItem.Content style={styles.content}>
+        <View style={styles.content}>
           {/* Quiz Name */}
           <Text
             numberOfLines={2}
@@ -44,9 +42,7 @@ export default function QuizItem({ quiz }) {
               style={[
                 styles.statusDot,
                 {
-                  backgroundColor: isPublished
-                    ? "#27AE60"
-                    : "#F39C12",
+                  backgroundColor: isPublished ? "#27AE60" : "#F39C12",
                 },
               ]}
             />
@@ -54,9 +50,7 @@ export default function QuizItem({ quiz }) {
               style={[
                 styles.statusText,
                 {
-                  color: isPublished
-                    ? "#27AE60"
-                    : "#F39C12",
+                  color: isPublished ? "#27AE60" : "#F39C12",
                 },
               ]}
             >
@@ -106,7 +100,7 @@ export default function QuizItem({ quiz }) {
                 : "N/A"}
             </Text>
           </View>
-        </ListItem.Content>
+        </View>
 
         {/* Actions */}
         <View style={styles.actionContainer}>
@@ -116,8 +110,8 @@ export default function QuizItem({ quiz }) {
             instantResult={quiz.instant_result}
           />
         </View>
-      </ListItem >
-    </View >
+      </View>
+    </View>
   );
 }
 
@@ -128,6 +122,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
+    flexDirection: "row",
     borderRadius: 16,
     borderWidth: 1,
     borderLeftWidth: 5,

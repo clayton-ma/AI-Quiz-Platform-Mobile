@@ -25,7 +25,7 @@ export default function QuizControlButton({
   return (
     <View style={styles.actions}>
       {isPublished ? (
-        <>
+        <View>
           <TouchableOpacity
             style={styles.attemptButton}
             onPress={() =>
@@ -55,7 +55,7 @@ export default function QuizControlButton({
               </Text>
             </View>
           </TouchableOpacity>
-        </>
+        </View>
       ) : (
         <TouchableOpacity
           style={styles.editButton}

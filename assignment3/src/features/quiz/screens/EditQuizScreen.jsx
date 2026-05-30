@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
   Text,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Icon, Button, Divider } from "react-native-elements";
 import MainContainer from "../../../components/layout/MainContainer";
@@ -15,6 +16,7 @@ import {
   updateQuiz,
   publishQuiz,
 } from "../services/quizApi";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { fetchGroups } from "../../group/services/groupApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
@@ -101,22 +103,22 @@ function reducer(state, action) {
             content: q.content || "",
             options: q.options
               ? q.options.map((o) => ({
-                temId: Math.random().toString(36).substring(7),
-                content: o.content || "",
-                is_correct: o.is_correct,
-              }))
+                  temId: Math.random().toString(36).substring(7),
+                  content: o.content || "",
+                  is_correct: o.is_correct,
+                }))
               : [
-                {
-                  temId: Math.random().toString(36).substring(7),
-                  content: "",
-                  is_correct: false,
-                },
-                {
-                  temId: Math.random().toString(36).substring(7),
-                  content: "",
-                  is_correct: false,
-                },
-              ],
+                  {
+                    temId: Math.random().toString(36).substring(7),
+                    content: "",
+                    is_correct: false,
+                  },
+                  {
+                    temId: Math.random().toString(36).substring(7),
+                    content: "",
+                    is_correct: false,
+                  },
+                ],
           })),
         ],
       };
@@ -285,7 +287,15 @@ export default function EditQuiz({ route, navigation }) {
 
   return (
     <MainContainer title="Edit Quiz" navigation={navigation} isMain={false}>
-      <View style={[styles.topActionsContainer, { backgroundColor: theme.colors.card, borderBottomColor: theme.colors.border }]}>
+      <View
+        style={[
+          styles.topActionsContainer,
+          {
+            backgroundColor: theme.colors.card,
+            borderBottomColor: theme.colors.border,
+          },
+        ]}
+      >
         <View style={styles.headerActionsRow}>
           <Button
             title="Publish Quiz"
@@ -329,8 +339,13 @@ export default function EditQuiz({ route, navigation }) {
           />
         </View>
       </View>
-
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContainer}
+        enableOnAndroid
+        extraScrollHeight={80}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <EditQuizMetadata
           metadata={state.metadata}
           dispatch={dispatch}
@@ -348,7 +363,9 @@ export default function EditQuiz({ route, navigation }) {
             style={[styles.aiButton, { borderColor: BackgroundColor }]}
           >
             <Icon name="auto-fix-high" color={BackgroundColor} size={20} />
-            <Text style={[styles.aiButtonText, { color: BackgroundColor }]}>AI Generate</Text>
+            <Text style={[styles.aiButtonText, { color: BackgroundColor }]}>
+              AI Generate
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -370,7 +387,7 @@ export default function EditQuiz({ route, navigation }) {
           buttonStyle={{ borderColor: BackgroundColor }}
           titleStyle={{ color: BackgroundColor }}
         />
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <GenerateQuestionModal
         opened={generateOpen}

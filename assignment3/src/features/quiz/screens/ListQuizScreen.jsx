@@ -68,7 +68,7 @@ export default function ListQuizScreen({ navigation }) {
           setDisplayData((prev) =>
             isRefresh || prev === null ? newQuizzes : [...prev, ...newQuizzes],
           );
-          
+
           setHasMore(!!linkHeader?.next);
           setPage(pageNum);
         }
@@ -79,7 +79,7 @@ export default function ListQuizScreen({ navigation }) {
         setRefreshing(false);
       }
     },
-    [keyword, selectedFilters, loading],
+    [keyword, selectedFilters],
   );
 
   useEffect(() => {

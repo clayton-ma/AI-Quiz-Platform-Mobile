@@ -10,6 +10,7 @@ import CreateButton from "../../../components/ui/CreateButton";
 import ListFooter from "../../../components/ui/ListFooter";
 import CreateGroupModal from "../components/CreateGroupModal";
 import { useTheme } from "../../../app/providers/ThemeContext";
+import GroupList from "../components/GroupList";
 
 export default function ListGroupScreen({ navigation }) {
   const [keyword, setKeyword] = useState("");
@@ -102,41 +103,14 @@ export default function ListGroupScreen({ navigation }) {
         selectedFilters={selectedFilters}
         onFilterChange={handleFilterChange}
       />
-      <FlatList
-        data={displayData}
-        renderItem={({ item }) => (
-          <Group
-            name={item.name}
-            memberCount={item.memberCount}
-            isAdmin={item.isAdmin}
-            onActionPress={() =>
-              navigation.navigate("EditGroup", { groupId: item._id })
-            }
-          />
-        )}
-        keyExtractor={(item, index) => item._id || `group-idx-${index}`}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListEmptyComponent={
-          !loading &&
-          !refreshing && (
-            <View
-              style={[
-                styles.emptyContainer,
-                { backgroundColor: theme.colors.background },
-              ]}
-            >
-              <Text style={[styles.emptyText, { color: theme.colors.text }]}>
-                No groups found
-              </Text>
-            </View>
-          )
-        }
-        ListFooterComponent={() => ListFooter(loading, refreshing)}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+      <GroupList
+        groups={displayData}
+        loading={loading}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        handleLoadMore={handleLoadMore}
       />
+
       <CreateButton handlePress={() => setIsCreateModalVisible(true)} />
       <CreateGroupModal
         visible={isCreateModalVisible}

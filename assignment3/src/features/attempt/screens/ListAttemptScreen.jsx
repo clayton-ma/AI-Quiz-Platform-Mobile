@@ -7,6 +7,7 @@ import { createAttempt } from "../services/attemptApi";
 import { useTheme } from "../../../app/providers/ThemeContext";
 import QuizDetails from "../components/QuizDetails";
 import ListAttemptTable from "../components/ListAttemptTable";
+import ExportQuizButton from "../components/ExportQuiz";
 
 /**
  * ListAttemptScreen component displays all attempts made by the user for a specific quiz.
@@ -42,7 +43,11 @@ export default function ListAttemptScreen({ route, navigation }) {
             ]}
           >
             <QuizDetails quizId={quizId} />
-            
+
+            <View style={{ marginBottom: 15 }}>
+              <ExportQuizButton quizId={quizId} />
+            </View>
+
             <Button
               title="Start New Attempt"
               icon={

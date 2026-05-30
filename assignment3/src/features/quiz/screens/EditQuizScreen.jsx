@@ -24,7 +24,6 @@ import EditQuestionCard from "../components/EditQuestionCard";
 import EditQuizMetadata from "../components/EditQuizMetadata";
 import GenerateQuestionModal from "../components/GenerateQuestionModal";
 import { useTheme } from "../../../app/providers/ThemeContext";
-import ExportQuizButton from "../components/ExportQuiz";
 
 /**
  * Initial state structure for the quiz being edited.
@@ -337,7 +336,6 @@ export default function EditQuiz({ route, navigation }) {
           dispatch={dispatch}
           groupsData={groupsData}
         />
-        <ExportQuizButton quiz={state.metadata} />
 
         <Divider style={styles.divider} />
 

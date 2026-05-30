@@ -1,20 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Icon } from "react-native-elements";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useTheme } from "../../../app/providers/ThemeContext";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
+import { fetchQuizByIdForEdit } from "../../quiz/services/quizApi";
 
 /**
  * ExportQuizButton component allows users to generate a PDF version of the quiz
  * and share it using the device's native sharing capabilities.
  * 
- * @param {Object} quiz - The quiz object containing name, description, and questions.
+ * @param {string} quizId - The ID of the quiz to fetch and export.
  */
-export default function ExportQuizButton({ quiz }) {
+export default function ExportQuizButton({ quizId }) {
     const { theme } = useTheme();
+    const [quiz, setQuiz] = useState(null);
     const [exporting, setExporting] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const loadQuiz = async () => {
+            if (!quizId) return;
+            setLoading(true);
+            try {
+                const data = await fetchQuizByIdForEdit(quizId);
+                setQuiz(data);
+            } catch (error) {
+                console.error("Failed to load quiz for export:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadQuiz();
+    }, [quizId]);
 
     const generateHtml = () => {
         const questionsHtml = quiz.questions?.map((q, index) => `
@@ -22,8 +41,8 @@ export default function ExportQuizButton({ quiz }) {
         <p class="question-text"><b>Question ${index + 1}:</b> ${q.content}</p>
         <ul class="options-list">
           ${q.options?.map(opt => `
-            <li class="option-item ${opt.is_correct ? 'correct' : ''}">
-              [ ] ${opt.content} ${opt.is_correct ? ' (Correct Answer)' : ''}
+            <li class="option-item">
+              [ ] ${opt.content}
             </li>
           `).join('')}
         </ul>
@@ -85,12 +104,13 @@ export default function ExportQuizButton({ quiz }) {
         <TouchableOpacity
             style={[
                 styles.button,
-                { backgroundColor: theme.dark ? "rgba(255,255,255,0.1)" : "#f0f0f0" }
+                { backgroundColor: theme.dark ? "rgba(255,255,255,0.1)" : "#f0f0f0" },
+                (!quiz || loading) && { opacity: 0.5 }
             ]}
             onPress={handleExport}
-            disabled={exporting}
+            disabled={exporting || loading || !quiz}
         >
-            {exporting ? (
+            {exporting || loading ? (
                 <ActivityIndicator size="small" color={theme.colors.primary} />
             ) : (
                 <>

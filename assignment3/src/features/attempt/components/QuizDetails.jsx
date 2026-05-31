@@ -1,3 +1,7 @@
+/**
+ * @file QuizDetails.jsx
+ * @description Component for displaying quiz metadata including title, description, and result visibility status.
+ */
 import { View, Text, StyleSheet } from "react-native";
 import { Icon, Badge } from "@rneui/themed";
 import { useCallback, useEffect, useState } from "react";
@@ -7,16 +11,18 @@ import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * QuizDetails component displays the static metadata of a quiz.
- * This is typically used as a header in the attempt listing or preview pages.
+ * It fetches and displays the quiz name, description, and whether results are instantly visible.
  *
- * @param {Object} props.quiz - The quiz object containing name and description.
+ * @param {Object} props - Component props
+ * @param {string} props.quizId - The unique identifier of the quiz to fetch details for.
+ * @returns {JSX.Element|null} The rendered quiz details header or null if no quizId.
  */
 export default function QuizDetails({ quizId }) {
-  // Prevent rendering if quiz data hasn't loaded yet
   if (!quizId) return null;
   const [quizMetaData, setQuizMetaData] = useState(null);
   const { theme } = useTheme();
 
+  /** Fetches quiz metadata from the API */
   const loadQuizMetaData = useCallback(async () => {
     try {
       const response = await fetchQuizMetadata(quizId);
@@ -24,6 +30,7 @@ export default function QuizDetails({ quizId }) {
     } catch (error) {}
   }, [quizId]);
 
+  /** Reloads data whenever the screen comes into focus */
   useFocusEffect(
     useCallback(() => {
       loadQuizMetaData();
@@ -114,7 +121,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#ECF0F1",
     marginVertical: 12,
   },
   descriptionRow: {
@@ -128,7 +134,6 @@ const styles = StyleSheet.create({
   description: {
     flex: 1,
     fontSize: 14,
-    color: "#2C3E50",
     lineHeight: 20,
   },
 });

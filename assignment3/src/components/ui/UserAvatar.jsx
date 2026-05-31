@@ -1,19 +1,30 @@
+/**
+ * @file UserAvatar.jsx
+ * @description A reusable UI component that displays user initials in a stylized circular avatar.
+ */
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
- * UserAvatar component displays the user's initials in a circular container.
+ * UserAvatar component.
  *
- * @param {string} firstname - User's first name.
- * @param {string} lastname - User's last name.
- * @param {number} size - Diameter of the avatar.
+ * Renders a circular avatar containing the uppercase initials of the provided names.
+ * Falls back to "AI" if no names are provided.
+ *
+ * @param {Object} props - Component props
+ * @param {string} [props.firstname] - User's first name
+ * @param {string} [props.lastname] - User's last name
+ * @param {number} [props.size=50] - Diameter of the avatar circle
+ * @returns {JSX.Element} The rendered avatar component.
  */
 export default function UserAvatar({ firstname, lastname, size = 50 }) {
   const { theme } = useTheme();
+
+  /** Extracts and formats initials from names */
   const getInitials = () => {
-    const f = firstname ? firstname.charAt(0).toUpperCase() : "";
-    const l = lastname ? lastname.charAt(0).toUpperCase() : "";
+    const f = firstname?.trim().charAt(0).toUpperCase() || "";
+    const l = lastname?.trim().charAt(0).toUpperCase() || "";
     return `${f}${l}` || "AI";
   };
 
@@ -49,9 +60,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
   initials: {
-    color: "#fff",
     fontWeight: "bold",
+    letterSpacing: 1,
   },
 });

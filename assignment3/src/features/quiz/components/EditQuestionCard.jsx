@@ -52,7 +52,10 @@ export default function EditQuestionCard({ q, index, dispatch }) {
     }));
   };
 
-  // Set an option as the correct answer and unset others
+  /**
+   * Sets a specific option as the correct answer and unsets all others.
+   * @param {string} optId - The temporary ID of the option to mark correct
+   */
   const setCorrect = (optId) => {
     setLocal((prev) => ({
       ...prev,
@@ -63,7 +66,9 @@ export default function EditQuestionCard({ q, index, dispatch }) {
     }));
   };
 
-  // Add a new option (limit to 4 for standard MCQ)
+  /**
+   * Adds a new blank option to the question. Limits total options to 4.
+   */
   const addOption = () => {
     if (local.options.length >= 4) return;
 
@@ -80,7 +85,10 @@ export default function EditQuestionCard({ q, index, dispatch }) {
     }));
   };
 
-  // Remove an option and ensure at least one is marked correct if any remain
+  /**
+   * Removes an option and ensures at least one remains marked correct if others exist.
+   * @param {string} optId - The temporary ID of the option to remove
+   */
   const deleteOption = (optId) => {
     setLocal((prev) => {
       const updated = prev.options.filter((o) => o.temId !== optId);
@@ -94,12 +102,14 @@ export default function EditQuestionCard({ q, index, dispatch }) {
     });
   };
 
-  // UI for editing a question, its options, and managing correct answers and deletions
   return (
     <View
       style={[
         styles.card,
-        { backgroundColor: theme.colors.card, borderColor: theme.colors.border },
+        {
+          backgroundColor: theme.colors.card,
+          borderColor: theme.colors.border,
+        },
       ]}
     >
       <View style={styles.header}>
@@ -107,7 +117,6 @@ export default function EditQuestionCard({ q, index, dispatch }) {
           Question {index + 1}
         </Text>
 
-        {/* Delete Question Button */}
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={() =>
@@ -118,7 +127,6 @@ export default function EditQuestionCard({ q, index, dispatch }) {
         </TouchableOpacity>
       </View>
 
-      {/* Question Content Input */}
       <TextInput
         style={[
           styles.input,
@@ -139,7 +147,6 @@ export default function EditQuestionCard({ q, index, dispatch }) {
         Options
       </Text>
 
-      {/* Option Cards */}
       <View style={styles.optionsList}>
         {local.options.map((opt) => (
           <EditOptionCard

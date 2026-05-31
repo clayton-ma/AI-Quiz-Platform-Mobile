@@ -1,3 +1,7 @@
+/**
+ * @file RegistrationForm.jsx
+ * @description Component for user registration handling.
+ */
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -24,11 +28,18 @@ import Heading from "../../../components/ui/Heading";
 import FormContainer from "../../../components/ui/FormContainer";
 
 /**
- * Register component provides a form for new users to create an account.
- * Adapted for React Native.
+ * RegisterForm component.
+ *
+ * Provides a comprehensive form for new users to create an account. It handles
+ * input validation for names, emails, and passwords, ensures data consistency
+ * (e.g., matching passwords), and manages the registration API lifecycle.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered registration form.
  */
 export default function RegisterForm({ navigation }) {
-  const [loading, setLoading] = useState(false); // Local state for submission loading
+  const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
   const {
@@ -48,9 +59,9 @@ export default function RegisterForm({ navigation }) {
     },
   });
 
-  // Access authentication context to check if user is already logged in
   const { user } = useAuth();
 
+  /** Redirect user if they are already authenticated */
   useEffect(() => {
     if (user !== null) {
       ShowNotification({
@@ -60,12 +71,14 @@ export default function RegisterForm({ navigation }) {
         type: "success",
       });
 
-      navigation.navigate("Quiz");
+      navigation.navigate("QuizScreen");
     }
   }, [user]);
 
   /**
    * Handles the registration form submission.
+   *
+   * @param {Object} data - The validated form data.
    */
   const onSubmit = async (data) => {
     setLoading(true);
@@ -81,10 +94,8 @@ export default function RegisterForm({ navigation }) {
         type: "success",
       });
 
-      // Redirect to login so user can authenticate with new credentials
       navigation.navigate("Login");
     } catch (errors) {
-      // Display backend or network errors to the user
       ShowErrorNotification(errors);
     } finally {
       setLoading(false);
@@ -358,23 +369,6 @@ export default function RegisterForm({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 20, backgroundColor: "#fff", flexGrow: 1 },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  linkText: { textAlign: "center", marginTop: 10, color: "#666" },
-  link: { color: "#228be6", fontWeight: "600" },
-  formCard: {
-    marginTop: 30,
-    padding: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#dee2e6",
-    backgroundColor: "#fff",
-    elevation: 2,
-  },
   row: { flexDirection: "row", marginBottom: 15 },
   flex1: { flex: 1 },
   label: { fontSize: 14, fontWeight: "500", marginBottom: 5, color: "#495057" },

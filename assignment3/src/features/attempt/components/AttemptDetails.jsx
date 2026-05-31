@@ -1,3 +1,7 @@
+/**
+ * @file AttemptDetails.jsx
+ * @description Component for displaying quiz attempt metadata and providing save/submit actions.
+ */
 import React from "react";
 import {
   View,
@@ -10,14 +14,16 @@ import { Icon, Badge } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * AttemptDetails component displays the header information for a quiz attempt
- * and provides actions to save or submit.
+ * AttemptDetails component.
+ * Displays the header information for a quiz attempt and provides actions to save progress or submit the final attempt.
  *
- * @param {Object} quiz - The quiz metadata
- * @param {Object} attempt - The current attempt data
- * @param {Function} onSave - Handler for saving progress
- * @param {Function} onSubmit - Handler for final submission
- * @param {boolean} loading - Loading state for buttons
+ * @param {Object} props - Component props
+ * @param {Object} props.quiz - The quiz metadata object containing name and other details
+ * @param {Object} props.attempt - The current attempt data object containing timestamps
+ * @param {Function} props.onSave - Handler function for saving progress
+ * @param {Function} props.onSubmit - Handler function for final submission
+ * @param {boolean} props.loading - Loading state for action buttons
+ * @returns {JSX.Element|null} The rendered attempt details header or null if data is missing.
  */
 export default function AttemptDetails({
   quiz,

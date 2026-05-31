@@ -1,15 +1,20 @@
+/**
+ * @file AttemptTimer.jsx
+ * @description A visual countdown timer component for quiz attempts with dynamic color coding based on remaining time.
+ */
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * AttemptTimer component provides a visual countdown for the quiz attempt.
+ * AttemptTimer component.
  *
- * @param {number} questionCount - Used to calculate default time if no limit provided
- * @param {Function} onTimeUp - Callback triggered when the timer hits zero
- * @param {number} customTimeLimit - Optional specific time limit in seconds
- * @param {number} minutesPerQuestion - Default minutes allocated per question (default 2)
+ * @param {Object} props - Component props
+ * @param {number} [props.questionCount=0] - Used to calculate default time if no limit provided
+ * @param {Function} props.onTimeUp - Callback triggered when the timer hits zero
+ * @param {number} [props.customTimeLimit] - Optional specific time limit in seconds
+ * @param {number} [props.minutesPerQuestion=2] - Default minutes allocated per question
  */
 export default function AttemptTimer({
   questionCount = 0,
@@ -25,8 +30,8 @@ export default function AttemptTimer({
   const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
   const timerRef = useRef(null);
 
+  /** Initializes the countdown interval on mount */
   useEffect(() => {
-    // Start the interval
     timerRef.current = setInterval(() => {
       setSecondsLeft((prev) => {
         if (prev <= 1) {
@@ -37,20 +42,24 @@ export default function AttemptTimer({
       });
     }, 1000);
 
-    // Cleanup on unmount
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
 
-  // Trigger onTimeUp callback when seconds reach 0
+  /** Monitors time and triggers expiration callback */
   useEffect(() => {
     if (secondsLeft === 0) {
       if (onTimeUp) onTimeUp();
     }
   }, [secondsLeft, onTimeUp]);
 
-  // Format seconds into HH:MM:SS
+  /**
+   * Formats raw seconds into a readable HH:MM:SS string.
+   *
+   * @param {number} totalSeconds - The time remaining in seconds
+   * @returns {string} Formatted time string
+   */
   const formatTime = (totalSeconds) => {
     const hrs = Math.floor(totalSeconds / 3600);
     const mins = Math.floor((totalSeconds % 3600) / 60);
@@ -64,7 +73,11 @@ export default function AttemptTimer({
     return parts.join(":");
   };
 
-  // Determine color based on urgency
+  /**
+   * Determines the UI color based on time urgency.
+   *
+   * @returns {string} Hex color code
+   */
   const getTimerColor = () => {
     if (secondsLeft < 60) return "#E74C3C"; // Red for last minute
     if (secondsLeft < 300) return "#F39C12"; // Orange for last 5 mins
@@ -104,6 +117,5 @@ const styles = StyleSheet.create({
   timerText: {
     fontSize: 18,
     fontWeight: "bold",
-    fontFamily: "Courier", // Monospaced font for stable digits
   },
 });

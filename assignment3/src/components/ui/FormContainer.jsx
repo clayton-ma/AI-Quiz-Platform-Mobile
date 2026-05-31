@@ -1,11 +1,17 @@
+/**
+ * @file FormContainer.jsx
+ * @description A reusable layout component that provides a consistent card-like container for forms.
+ */
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
- * A reusable container for authentication forms.
- * Provides consistent styling for the card-like background and borders.
+ * FormContainer component.
  *
- * @param {React.ReactNode} children - The form fields and buttons to display inside.
+ * Wraps children in a styled card with theme-aware background and border colors.
+ *
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - The form fields and buttons to display inside.
  */
 export default function FormContainer({ children }) {
   const { theme } = useTheme();
@@ -26,13 +32,12 @@ export default function FormContainer({ children }) {
 }
 
 const styles = StyleSheet.create({
+  /** Base styling for the form card */
   formCard: {
     marginTop: 30,
     padding: 20,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#dee2e6",
-    backgroundColor: "#fff",
     elevation: 2,
     // Shadow for iOS
     shadowColor: "#000",

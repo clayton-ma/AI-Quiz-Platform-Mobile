@@ -6,14 +6,22 @@ import { fetchGroups } from "../../group/services/groupApi";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * EditQuizMetadata component handles the quiz settings.
- * Optimized with local state and debounced dispatch to prevent parent re-renders on every keystroke.
+ * EditQuizMetadata component.
+ *
+ * Provides an interface for editing quiz-level settings such as title, description,
+ * group assignments, and result visibility. It uses local state and debouncing
+ * to optimize performance by reducing the frequency of parent state updates.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.metadata - The current quiz metadata from the parent state
+ * @param {Function} props.dispatch - Reducer dispatch function to sync changes back to the parent
  */
 export default function EditQuizMetadata({ metadata, dispatch }) {
   const [local, setLocal] = useState(metadata);
   const [groupsData, setGroupsData] = useState([]);
   const { theme } = useTheme();
 
+  /** Fetches available groups where the user has administrative rights */
   useEffect(() => {
     const loadGroups = async () => {
       try {
@@ -26,7 +34,7 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
     loadGroups();
   }, []);
 
-  // Keep local state in sync when parent metadata changes (e.g. after a save or initial load)
+  /** Keeps local state in sync when parent metadata changes (e.g., after initial load) */
   useEffect(() => {
     setLocal(metadata);
   }, [
@@ -37,7 +45,7 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
     metadata.instant_result,
   ]);
 
-  // Debounce effect: Sync local changes to the parent reducer after 300ms of inactivity
+  /** Debounce effect: Syncs local changes to the parent reducer after 300ms of inactivity */
   useEffect(() => {
     const timer = setTimeout(() => {
       // Only dispatch if local state actually differs from metadata to avoid loops
@@ -49,10 +57,17 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
     return () => clearTimeout(timer);
   }, [local, dispatch, metadata]);
 
+  /**
+   * Updates a specific field in the local metadata state.
+   */
   const handleChange = useCallback((field, value) => {
     setLocal((prev) => ({ ...prev, [field]: value }));
   }, []);
 
+  /**
+   * Toggles the selection of a group for the quiz.
+   * @param {string} groupId - The ID of the group to toggle
+   */
   const toggleGroup = (groupId) => {
     setLocal((prev) => {
       const currentIds = prev.groupIds || [];
@@ -64,7 +79,6 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
     });
   };
 
-  // UI for quiz metadata editing, including title, description, group assignment, and instant result toggle
   return (
     <View
       style={[
@@ -114,6 +128,7 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
         ]}
         placeholder="Enter quiz title"
         placeholderTextColor={theme.dark ? "#666" : "#999"}
+        maxLength={100}
         value={local.name || ""}
         onChangeText={(val) => handleChange("name", val)}
       />
@@ -134,6 +149,7 @@ export default function EditQuizMetadata({ metadata, dispatch }) {
         placeholder="Enter quiz description"
         placeholderTextColor={theme.dark ? "#666" : "#999"}
         value={local.description || ""}
+        maxLength={500}
         onChangeText={(val) => handleChange("description", val)}
         multiline
         numberOfLines={3}

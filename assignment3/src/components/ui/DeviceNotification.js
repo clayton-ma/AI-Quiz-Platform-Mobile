@@ -1,9 +1,17 @@
+/**
+ * @file DeviceNotification.js
+ * @description Utility for managing local and push notifications using Expo Notifications.
+ * Includes permission handling, token registration, and notification scheduling.
+ */
 import { useEffect } from "react";
 import { Platform, Linking } from "react-native";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 
+/**
+ * Configures the global notification handler for the app.
+ */
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: false,
@@ -13,6 +21,10 @@ Notifications.setNotificationHandler({
   }),
 });
 
+/**
+ * Hook to observe and handle user interactions with notifications.
+ * Supports deep linking if a URL is provided in the notification data.
+ */
 export function useNotificationObserver() {
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(
@@ -32,6 +44,14 @@ export function useNotificationObserver() {
   }, []);
 }
 
+/**
+ * Schedules a local notification.
+ *
+ * @param {string} title - The title of the notification.
+ * @param {string} body - The message body.
+ * @param {number} [delay=0] - Delay in seconds before showing the notification.
+ * @param {Object} [data={}] - Additional metadata for the notification.
+ */
 export async function schedulePushNotification(
   title,
   body,
@@ -54,6 +74,11 @@ export async function schedulePushNotification(
   });
 }
 
+/**
+ * Requests notification permissions and retrieves the Expo Push Token.
+ *
+ * @returns {Promise<string|undefined>} The push token or an error message string.
+ */
 export async function registerForPushNotificationsAsync() {
   let token;
 
@@ -78,9 +103,7 @@ export async function registerForPushNotificationsAsync() {
       alert("Failed to get push token for push notification!");
       return;
     }
-    // Learn more about projectId:
-    // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-    // EAS projectId is used here.
+
     try {
       const projectId =
         Constants?.expoConfig?.extra?.eas?.projectId ??

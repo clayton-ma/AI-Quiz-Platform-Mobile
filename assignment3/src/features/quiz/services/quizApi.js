@@ -1,6 +1,6 @@
 /**
- * @file quiz/api.js
- * @description Service layer for quiz-related API interactions, including CRUD operations, AI generation, and publishing.
+ * @file quizApi.js
+ * @description Service layer for quiz-related API interactions, including CRUD operations, AI generation, and result management.
  */
 import { API_BASE_URL, getAuthHeader } from "../../../services/authHeader";
 
@@ -11,14 +11,12 @@ import { API_BASE_URL, getAuthHeader } from "../../../services/authHeader";
  * @returns {Promise<Object>} Object containing quiz data and pagination Link header.
  */
 export const fetchQuizzes = async (params = {}) => {
-  // Build query string
   const query = new URLSearchParams();
   if (params.page) query.append("page", params.page);
   if (params.limit) query.append("limit", params.limit);
   if (params.search) query.append("search", params.search);
   if (params.sort) query.append("sort", params.sort);
 
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz?${query.toString()}`, {
     headers: getAuthHeader(),
   });
@@ -31,7 +29,6 @@ export const fetchQuizzes = async (params = {}) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   const linkHeader = response.headers.get("Link") || "";
   return { data, linkHeader };
@@ -44,12 +41,10 @@ export const fetchQuizzes = async (params = {}) => {
  * @returns {Promise<Object>} The quiz data.
  */
 export const fetchQuizById = async (quizId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch quiz", {
@@ -57,7 +52,6 @@ export const fetchQuizById = async (quizId) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -69,12 +63,10 @@ export const fetchQuizById = async (quizId) => {
  * @returns {Promise<Object>} The quiz metadata.
  */
 export const fetchQuizMetadata = async (quizId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz/metadata/${quizId}`, {
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch quiz", {
@@ -82,7 +74,6 @@ export const fetchQuizMetadata = async (quizId) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -94,12 +85,10 @@ export const fetchQuizMetadata = async (quizId) => {
  * @returns {Promise<Object>} The full quiz data for admin use.
  */
 export const fetchQuizByIdForEdit = async (quizId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/edit`, {
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch quiz", {
@@ -107,7 +96,6 @@ export const fetchQuizByIdForEdit = async (quizId) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -119,7 +107,6 @@ export const fetchQuizByIdForEdit = async (quizId) => {
  * @returns {Promise<Object>} The created quiz object.
  */
 export const createQuiz = async (quizData) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz`, {
     method: "POST",
     headers: {
@@ -129,7 +116,6 @@ export const createQuiz = async (quizData) => {
     body: JSON.stringify(quizData),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to create quiz", {
@@ -137,7 +123,6 @@ export const createQuiz = async (quizData) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -150,7 +135,6 @@ export const createQuiz = async (quizData) => {
  * @returns {Promise<Object>} The updated quiz object.
  */
 export const updateQuiz = async (quizId, quizData) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
     method: "PUT",
     headers: {
@@ -160,14 +144,13 @@ export const updateQuiz = async (quizId, quizData) => {
     body: JSON.stringify(quizData),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to update quiz", {
       cause: errors.errors || undefined,
     });
   }
-  // Return the data
+
   const { data } = await response.json();
   return data;
 };
@@ -178,13 +161,11 @@ export const updateQuiz = async (quizId, quizData) => {
  * @param {string} quizId - The ID of the quiz to delete.
  */
 export const deleteQuiz = async (quizId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
     method: "DELETE",
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to delete quiz", {
@@ -201,7 +182,6 @@ export const deleteQuiz = async (quizId) => {
  * @returns {Promise<Array>} Array of generated question objects.
  */
 export const generateQuestions = async (topic, numQuestions) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/ai`, {
     method: "POST",
     headers: {
@@ -211,7 +191,6 @@ export const generateQuestions = async (topic, numQuestions) => {
     body: JSON.stringify({ topic, question_count: numQuestions }),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to generate questions", {
@@ -219,7 +198,6 @@ export const generateQuestions = async (topic, numQuestions) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -231,13 +209,11 @@ export const generateQuestions = async (topic, numQuestions) => {
  * @returns {Promise<string>} Success message.
  */
 export const publishQuiz = async (quizId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/publish`, {
     method: "PUT",
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to publish quiz", {
@@ -247,13 +223,13 @@ export const publishQuiz = async (quizId) => {
 };
 
 /**
- * Releases the results for a specific quiz, making scores visible to students.
+ * Toggles the instant result visibility for a specific quiz.
  * @async
- * @param {string} quizId - The ID of the quiz to release results for.
- * @returns {Promise<string>} Success message.
+ * @param {Object} payload - The payload object.
+ * @param {string} payload.quizId - The ID of the quiz.
+ * @param {boolean} payload.instant_result - Whether results should be shown instantly.
  */
 export const toggleInstantResult = async ({ quizId, instant_result }) => {
-  // Call api
   const response = await fetch(
     `${API_BASE_URL}/quiz/${quizId}/toggle-release-results`,
     {
@@ -266,7 +242,6 @@ export const toggleInstantResult = async ({ quizId, instant_result }) => {
     },
   );
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to release quiz results", {

@@ -1,21 +1,24 @@
+/**
+ * @file SplashScreen.jsx
+ * @description Initial landing screen with animated branding and logo.
+ */
 import React, { useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Dimensions,
-  StatusBar,
-} from "react-native";
+import { View, Text, StyleSheet, Animated, StatusBar } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
-const { height } = Dimensions.get("window");
-
+/**
+ * SplashScreen component.
+ * Displays an animated logo and title before transitioning to the main application.
+ *
+ * @param {Object} props - Component props
+ * @param {Function} props.onFinish - Callback function triggered after the splash delay
+ * @returns {JSX.Element} The rendered Splash screen.
+ */
 export default function SplashScreen({ onFinish }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const { theme } = useTheme();
-  const BackgroundColor = theme.colors.primary;
+  const primaryColor = theme.colors.primary;
 
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
@@ -51,7 +54,7 @@ export default function SplashScreen({ onFinish }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={BackgroundColor} />
+      <StatusBar barStyle="light-content" backgroundColor={primaryColor} />
       <Animated.View
         style={[
           styles.logoContainer,
@@ -65,7 +68,7 @@ export default function SplashScreen({ onFinish }) {
           <Icon
             name="psychology"
             size={80}
-            color={BackgroundColor}
+            color={primaryColor}
             type="material"
           />
         </View>
@@ -95,7 +98,7 @@ export default function SplashScreen({ onFinish }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "#000000",
     justifyContent: "center",
     alignItems: "center",
   },

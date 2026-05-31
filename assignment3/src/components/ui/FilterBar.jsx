@@ -1,3 +1,7 @@
+/**
+ * @file FilterBar.jsx
+ * @description A reusable horizontal filter bar component with modal-based dropdown selection.
+ */
 import React, { useState } from "react";
 import {
   View,
@@ -11,10 +15,11 @@ import { Button, Icon } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
 /**
- * A reusable FilterBar component with dropdown support and multi-field filtering.
+ * FilterBar component.
  *
- * @param {Array} filters - Array of filter objects { key, label, options }.
- * @param {Object} selectedFilters - Object mapping keys to selected values.
+ * @param {Object} props - Component props
+ * @param {Array} props.filters - Array of filter objects { key, label, options: [{value, label}] }.
+ * @param {Object} props.selectedFilters - Object mapping keys to currently selected values.
  * @param {function} onFilterChange - Callback when a filter value changes.
  */
 export default function FilterBar({
@@ -26,10 +31,17 @@ export default function FilterBar({
   const { theme } = useTheme();
   const BackgroundColor = theme.colors.primary;
 
+  /**
+   * Handles the selection of a filter option.
+   *
+   * @param {string} key - The filter category key.
+   * @param {string|number} value - The selected value.
+   */
   const handleSelect = (key, value) => {
     onFilterChange(key, value);
     setVisibleModal(null);
   };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -38,6 +50,7 @@ export default function FilterBar({
         contentContainerStyle={styles.scrollContent}
       >
         {filters.map((filter) => {
+          // Determine current display label and active state for the filter button
           const currentValue = selectedFilters[filter.key];
           const selectedOption =
             filter.options.find((opt) => opt.value === currentValue) ||
@@ -72,6 +85,7 @@ export default function FilterBar({
                 containerStyle={styles.buttonContainer}
               />
 
+              {/* Dropdown Selection Modal */}
               <Modal
                 visible={visibleModal === filter.key}
                 transparent={true}

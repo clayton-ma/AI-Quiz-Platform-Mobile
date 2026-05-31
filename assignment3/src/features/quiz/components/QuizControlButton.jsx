@@ -4,14 +4,28 @@ import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/themed";
 import { toggleInstantResult } from "../services/quizApi";
 
+/**
+ * QuizControlButton component provides contextual actions for a quiz item.
+ * For published quizzes, it allows viewing attempts and toggling result visibility.
+ * For draft quizzes, it provides an edit action.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.quizId - The unique identifier of the quiz
+ * @param {boolean} props.isPublished - Whether the quiz is currently published
+ * @param {boolean} props.instantResult - Initial state of the instant result setting
+ */
 export default function QuizControlButton({
   quizId,
   isPublished,
   instantResult,
 }) {
   const navigation = useNavigation();
+  // Local state to manage the toggle UI without waiting for a full list refresh
   const [localInstantResult, setLocalInstantResult] = useState(instantResult);
 
+  /**
+   * Toggles the instant result setting via the API and updates local state.
+   */
   const handleToggleInstantResult = async () => {
     const newValue = !localInstantResult;
     try {
@@ -23,6 +37,7 @@ export default function QuizControlButton({
   return (
     <View style={styles.actions}>
       {isPublished ? (
+        /* Actions for Published Quizzes */
         <View>
           <TouchableOpacity
             style={styles.attemptButton}
@@ -38,6 +53,7 @@ export default function QuizControlButton({
               <Text style={styles.actionLabel}>Attempt</Text>
             </View>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.attemptButton}
             onPress={handleToggleInstantResult}
@@ -55,6 +71,7 @@ export default function QuizControlButton({
           </TouchableOpacity>
         </View>
       ) : (
+        /* Actions for Draft Quizzes */
         <TouchableOpacity
           style={styles.editButton}
           onPress={() =>

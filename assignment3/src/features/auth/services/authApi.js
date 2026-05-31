@@ -1,13 +1,13 @@
 /**
- * @file auth/api.js
+ * @file authApi.js
  * @description Service layer for handling user authentication including registration, login, and logout.
  */
-import { useAuth } from "../../../app/providers/AuthContext";
 import { API_BASE_URL } from "../../../services/authHeader";
 import * as SecureStore from "expo-secure-store";
 
 /**
  * Registers a new user with the provided information.
+ * @async
  * @param {Object} userInfo - The user registration data.
  * @param {string} userInfo.email - User's email address.
  * @param {string} userInfo.password - User's password.
@@ -20,7 +20,6 @@ export const registerUser = async (userInfo) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-  // Call api
   let response;
   try {
     response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -37,7 +36,6 @@ export const registerUser = async (userInfo) => {
     clearTimeout(timeoutId);
   }
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Registration failed", {
@@ -48,6 +46,7 @@ export const registerUser = async (userInfo) => {
 
 /**
  * Authenticates a user and stores the JWT token in SecureStore.
+ * @async
  * @param {Object} loginInfo - The user login credentials.
  * @param {string} loginInfo.email - User's email address.
  * @param {string} loginInfo.password - User's password.
@@ -55,12 +54,9 @@ export const registerUser = async (userInfo) => {
  * @throws {Error} If authentication fails or server returns an error.
  */
 export const loginUser = async (loginInfo) => {
-  // const {}=useAuth();
-
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-  // Call api
   let response;
   try {
     response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -77,7 +73,6 @@ export const loginUser = async (loginInfo) => {
     clearTimeout(timeoutId);
   }
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Login failed", {
@@ -85,8 +80,6 @@ export const loginUser = async (loginInfo) => {
     });
   }
 
-  // Store the token in SecureStore
   const { data } = await response.json();
-
   await SecureStore.setItemAsync("jwt", data);
 };

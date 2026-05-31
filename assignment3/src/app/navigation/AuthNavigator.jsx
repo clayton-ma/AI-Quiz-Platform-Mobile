@@ -1,3 +1,7 @@
+/**
+ * @file AuthNavigator.jsx
+ * @description Defines the navigation structure for unauthenticated users, including Login, Register, and About tabs.
+ */
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
@@ -10,15 +14,20 @@ import { useTheme } from "../providers/ThemeContext";
 
 import About from "../../features/about/screens/AboutScreen";
 
-/**
- * Shared stack navigator configuration for authentication screens.
- */
 const AuthStack = createStackNavigator();
+
+/** Default options for stack navigators to maintain a clean UI */
 const stackScreenOptions = {
   headerShown: false,
   gestureEnabled: true,
 };
 
+/**
+ * LoginStack component.
+ * Wraps the Login screen in a stack navigator.
+ *
+ * @returns {JSX.Element}
+ */
 function LoginScreen() {
   return (
     <AuthStack.Navigator screenOptions={stackScreenOptions}>
@@ -27,6 +36,12 @@ function LoginScreen() {
   );
 }
 
+/**
+ * RegisterStack component.
+ * Wraps the Register screen in a stack navigator.
+ *
+ * @returns {JSX.Element}
+ */
 function RegisterScreen() {
   return (
     <AuthStack.Navigator screenOptions={stackScreenOptions}>
@@ -35,6 +50,12 @@ function RegisterScreen() {
   );
 }
 
+/**
+ * AboutStack component.
+ * Wraps the About screen in a stack navigator.
+ *
+ * @returns {JSX.Element}
+ */
 function AboutScreen() {
   return (
     <AuthStack.Navigator screenOptions={stackScreenOptions}>
@@ -45,6 +66,7 @@ function AboutScreen() {
 
 const Tab = createBottomTabNavigator();
 
+/** Mapping of route names to Material Icon names */
 const TAB_ICONS = {
   Login: "login",
   Register: "person-add",

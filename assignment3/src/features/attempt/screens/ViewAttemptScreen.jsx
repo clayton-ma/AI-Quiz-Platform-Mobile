@@ -1,3 +1,7 @@
+/**
+ * @file ViewAttemptScreen.jsx
+ * @description Screen component for reviewing a specific quiz attempt's results and details.
+ */
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text, Badge, Divider, Card } from "@rneui/themed";
@@ -7,14 +11,17 @@ import {
   fetchQuizMetadata,
 } from "../../quiz/services/quizApi";
 import ViewQuestionList from "../components/ViewQuestionList";
-// import LoadingState from "../../../components/ui/LoadingState";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import MainContainer from "../../../components/layout/MainContainer";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * ViewAttemptPage component displays the results and details of a specific quiz attempt.
+ * ViewAttemptScreen component.
+ *
  * It shows the score, timestamps, and a detailed review of questions and answers.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.route - React Navigation route object containing attemptId
  */
 export default function ViewAttemptScreen({ route, navigation }) {
   const { attemptId } = route.params;
@@ -24,9 +31,7 @@ export default function ViewAttemptScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 
-  /**
-   * Loads the attempt data and associated quiz metadata on component mount.
-   */
+  /** Loads the attempt data and associated quiz metadata on component mount */
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -47,8 +52,6 @@ export default function ViewAttemptScreen({ route, navigation }) {
     loadData();
   }, [attemptId]);
 
-  // Show loading state while fetching data, and return null if attempt or quiz data is not available
-  // if (loading) return <LoadingState />;
   if (!attempt || !quiz) return null;
 
   return (
@@ -126,7 +129,7 @@ export default function ViewAttemptScreen({ route, navigation }) {
           </View>
         </Card>
 
-        {/* Detailed Question Review Section */}
+        {/* Detailed Question Review Section - Only shown if instructor allows instant results */}
         {quiz.instant_result && quiz.questions && quiz.questions.length > 0 && (
           <>
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>

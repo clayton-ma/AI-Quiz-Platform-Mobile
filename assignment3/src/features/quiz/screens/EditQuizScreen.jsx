@@ -2,12 +2,10 @@ import React, { useEffect, useReducer, useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
   Text,
-  KeyboardAvoidingView,
 } from "react-native";
 import { Icon, Button, Divider } from "@rneui/themed";
 import MainContainer from "../../../components/layout/MainContainer";
@@ -28,7 +26,9 @@ import GenerateQuestionModal from "../components/GenerateQuestionModal";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * Initial state structure for the quiz being edited.
+ * @typedef {Object} QuizState
+ * @property {Object} metadata - Quiz configuration (name, description, etc.)
+ * @property {Array} questions - List of question objects
  */
 const initialState = {
   metadata: {
@@ -44,6 +44,10 @@ const initialState = {
 /**
  * Reducer function to manage quiz state updates.
  * Handles complex nested structures for metadata and questions.
+ *
+ * @param {QuizState} state - Current state
+ * @param {Object} action - Action object with type and payload
+ * @returns {QuizState} Updated state
  */
 function reducer(state, action) {
   switch (action.type) {
@@ -152,8 +156,14 @@ function reducer(state, action) {
 }
 
 /**
- * EditQuizPage component provides a comprehensive interface for instructors to
+ * EditQuiz component.
+ *
+ * Provides a comprehensive interface for instructors to
  * modify quiz settings, manage questions manually, or generate them using AI.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.route - React Navigation route object
+ * @param {Object} props.navigation - React Navigation object
  */
 export default function EditQuiz({ route, navigation }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -271,10 +281,6 @@ export default function EditQuiz({ route, navigation }) {
       ShowErrorNotification(errors);
     }
   }, [saveQuiz, quizId, navigation]);
-
-  /**
-   * Calls AI API to generate questions based on user-provided topics.
-   */
 
   if (loading && !state.metadata.name) {
     return (

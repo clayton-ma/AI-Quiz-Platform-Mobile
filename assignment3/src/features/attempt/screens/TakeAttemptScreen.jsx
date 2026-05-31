@@ -1,3 +1,7 @@
+/**
+ * @file TakeAttemptScreen.jsx
+ * @description Screen component for conducting a quiz attempt, managing real-time answers and submission.
+ */
 import { useState, useEffect } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { fetchAttemptById, updateAttempt } from "../services/attemptApi";
@@ -12,10 +16,15 @@ import TimerSetting from "../components/TimerSetting";
 import StabilityGuard from "../components/SensorAlert";
 
 /**
- * TakeAttemptPage component allows users to answer questions in a quiz attempt.
+ * TakeAttemptScreen component.
+ *
+ * Allows users to answer questions in a quiz attempt.
  * It handles real-time answer state, saving progress, and final submission.
+ *
+ * @param {Object} props.route - Navigation route containing quizId and attemptId
+ * @param {Object} props.navigation - React Navigation object
  */
-export default function TakeAttemptPage({ route, navigation }) {
+export default function TakeAttemptScreen({ route, navigation }) {
   const { quizId, attemptId } = route.params;
 
   const [quiz, setQuiz] = useState(null);
@@ -24,9 +33,7 @@ export default function TakeAttemptPage({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
-  /**
-   * Loads quiz metadata and existing attempt data on mount.
-   */
+  /** Loads quiz metadata and existing attempt data on mount */
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -59,7 +66,11 @@ export default function TakeAttemptPage({ route, navigation }) {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
   };
 
-  // Formats the local answers object into the array format expected by the API
+  /**
+   * Formats the local answers object into the array format expected by the API.
+   *
+   * @returns {Array<{question_id: string, selected_option_id: string}>}
+   */
   const formatAnswers = () =>
     Object.entries(answers).map(([question_id, selected_option_id]) => ({
       question_id,
@@ -104,15 +115,15 @@ export default function TakeAttemptPage({ route, navigation }) {
     }
   };
 
-  // if (loading) return <LoadingState />;
+  if (loading) return null;
 
   return (
     <MainContainer title="Take Attempt" navigation={navigation} isMain={false}>
+      <StabilityGuard />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
       >
-        <StabilityGuard />
         {/* Header with Quiz info and Action buttons */}
         <AttemptDetails
           quiz={quiz}

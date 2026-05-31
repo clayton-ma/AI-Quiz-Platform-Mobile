@@ -6,12 +6,10 @@ import { API_BASE_URL, getAuthHeader } from "../../../services/authHeader";
  * @throws {Error} If the request fails.
  */
 export const fetchUser = async () => {
-  // Call api - GET /api/user
   const response = await fetch(`${API_BASE_URL}/user`, {
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch user", {
@@ -19,19 +17,19 @@ export const fetchUser = async () => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
 
 /**
  * Updates the current user's profile information.
- * @param {Object} userData - The updated user fields (firstname, lastname).
+ * @param {Object} userData - The updated user fields.
+ * @param {string} [userData.firstname] - The user's first name.
+ * @param {string} [userData.lastname] - The user's last name.
  * @returns {Promise<Object>} The updated user object.
  * @throws {Error} If the update fails.
  */
 export const updateUser = async (userData) => {
-  // Call api - PUT /api/user
   const response = await fetch(`${API_BASE_URL}/user`, {
     method: "PUT",
     headers: {
@@ -41,7 +39,6 @@ export const updateUser = async (userData) => {
     body: JSON.stringify(userData),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to update user", {
@@ -49,7 +46,6 @@ export const updateUser = async (userData) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };

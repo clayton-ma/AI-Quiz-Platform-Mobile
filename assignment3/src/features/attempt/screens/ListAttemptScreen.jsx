@@ -1,3 +1,7 @@
+/**
+ * @file ListAttemptScreen.jsx
+ * @description Screen component for viewing all attempts of a specific quiz and initiating new ones.
+ */
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Icon } from "@rneui/themed";
@@ -11,15 +15,21 @@ import ExportQuizButton from "../components/ExportQuiz";
 
 /**
  * ListAttemptScreen component displays all attempts made by the user for a specific quiz.
+ *
+ * It provides a summary of the quiz, an option to export quiz data,
+ * and a list of previous attempts with their statuses and scores.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.route - React Navigation route object containing quizId
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered attempt list screen.
  */
 export default function ListAttemptScreen({ route, navigation }) {
   const { quizId } = route.params;
   const [actionLoading, setActionLoading] = useState(false);
   const { theme } = useTheme();
 
-  /**
-   * Creates a new attempt for the current quiz and navigates to the attempt interface.
-   */
+  /** Handles the creation of a new quiz attempt and navigates to the taking screen */
   const handleStartNewAttempt = async () => {
     setActionLoading(true);
     try {
@@ -35,6 +45,7 @@ export default function ListAttemptScreen({ route, navigation }) {
   return (
     <MainContainer title="Quiz Attempts" navigation={navigation} isMain={false}>
       <View style={styles.container}>
+        {/* Quiz Header and Actions Section */}
         <View style={styles.glassWrapper}>
           <View
             style={[
@@ -47,10 +58,12 @@ export default function ListAttemptScreen({ route, navigation }) {
           >
             <QuizDetails quizId={quizId} />
 
-            <View style={{ marginBottom: 15 }}>
+            {/* Export Functionality */}
+            <View style={styles.exportWrapper}>
               <ExportQuizButton quizId={quizId} />
             </View>
 
+            {/* Start Attempt Action */}
             <Button
               title="Start New Attempt"
               icon={
@@ -71,6 +84,7 @@ export default function ListAttemptScreen({ route, navigation }) {
           </View>
         </View>
 
+        {/* History Table Section */}
         <View style={styles.tableSection}>
           <ListAttemptTable quizId={quizId} />
         </View>
@@ -101,6 +115,9 @@ const styles = StyleSheet.create({
   startBtn: {
     borderRadius: 12,
     height: 50,
+  },
+  exportWrapper: {
+    marginBottom: 15,
   },
   btnContainer: { marginTop: 10 },
   tableSection: { flex: 1 },

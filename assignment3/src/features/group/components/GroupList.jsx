@@ -1,3 +1,7 @@
+/**
+ * @file GroupList.jsx
+ * @description Component for rendering a scrollable list of groups with support for pagination and refresh.
+ */
 import React from "react";
 import { FlatList, StyleSheet, RefreshControl, View, Text } from "react-native";
 import Group from "./Group";
@@ -5,6 +9,17 @@ import ListFooter from "../../../components/ui/ListFooter";
 import { useTheme } from "../../../app/providers/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
 
+/**
+ * GroupList component.
+ *
+ * @param {Object} props - Component props
+ * @param {Array} props.groups - Array of group objects to display
+ * @param {boolean} props.loading - Loading state for the list
+ * @param {boolean} props.refreshing - Refreshing state for pull-to-refresh
+ * @param {Function} props.onRefresh - Callback for pull-to-refresh action
+ * @param {Function} props.handleLoadMore - Callback for infinite scroll pagination
+ * @returns {JSX.Element} The rendered flat list of groups.
+ */
 export default function GroupList({
   groups,
   loading,
@@ -20,6 +35,7 @@ export default function GroupList({
       data={groups}
       renderItem={({ item }) => (
         <Group
+          id={item._id}
           name={item.name}
           memberCount={item.memberCount}
           isAdmin={item.isAdmin}
@@ -28,7 +44,9 @@ export default function GroupList({
           }
         />
       )}
-      keyExtractor={(item, index) => item._id || `group-idx-${index}`}
+      keyExtractor={(item, index) =>
+        item._id?.toString() || `group-idx-${index}`
+      }
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.1}
       ListEmptyComponent={
@@ -50,7 +68,11 @@ export default function GroupList({
         <ListFooter loading={loading} refreshing={refreshing} />
       )}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[theme.colors.primary]}
+        />
       }
     />
   );
@@ -65,6 +87,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#7F8C8D",
+    fontWeight: "500",
   },
 });

@@ -1,15 +1,25 @@
+/**
+ * @file EditGroupScreen.jsx
+ * @description Screen component for editing an existing group's details.
+ */
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import MainContainer from "../../../components/layout/MainContainer";
 import EditGroupForm from "../components/EditGroupForm";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * EditGroupScreen component serves as a wrapper for the EditGroupForm.
- * It provides the layout and navigation context for editing a group.
+ * EditGroupScreen
+ *
+ * This screen serves as the entry point for modifying group information.
+ * It extracts the groupId from navigation parameters and passes it to the EditGroupForm.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.route - React Navigation route object containing params
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered Edit Group screen.
  */
 export default function EditGroupScreen({ route, navigation }) {
-  // Extract groupId from navigation parameters
   const { groupId } = route.params;
   const { theme } = useTheme();
 

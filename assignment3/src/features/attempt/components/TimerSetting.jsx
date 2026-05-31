@@ -1,3 +1,7 @@
+/**
+ * @file TimerSetting.jsx
+ * @description Component for configuring and managing the quiz countdown timer with push notification support.
+ */
 import React, { useState } from "react";
 import {
   View,
@@ -16,15 +20,20 @@ import {
 } from "../../../components/ui/DeviceNotification";
 
 /**
- * TimerSetting component allows users to configure and control the quiz timer.
+ * TimerSetting component.
  *
- * @param {number} questionCount - Number of questions to calculate time
- * @param {Function} onTimeUp - Callback function when timer reaches zero
+ * Provides an interface for users to set a time limit per question,
+ * start the countdown, and receive notifications when time expires.
+ *
+ * @param {Object} props - Component props
+ * @param {number} props.questionCount - Number of questions to calculate total time
+ * @param {Function} props.onTimeUp - Callback function triggered when timer reaches zero
+ * @returns {JSX.Element} The rendered timer configuration and display.
  */
 export default function TimerSetting({ questionCount, onTimeUp }) {
   const { theme } = useTheme();
   const [isTimerActive, setIsTimerActive] = useState(false);
-  const [seconds, setSeconds] = useState("60"); // Default seconds per question
+  const [seconds, setSeconds] = useState("60");
 
   const handleStart = async () => {
     const secs = parseInt(seconds, 10);
@@ -32,10 +41,12 @@ export default function TimerSetting({ questionCount, onTimeUp }) {
       Alert.alert("Invalid Input", "Please enter a valid number of seconds.");
       return;
     }
+    // Request notification permissions and start timer
     setIsTimerActive(true);
     await registerForPushNotificationsAsync();
   };
 
+  /** Resets the timer to configuration mode */
   const handleReset = () => {
     setIsTimerActive(false);
   };
@@ -47,9 +58,9 @@ export default function TimerSetting({ questionCount, onTimeUp }) {
         {
           backgroundColor: theme.colors.card,
           borderColor: isTimerActive ? "#E74C3C" : theme.colors.primary,
-          borderWidth: 2,
           shadowColor: isTimerActive ? "#E74C3C" : theme.colors.primary,
         },
+        styles.container,
       ]}
     >
       <View style={styles.headerRow}>
@@ -140,12 +151,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 12,
     borderRadius: 10,
-    borderWidth: 1,
+    borderWidth: 2,
     marginVertical: 12,
     elevation: 4,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
     borderStyle: "dashed",
   },
   headerRow: {

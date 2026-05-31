@@ -3,7 +3,15 @@ import MainContainer from "../../../components/layout/MainContainer";
 import UserSettingList from "../components/UserSetting";
 
 /**
- * UserSettingListScreen component provides the layout for the settings tab.
+ * UserSettingListScreen
+ *
+ * A screen component that serves as the primary entry point for the Settings tab.
+ * It wraps the UserSettingList component within a MainContainer to provide
+ * consistent layout and navigation.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered settings screen
  */
 export default function UserSettingListScreen({ navigation }) {
   return (

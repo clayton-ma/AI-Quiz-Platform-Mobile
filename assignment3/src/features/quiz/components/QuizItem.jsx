@@ -4,6 +4,13 @@ import { Icon } from "@rneui/themed";
 import QuizControlButton from "./QuizControlButton";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
+/**
+ * QuizItem component renders a card representing a single quiz.
+ * It displays the quiz title, status (Draft/Published), assigned group, and last update date.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.quiz - The quiz data object
+ */
 export default function QuizItem({ quiz }) {
   const { theme } = useTheme();
 
@@ -128,7 +135,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 5,
     paddingVertical: 16,
     paddingHorizontal: 14,
-
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

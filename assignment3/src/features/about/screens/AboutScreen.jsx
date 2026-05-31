@@ -1,12 +1,9 @@
+/**
+ * @file AboutScreen.jsx
+ * @description Screen component providing an overview of the application's features and mission.
+ */
 import React, { useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  Animated,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Animated } from "react-native";
 import MainContainer from "../../../components/layout/MainContainer";
 import { Icon } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
@@ -38,11 +35,19 @@ const features = [
   },
 ];
 
+/**
+ * About component displays application information with animated transitions.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered About screen.
+ */
 export default function About({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const { theme } = useTheme();
 
+  /** Triggers entry animations on component mount */
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -56,10 +61,10 @@ export default function About({ navigation }) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   return (
-    <MainContainer title="About" isMain={true} navigation={navigation}>
+    <MainContainer title="About" isMain={false} navigation={navigation}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Animated.View
           style={[
@@ -143,12 +148,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "900",
     textAlign: "left",
-    color: "#2C3E50",
     marginBottom: 15,
   },
+  highlight: { fontWeight: "bold" },
   subtitle: {
     fontSize: 16,
-    color: "#7f8c8d",
     textAlign: "left",
     lineHeight: 24,
   },
@@ -181,12 +185,10 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#2C3E50",
     marginBottom: 8,
   },
   featureDescription: {
     fontSize: 14,
-    color: "#95a5a6",
     lineHeight: 20,
   },
 });

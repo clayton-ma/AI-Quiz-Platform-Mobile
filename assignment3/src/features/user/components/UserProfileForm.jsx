@@ -18,8 +18,12 @@ import { useTheme } from "../../../app/providers/ThemeContext";
 import FormContainer from "../../../components/ui/FormContainer";
 
 /**
- * ProfileForm component allows users to view and update their personal information.
- * It handles name updates and provides a link to the password change page.
+ * UserProfileForm component.
+ *
+ * Provides a form interface for users to view their profile details and update
+ * their first and last names. The email field remains read-only.
+ *
+ * @returns {JSX.Element} The rendered profile form.
  */
 export default function UserProfileForm() {
   const { user, refreshUser } = useAuth();
@@ -45,6 +49,7 @@ export default function UserProfileForm() {
   const watchedFirstName = watch("firstname");
   const watchedLastName = watch("lastname");
 
+  // Sync form state when user data is loaded or changed in context
   useEffect(() => {
     if (user) {
       reset({
@@ -55,6 +60,11 @@ export default function UserProfileForm() {
     }
   }, [user, reset]);
 
+  /**
+   * Handles form submission to update user profile.
+   *
+   * @param {Object} formData - The validated data from the form.
+   */
   const onSubmit = async (formData) => {
     setLoading(true);
     try {
@@ -174,7 +184,11 @@ export default function UserProfileForm() {
             />
           )}
         />
-        <Text style={styles.infoText}>Email address cannot be changed</Text>
+        <Text
+          style={[styles.infoText, { color: theme.dark ? "#999" : "#666" }]}
+        >
+          Email address cannot be changed
+        </Text>
 
         <View style={styles.buttonContainer}>
           <SaveButton loading={loading} onPress={handleSubmit(onSubmit)} />

@@ -1,3 +1,8 @@
+/**
+ * @file AuthContext.js
+ * @description Context provider for managing global authentication state,
+ * including user profile data and session persistence.
+ */
 import { createContext, useContext, useState, useEffect } from "react";
 import ShowErrorNotification from "../../components/ui/ShowErrorNotification";
 import { fetchUser } from "../../features/user/services/userApi";
@@ -16,13 +21,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // On initial mount, check if a JWT exists and attempt to fetch user details
   useEffect(() => {
+    /**
+     * Initializes authentication state on app mount.
+     * Checks for a stored JWT and attempts to restore the user session.
+     * @async
+     */
     const initAuth = async () => {
       try {
-        // Check SecureStore for existing token to restore session
         const token = await SecureStore.getItemAsync("jwt");
         if (token) {
+          // Fetch profile using the stored token
           const loginedUser = await fetchUser();
           if (loginedUser) setUser(loginedUser);
         } else {
@@ -40,6 +49,7 @@ export const AuthProvider = ({ children }) => {
   /**
    * Refreshes the user state from the server.
    * Called after a successful login API call has stored the JWT.
+   * @async
    */
   const refreshUser = async () => {
     setLoading(true);
@@ -60,6 +70,7 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Clears the authentication state and removes the JWT from SecureStore.
+   * @async
    */
   const clearUser = async () => {
     await SecureStore.deleteItemAsync("jwt");
@@ -75,8 +86,11 @@ export const AuthProvider = ({ children }) => {
 
 /**
  * Custom hook to access the AuthContext.
- * Provides { user, refreshUser, clearAuth, loading }.
  *
- * @returns {Object} Authentication context value
+ * @returns {Object} Auth context values.
+ * @property {Object|null} user - The current authenticated user object.
+ * @property {boolean} loading - Loading state for auth initialization or refresh.
+ * @property {Function} refreshUser - Function to fetch latest user data from API.
+ * @property {Function} clearUser - Function to log out and clear local session.
  */
 export const useAuth = () => useContext(AuthContext);

@@ -1,30 +1,33 @@
 import React, { useState, useCallback, useEffect } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  View,
-  Text,
-  SafeAreaView,
-} from "react-native";
-import QuizItem from "../components/QuizItem";
+import { StyleSheet, View } from "react-native";
 import MainContainer from "../../../components/layout/MainContainer";
 import SearchBar from "../../../components/ui/SearchBar";
 import FilterBar from "../../../components/ui/FilterBar";
 import { fetchQuizzes } from "../services/quizApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import CreateButton from "../../../components/ui/CreateButton";
-import { useTheme } from "../../../app/providers/ThemeContext";
 import ListQuiz from "../components/ListQuiz";
 
+/**
+ * ListQuizScreen component.
+ *
+ * Displays a searchable and filterable list of quizzes created by the user.
+ * Supports pagination, pull-to-refresh, and navigation to quiz creation.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered quiz list screen.
+ */
 export default function ListQuizScreen({ navigation }) {
-  const { theme } = useTheme();
   const [keyword, setKeyword] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({ status: "All" });
   const [displayData, setDisplayData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
+  /**
+   * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
+   */
   const [hasMore, setHasMore] = useState(true);
 
   const filters = [
@@ -41,10 +44,22 @@ export default function ListQuizScreen({ navigation }) {
     },
   ];
 
+  /**
+   * Updates the selected filter state.
+   *
+   * @param {string} key - The filter key to update
+   * @param {string} value - The new filter value
+   */
   const handleFilterChange = useCallback((key, value) => {
     setSelectedFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  /**
+   * Fetches quizzes from the API based on current search, filters, and page.
+   *
+   * @param {number} pageNum - The page number to fetch
+   * @param {boolean} isRefresh - Whether this is a refresh action (resets list)
+   */
   const loadQuizzes = useCallback(
     async (pageNum, isRefresh = false) => {
       if (loading) return;
@@ -82,15 +97,22 @@ export default function ListQuizScreen({ navigation }) {
     [keyword, selectedFilters],
   );
 
+  // Trigger initial load and reload on filter/search changes
   useEffect(() => {
     loadQuizzes(1, true);
   }, [keyword, selectedFilters, loadQuizzes]);
 
+  /**
+   * Handles pull-to-refresh action.
+   */
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadQuizzes(1, true);
   }, [loadQuizzes]);
 
+  /**
+   * Handles infinite scroll loading.
+   */
   const handleLoadMore = () => {
     if (!loading && hasMore) {
       loadQuizzes(page + 1);
@@ -126,18 +148,5 @@ export default function ListQuizScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  listContent: {
-    paddingBottom: 80,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 50,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#7F8C8D",
   },
 });

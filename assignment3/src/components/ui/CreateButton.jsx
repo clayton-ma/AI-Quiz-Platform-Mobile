@@ -1,14 +1,26 @@
+/**
+ * @file CreateButton.jsx
+ * @description A reusable Floating Action Button (FAB) for triggering creation actions.
+ */
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useTheme } from "../../app/providers/ThemeContext";
 
+/**
+ * CreateButton component.
+ *
+ * Renders a circular button fixed to the bottom-right of the screen,
+ * typically used for "Add" or "Create" operations.
+ *
+ * @param {Object} props - Component props
+ * @param {Function} props.handlePress - Callback function triggered on button press
+ */
 export default function CreateButton({ handlePress }) {
   const { theme } = useTheme();
-  const BackgroundColor = theme.colors.primary;
 
   return (
     <TouchableOpacity
-      style={[styles.fab, { backgroundColor: BackgroundColor }]}
+      style={[styles.fab, { backgroundColor: theme.colors.primary }]}
       onPress={handlePress}
     >
       <Icon name="add" color="#fff" size={30} />
@@ -17,6 +29,7 @@ export default function CreateButton({ handlePress }) {
 }
 
 const styles = StyleSheet.create({
+  /** Floating action button positioning and elevation */
   fab: {
     position: "absolute",
     right: 20,

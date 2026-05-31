@@ -1,3 +1,7 @@
+/**
+ * @file ViewQuestion.jsx
+ * @description Component for displaying a single question's result, highlighting user choice and correct answer.
+ */
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Badge, Icon } from "@rneui/themed";
@@ -39,6 +43,7 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
         {selectedOptionId && hasCorrectAnswerInfo && (
           <Badge
             value={selectedOption?.is_correct ? "Correct" : "Incorrect"}
+            // Use standard status colors for correctness feedback
             status={selectedOption?.is_correct ? "success" : "error"}
             badgeStyle={styles.badge}
           />
@@ -51,6 +56,7 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
         {question.content}
       </Text>
 
+      {/* Options list with conditional styling based on correctness and user selection */}
       <View style={styles.optionsContainer}>
         {question.options?.map((option) => {
           const isSelected = option._id === selectedOptionId;
@@ -117,7 +123,6 @@ export default function ViewQuestion({ question, index, selectedOptionId }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -134,9 +139,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  headerText: { fontSize: 18, fontWeight: "bold", color: "#2C3E50" },
+  headerText: { fontSize: 18, fontWeight: "bold" },
   badge: { paddingHorizontal: 8 },
-  content: { fontSize: 16, color: "#34495E", marginBottom: 16 },
+  content: { fontSize: 16, marginBottom: 16 },
   optionsContainer: { gap: 8 },
   optionItem: {
     flexDirection: "row",
@@ -145,7 +150,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ECF0F1",
   },
   optionCorrect: {
     borderColor: "#27AE60",
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
     borderColor: "#E74C3C",
     backgroundColor: "#FDEDEC",
   },
-  optionText: { flex: 1, fontSize: 14, color: "#2C3E50" },
+  optionText: { flex: 1, fontSize: 14 },
   optionTextBold: { fontWeight: "600" },
   iconGroup: {
     flexDirection: "row",

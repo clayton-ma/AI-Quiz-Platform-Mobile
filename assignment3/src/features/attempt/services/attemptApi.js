@@ -1,5 +1,5 @@
 /**
- * @file attempt/api.js
+ * @file attemptApi.js
  * @description Service layer for quiz attempt-related API interactions, including starting, saving, and retrieving results.
  */
 import { API_BASE_URL, getAuthHeader } from "../../../services/authHeader";
@@ -7,26 +7,28 @@ import { API_BASE_URL, getAuthHeader } from "../../../services/authHeader";
 /**
  * Fetches a paginated list of attempts for a specific quiz.
  * @async
- * @param {string} quizId - The ID of the quiz.
- * @param {Object} params - Query parameters (page, limit, sort).
+ * @param {string} quizId - The unique identifier of the quiz.
+ * @param {Object} [params={}] - Query parameters.
+ * @param {number} [params.page] - Page number for pagination.
+ * @param {number} [params.limit] - Number of items per page.
+ * @param {string} [params.sort] - Sorting criteria.
+ * @param {string} [params.status] - Filter by attempt status (e.g., 'completed', 'in_progress').
  * @returns {Promise<Object>} Object containing attempt data and pagination Link header.
  */
 export const fetchAttemptsByQuizId = async (quizId, params = {}) => {
-  // Build query string
   const query = new URLSearchParams();
   if (params.page) query.append("page", params.page);
   if (params.limit) query.append("limit", params.limit);
   if (params.sort) query.append("sort", params.sort);
   if (params.status) query.append("status", params.status);
 
-  // Call api
   const response = await fetch(
     `${API_BASE_URL}/attempt/quiz/${quizId}?${query.toString()}`,
     {
       headers: getAuthHeader(),
     },
   );
-  // Error handling
+
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch attempts", {
@@ -34,7 +36,6 @@ export const fetchAttemptsByQuizId = async (quizId, params = {}) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   const linkHeader = response.headers.get("Link") || "";
   return { data, linkHeader };
@@ -47,13 +48,11 @@ export const fetchAttemptsByQuizId = async (quizId, params = {}) => {
  * @returns {Promise<Object>} The created attempt object.
  */
 export const createAttempt = async (quizId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/attempt/quiz/${quizId}`, {
     method: "POST",
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to create attempt", {
@@ -61,7 +60,6 @@ export const createAttempt = async (quizId) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -73,12 +71,10 @@ export const createAttempt = async (quizId) => {
  * @returns {Promise<Object>} The attempt data.
  */
 export const fetchAttemptById = async (attemptId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/attempt/${attemptId}`, {
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch attempt", {
@@ -86,7 +82,6 @@ export const fetchAttemptById = async (attemptId) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -95,11 +90,12 @@ export const fetchAttemptById = async (attemptId) => {
  * Updates an attempt (Save progress or Submit for grading).
  * @async
  * @param {string} attemptId - The ID of the attempt to update.
- * @param {Object} attemptData - The updated data (action: 'save'|'submit', answers: []).
+ * @param {Object} attemptData - The updated data.
+ * @param {string} attemptData.action - The action to perform ('save' or 'submit').
+ * @param {Array<Object>} attemptData.answers - The user's answers.
  * @returns {Promise<Object>} The updated attempt object.
  */
 export const updateAttempt = async (attemptId, attemptData) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/attempt/${attemptId}`, {
     method: "PUT",
     headers: {
@@ -109,7 +105,6 @@ export const updateAttempt = async (attemptId, attemptData) => {
     body: JSON.stringify(attemptData),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to update attempt", {
@@ -117,7 +112,6 @@ export const updateAttempt = async (attemptId, attemptData) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -128,13 +122,11 @@ export const updateAttempt = async (attemptId, attemptData) => {
  * @param {string} attemptId - The ID of the attempt to delete.
  */
 export const deleteAttempt = async (attemptId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/attempt/${attemptId}`, {
     method: "DELETE",
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to delete attempt", {

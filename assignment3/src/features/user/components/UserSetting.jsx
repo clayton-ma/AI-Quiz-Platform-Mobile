@@ -15,11 +15,18 @@ import UserAvatar from "../../../components/ui/UserAvatar";
 import { useNavigation } from "@react-navigation/native";
 import SettingListItem from "./SettingListItem";
 
+/**
+ * UserSettingList component.
+ *
+ * Displays the user's profile summary and a list of settings including
+ * profile editing, app information, theme toggling, and logout functionality.
+ *
+ * @returns {JSX.Element} The rendered settings list.
+ */
 export default function UserSettingList() {
   const { user, clearUser } = useAuth();
   const { theme, updateThemeMode } = useTheme();
   const navigation = useNavigation();
-
   const settingsOptions = [
     {
       title: "Edit Profile",
@@ -35,6 +42,9 @@ export default function UserSettingList() {
     },
   ];
 
+  /**
+   * Prompts the user for logout confirmation and clears user session.
+   */
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
@@ -129,27 +139,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
   userInfo: {
     marginTop: 15,
     alignItems: "center",
   },
-
   userName: {
     fontSize: 20,
     fontWeight: "bold",
   },
-
   userEmail: {
     fontSize: 14,
     color: "#868e96",
     marginTop: 4,
   },
-
   listContainer: {
     marginTop: 10,
   },
-
   settingRow: {
     minHeight: 56,
     paddingHorizontal: 16,
@@ -159,21 +164,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-
   leftContent: {
     flexDirection: "row",
     alignItems: "center",
   },
-
   settingTitle: {
     fontSize: 16,
     marginLeft: 16,
   },
-
   logoutButton: {
     marginTop: 20,
   },
-
   logoutText: {
     marginLeft: 16,
     fontSize: 16,

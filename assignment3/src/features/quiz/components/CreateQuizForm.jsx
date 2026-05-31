@@ -1,3 +1,7 @@
+/**
+ * @file CreateQuizForm.jsx
+ * @description Component for creating a new quiz with basic metadata and group assignments.
+ */
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -15,8 +19,16 @@ import { createQuiz } from "../services/quizApi";
 import { fetchGroups } from "../../group/services/groupApi";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
+/**
+ * CreateQuizForm component.
+ *
+ * Provides a form for instructors to input quiz title, description,
+ * toggle instant results, and assign the quiz to specific administrative groups.
+ *
+ * @returns {JSX.Element} The rendered quiz creation form.
+ */
 export default function CreateQuizForm() {
-  const [loading, setLoading] = useState(false); // Controls loading state for API calls
+  const [loading, setLoading] = useState(false);
   const [groupsData, setGroupsData] = useState([]);
   const navigation = useNavigation();
   const { theme } = useTheme();
@@ -28,6 +40,7 @@ export default function CreateQuizForm() {
     groupIds: [],
   });
 
+  /** Fetches groups where the current user has administrative rights on mount */
   useEffect(() => {
     const loadGroups = async () => {
       try {
@@ -44,6 +57,10 @@ export default function CreateQuizForm() {
     loadGroups();
   }, []);
 
+  /**
+   * Validates form data and submits the new quiz to the backend.
+   * Redirects to the EditQuiz screen upon successful creation.
+   */
   const handleSubmit = async () => {
     if (formData.name.length < 3) {
       alert("Title must be at least 3 characters");
@@ -65,6 +82,11 @@ export default function CreateQuizForm() {
     }
   };
 
+  /**
+   * Toggles the selection of a group ID in the local form state.
+   *
+   * @param {string} groupId - The ID of the group to add or remove.
+   */
   const toggleGroup = (groupId) => {
     setFormData((prev) => {
       const isSelected = prev.groupIds.includes(groupId);
@@ -135,15 +157,16 @@ export default function CreateQuizForm() {
         <View style={styles.groupsList}>
           {groupsData.map((g) => {
             const isSelected = formData.groupIds.includes(g._id || g.id);
+            const groupId = g._id || g.id;
             return (
               <TouchableOpacity
-                key={g._id || g.id}
+                key={groupId}
                 style={[
                   styles.groupChip,
                   { borderColor: theme.colors.primary },
                   isSelected && { backgroundColor: theme.colors.primary },
                 ]}
-                onPress={() => toggleGroup(g._id)}
+                onPress={() => toggleGroup(groupId)}
                 disabled={loading}
               >
                 <Text
@@ -211,7 +234,7 @@ export default function CreateQuizForm() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8f9fa", padding: 16 },
+  container: { flex: 1, padding: 16 },
   card: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -260,13 +283,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   textArea: { height: 100, textAlignVertical: "top" },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    marginBottom: 20,
-    backgroundColor: "#f8f9fa",
-  },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",

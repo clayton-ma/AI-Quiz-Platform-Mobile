@@ -1,3 +1,7 @@
+/**
+ * @file EditGroupForm.jsx
+ * @description Component for editing group details, managing members, and administrative roles.
+ */
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -16,9 +20,16 @@ import ShowNotification from "../../../components/ui/ShowNotification";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 
 /**
- * EditGroup component provides an interface for group administrators to
- * update group names, manage member roles (promote to admin), add new members by email,
+ * EditGroupForm component.
+ *
+ * Provides an interface for group administrators to update group names,
+ * manage member roles (promote to admin), add new members by email,
  * and delete the group entirely.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.groupId - The ID of the group to edit
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered edit group form.
  */
 export default function EditGroupForm({ groupId, navigation }) {
   const [loading, setLoading] = useState(true);
@@ -33,7 +44,7 @@ export default function EditGroupForm({ groupId, navigation }) {
   const [membersToMerge, setMembersToMerge] = useState([]); // Tracks additions/role changes for API
   const [membersToDelete, setMembersToDelete] = useState([]); // Tracks removals for API
 
-  // Load group data on component mount
+  /** Fetches group details and initializes local state on mount */
   useEffect(() => {
     const initGroupDetails = async () => {
       try {
@@ -52,7 +63,6 @@ export default function EditGroupForm({ groupId, navigation }) {
         setAdmins(groupAdmins);
         setMembers(groupMembers);
       } catch (errors) {
-        navigate("/group");
         ShowErrorNotification(errors);
       } finally {
         setLoading(false);
@@ -103,7 +113,7 @@ export default function EditGroupForm({ groupId, navigation }) {
 
   /**
    * Moves a user from the members list to the admins list locally.
-   * @param {string} email - The email of the user to promote.
+   * @param {string} email - The email of the user to promote
    */
   const handlePromoteToAdmin = (email) => {
     // Find the member in the members list
@@ -156,8 +166,7 @@ export default function EditGroupForm({ groupId, navigation }) {
   };
 
   /**
-   * Submits the changes to the backend.
-   * @param {Object} values - Current form values.
+   * Validates and submits the updated group data to the backend.
    */
   const handleSave = async () => {
     setLoading(true);
@@ -187,7 +196,7 @@ export default function EditGroupForm({ groupId, navigation }) {
   };
 
   /**
-   * Deletes the entire group after confirmation.
+   * Deletes the entire group via the API.
    */
   const handleDeleteGroup = async () => {
     setLoading(true);
@@ -207,6 +216,9 @@ export default function EditGroupForm({ groupId, navigation }) {
     }
   };
 
+  /**
+   * Displays a confirmation alert before deleting the group.
+   */
   const confirmDelete = () => {
     Alert.alert(
       "Delete Group",

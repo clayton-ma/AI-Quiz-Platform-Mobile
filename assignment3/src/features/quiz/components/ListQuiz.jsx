@@ -4,6 +4,17 @@ import QuizItem from "./QuizItem";
 import ListFooter from "../../../components/ui/ListFooter";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
+/**
+ * ListQuiz component renders a scrollable list of quiz cards.
+ * It supports pull-to-refresh, infinite scrolling, and displays an empty state.
+ *
+ * @param {Object} props - Component props
+ * @param {Array|null} props.quizzes - Array of quiz data objects to display
+ * @param {boolean} props.refreshing - Indicates if the list is currently refreshing
+ * @param {Function} props.onRefresh - Callback function for pull-to-refresh
+ * @param {Function} props.handleLoadMore - Callback function for infinite scroll
+ * @param {boolean} props.loading - Indicates if data is currently being fetched
+ */
 export default function ListQuiz({
   quizzes,
   refreshing,
@@ -18,7 +29,7 @@ export default function ListQuiz({
       data={quizzes}
       renderItem={({ item }) => <QuizItem quiz={item} />}
       keyExtractor={(item, index) =>
-        item._id?.toString() || index.toString() || `quiz-${index}`
+        item._id?.toString() || item.id?.toString() || `quiz-${index}`
       }
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.2}

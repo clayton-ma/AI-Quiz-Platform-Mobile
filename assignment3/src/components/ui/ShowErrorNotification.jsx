@@ -1,17 +1,22 @@
+/**
+ * @file ShowErrorNotification.jsx
+ * @description Utility for parsing and displaying backend validation and system errors.
+ */
 import ShowNotification from "./ShowNotification";
 
 /**
- * A utility function to display Express Validator errors using native Alerts.
- * Adapted for React Native.
+ * ShowErrorNotification
+ *
+ * Processes error objects (typically from API responses) and displays them
+ * using the system-wide notification utility. It handles both generic
+ * error messages and structured Express Validator error arrays.
  *
  * @param {Object} errors - The error object containing message and cause.
+ * @param {string} [errors.message] - General error description.
+ * @param {Array|Object} [errors.cause] - Detailed validation errors or error cause.
  */
 export default function ShowErrorNotification(errors) {
   if (!errors || typeof errors !== "object") return;
-  // {
-  //    message: string
-  //    errors : errors data
-  // }
   const { message, cause } = errors;
 
   // Handle single error message without a cause array
@@ -38,6 +43,12 @@ export default function ShowErrorNotification(errors) {
   }
 }
 
+/**
+ * Formats an array of Express Validator errors into a readable string.
+ *
+ * @param {Array} cause - Array of error objects from the backend.
+ * @returns {string} Formatted error string.
+ */
 const formatExpressValidatorErrors = (cause = []) => {
   if (!Array.isArray(cause)) return "";
 
@@ -50,32 +61,41 @@ const formatExpressValidatorErrors = (cause = []) => {
     .join("\n");
 };
 
+/**
+ * Converts technical validation paths into user-friendly breadcrumbs.
+ * Example: "questions[0].content" -> "Questions 1 → Content"
+ *
+ * @param {string} path - The raw field path from the validator.
+ * @returns {string} Pretty-printed path.
+ */
 const formatValidationPath = (path = "") => {
   if (!path) return "";
 
-  return (
-    path
-      // split into segments: questions[0].options[1].content
-      .split(".")
-      .map((segment) => {
-        // extract base key + indexes
-        const match = segment.match(/^([a-zA-Z_]+)(\[(\d+)\])?$/);
+  return path
+    .split(".")
+    .map((segment) => {
+      // extract base key + indexes
+      const match = segment.match(/^([a-zA-Z_]+)(\[(\d+)\])?$/);
 
-        if (!match) return segment;
+      if (!match) return segment;
 
-        const [, key, , index] = match;
+      const [, key, , index] = match;
 
-        const prettyKey = capitalize(key);
+      const prettyKey = capitalize(key);
 
-        // if it has an index -> "Field 1"
-        if (index !== undefined) {
-          return `${prettyKey} ${Number(index) + 1}`;
-        }
+      if (index !== undefined) {
+        return `${prettyKey} ${Number(index) + 1}`;
+      }
 
-        return prettyKey;
-      })
-      .join(" → ")
-  );
+      return prettyKey;
+    })
+    .join(" → ");
 };
 
+/**
+ * Capitalizes the first letter of a string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
 const capitalize = (str = "") => str.charAt(0).toUpperCase() + str.slice(1);

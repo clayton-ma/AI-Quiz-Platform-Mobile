@@ -1,3 +1,7 @@
+/**
+ * @file CreateGroupModal.jsx
+ * @description Modal component for creating a new administrative group.
+ */
 import React, { useState } from "react";
 import {
   View,
@@ -11,22 +15,29 @@ import {
   Platform,
 } from "react-native";
 import { Button, Icon } from "@rneui/themed";
-import MainContainer from "../../../components/layout/MainContainer";
-import FormContainer from "../../../components/ui/FormContainer";
 import { createGroup } from "../services/groupApi";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
 import ShowNotification from "../../../components/ui/ShowNotification";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * CreateGroupScreen component provides a form for users to create a new group.
- * Upon successful creation, it navigates to the EditGroup screen.
+ * CreateGroupModal component.
+ *
+ * Provides a modal interface for users to input a group name and create a new group.
+ * Automatically navigates to the group editing screen upon successful creation.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.navigation - React Navigation object
+ * @param {boolean} props.visible - Controls modal visibility
+ * @param {Function} props.onClose - Callback to close the modal
+ * @returns {JSX.Element} The rendered group creation modal.
  */
-export default function CreateGroupScreen({ navigation, visible, onClose }) {
+export default function CreateGroupModal({ navigation, visible, onClose }) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
+  /** Handles the group creation request and navigation */
   const handleCreate = async () => {
     if (!name.trim()) {
       return ShowNotification({
@@ -46,7 +57,7 @@ export default function CreateGroupScreen({ navigation, visible, onClose }) {
         type: "success",
       });
 
-      // Navigate to EditGroup to allow adding members or further configuration
+      setName("");
       navigation.navigate("EditGroup", {
         groupId: newGroup,
       });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import {
   Modal,
   View,
@@ -10,24 +10,31 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-
 import { generateQuestions } from "../services/quizApi";
 import ShowNotification from "../../../components/ui/ShowNotification";
 import ShowErrorNotification from "../../../components/ui/ShowErrorNotification";
-import { useCallback } from "react";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * GenerateQuestionModal provides an interface for users to input topics
- * and specify the number of questions they want the AI to generate for a quiz.
+ * GenerateQuestionModal component.
+ *
+ * Provides a modal interface for instructors to generate quiz questions using AI.
+ * Users can specify a topic and the desired number of questions.
+ *
+ * @param {Object} props - Component props
+ * @param {boolean} props.opened - Controls modal visibility
+ * @param {Function} props.onClose - Callback to close the modal
+ * @param {Function} props.dispatch - Reducer dispatch function to update quiz state
+ * @returns {JSX.Element} The rendered AI generation modal.
  */
 export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
-  const [numQuestions, setNumQuestions] = React.useState(1);
-  const [topics, setTopics] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+  const [numQuestions, setNumQuestions] = useState(1);
+  const [topics, setTopics] = useState("");
+  const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
 
-  const onGenerate = useCallback(async () => {
+  /** Handles the AI generation request and updates the parent state */
+  const handleGenerate = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -66,19 +73,33 @@ export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.overlay}
       >
-        <View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>Generate AI Quiz</Text>
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: theme.colors.card },
+          ]}
+        >
+          <Text style={[styles.title, { color: theme.colors.text }]}>
+            Generate AI Quiz
+          </Text>
 
           {loading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={theme.colors.primary} />
-              <Text style={[styles.loadingText, { color: theme.dark ? "#999" : "#666" }]}>
+              <Text
+                style={[
+                  styles.loadingText,
+                  { color: theme.dark ? "#999" : "#666" },
+                ]}
+              >
                 AI is generating your questions...
               </Text>
             </View>
           ) : (
             <View style={styles.form}>
-              <Text style={[styles.label, { color: theme.colors.text }]}>Topic</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
+                Topic
+              </Text>
               <TextInput
                 style={[
                   styles.input,
@@ -86,7 +107,9 @@ export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
                   {
                     color: theme.colors.text,
                     borderColor: theme.colors.border,
-                    backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+                    backgroundColor: theme.dark
+                      ? "rgba(255,255,255,0.05)"
+                      : "#fff",
                   },
                 ]}
                 placeholder="e.g. Quantum Physics basics or React Hooks"
@@ -98,14 +121,18 @@ export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
                 onChangeText={setTopics}
               />
 
-              <Text style={[styles.label, { color: theme.colors.text }]}>Number of Questions (Max 10)</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>
+                Number of Questions (Max 10)
+              </Text>
               <TextInput
                 style={[
                   styles.input,
                   {
                     color: theme.colors.text,
                     borderColor: theme.colors.border,
-                    backgroundColor: theme.dark ? "rgba(255,255,255,0.05)" : "#fff",
+                    backgroundColor: theme.dark
+                      ? "rgba(255,255,255,0.05)"
+                      : "#fff",
                   },
                 ]}
                 keyboardType="numeric"
@@ -117,10 +144,20 @@ export default function GenerateQuestionModal({ opened, onClose, dispatch }) {
 
               <View style={styles.buttonGroup}>
                 <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                  <Text style={[styles.cancelButtonText, { color: theme.dark ? "#999" : "#666" }]}>Cancel</Text>
+                  <Text
+                    style={[
+                      styles.cancelButtonText,
+                      { color: theme.dark ? "#999" : "#666" },
+                    ]}
+                  >
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.generateButton, { backgroundColor: theme.colors.primary }]}
+                  style={[
+                    styles.generateButton,
+                    { backgroundColor: theme.colors.primary },
+                  ]}
                   onPress={() => topics.trim() && onGenerate()}
                 >
                   <Text style={[styles.generateButtonText, { color: "#fff" }]}>

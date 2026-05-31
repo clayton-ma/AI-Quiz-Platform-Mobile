@@ -1,3 +1,7 @@
+/**
+ * @file ExportQuiz.jsx
+ * @description Component for exporting quiz content to a PDF file and sharing it.
+ */
 import React, { useState, useEffect } from "react";
 import {
   TouchableOpacity,
@@ -14,15 +18,17 @@ import { fetchQuizByIdForEdit } from "../../quiz/services/quizApi";
 
 /**
  * ExportQuizButton component allows users to generate a PDF version of the quiz
- * and share it using the device's native sharing capabilities.
+ * and share it using the device's native sharing capabilities. It fetches the
+ * full quiz data including questions and options.
  *
  * @param {string} quizId - The ID of the quiz to fetch and export.
+ * @returns {JSX.Element} The rendered export button.
  */
 export default function ExportQuizButton({ quizId }) {
   const { theme } = useTheme();
   const [quiz, setQuiz] = useState(null);
-  const [exporting, setExporting] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -32,12 +38,18 @@ export default function ExportQuizButton({ quizId }) {
         const data = await fetchQuizByIdForEdit(quizId);
         setQuiz(data);
       } catch (error) {
+        ShowErrorNotification(error);
       } finally {
         setLoading(false);
       }
     };
     loadQuiz();
   }, [quizId]);
+
+  /**
+   * Generates the HTML string used for PDF creation.
+   * @returns {string} HTML content.
+   */
 
   const generateHtml = () => {
     const questionsHtml =
@@ -90,6 +102,9 @@ export default function ExportQuizButton({ quizId }) {
     `;
   };
 
+  /**
+   * Handles the PDF generation and triggers the native sharing dialog.
+   */
   const handleExport = async () => {
     if (!quiz) return;
     setExporting(true);

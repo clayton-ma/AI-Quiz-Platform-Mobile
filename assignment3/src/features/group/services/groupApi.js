@@ -1,13 +1,22 @@
+/**
+ * @file groupApi.js
+ * @description Service layer for group-related API interactions, including CRUD operations and group management.
+ */
 import { API_BASE_URL, getAuthHeader } from "../../../services/authHeader";
 import parseLinkHeader from "../../../utils/parseLinkHeader";
 
 /**
- * Fetches all groups available to the current user.
+ * Fetches a paginated list of groups available to the current user with optional filters.
  * @async
- * @returns {Promise<Array>} A promise that resolves to the list of groups.
+ * @param {Object} [params={}] - Query parameters.
+ * @param {number} [params.page] - Page number for pagination.
+ * @param {number} [params.limit] - Number of items per page.
+ * @param {string} [params.search] - Search term for group names.
+ * @param {string} [params.role] - Filter by user role in the group (e.g., 'admin').
+ * @param {string} [params.sort] - Sorting criteria.
+ * @returns {Promise<Object>} Object containing the array of groups and parsed pagination links.
  */
 export const fetchGroups = async (params = {}) => {
-  // Build query string
   const query = new URLSearchParams();
   if (params.page) query.append("page", params.page);
   if (params.limit) query.append("limit", params.limit);
@@ -15,12 +24,10 @@ export const fetchGroups = async (params = {}) => {
   if (params.role) query.append("role", params.role);
   if (params.sort) query.append("sort", params.sort);
 
-  // Call api
   const response = await fetch(`${API_BASE_URL}/group?${query.toString()}`, {
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch groups", {
@@ -28,7 +35,6 @@ export const fetchGroups = async (params = {}) => {
     });
   }
 
-  // Return the data
   const json = await response.json();
   const data = json.data;
   const linkHeader = parseLinkHeader(response.headers.get("Link")) || "";
@@ -38,16 +44,14 @@ export const fetchGroups = async (params = {}) => {
 /**
  * Fetches details for a specific group by its ID.
  * @async
- * @param {string|number} groupId - The unique identifier of the group.
+ * @param {string} groupId - The unique identifier of the group.
  * @returns {Promise<Object>} The group data.
  */
 export const fetchGroupById = async (groupId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/group/${groupId}`, {
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to fetch group", {
@@ -55,7 +59,6 @@ export const fetchGroupById = async (groupId) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -63,11 +66,12 @@ export const fetchGroupById = async (groupId) => {
 /**
  * Creates a new group.
  * @async
- * @param {Object} groupData - The data for the new group (e.g., name, description).
+ * @param {Object} groupData - The group configuration.
+ * @param {string} groupData.name - The name of the group.
+ * @param {string} [groupData.description] - Optional description.
  * @returns {Promise<Object>} The created group object.
  */
 export const createGroup = async (groupData) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/group`, {
     method: "POST",
     headers: {
@@ -77,7 +81,6 @@ export const createGroup = async (groupData) => {
     body: JSON.stringify(groupData),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to create group", {
@@ -85,7 +88,6 @@ export const createGroup = async (groupData) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
@@ -93,12 +95,11 @@ export const createGroup = async (groupData) => {
 /**
  * Updates an existing group's information.
  * @async
- * @param {string|number} groupId - The ID of the group to update.
+ * @param {string} groupId - The ID of the group to update.
  * @param {Object} groupData - The updated data fields.
  * @returns {Promise<Object>} The updated group object.
  */
 export const updateGroup = async (groupId, groupData) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/group/${groupId}`, {
     method: "PUT",
     headers: {
@@ -108,7 +109,6 @@ export const updateGroup = async (groupId, groupData) => {
     body: JSON.stringify(groupData),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to update group", {
@@ -116,24 +116,21 @@ export const updateGroup = async (groupId, groupData) => {
     });
   }
 
-  // Return the data
   const { data } = await response.json();
   return data;
 };
 
 /**
- * Deletes a group.
+ * Deletes a group and removes associated memberships.
  * @async
- * @param {string|number} groupId - The ID of the group to delete.
+ * @param {string} groupId - The ID of the group to delete.
  */
 export const deleteGroup = async (groupId) => {
-  // Call api
   const response = await fetch(`${API_BASE_URL}/group/${groupId}`, {
     method: "DELETE",
     headers: getAuthHeader(),
   });
 
-  // Error handling
   if (!response.ok) {
     const errors = await response.json();
     throw new Error(errors.message || "Failed to delete group", {

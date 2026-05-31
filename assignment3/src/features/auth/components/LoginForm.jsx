@@ -1,3 +1,7 @@
+/**
+ * @file LoginForm.jsx
+ * @description Component for user authentication and login handling.
+ */
 import {
   View,
   Text,
@@ -22,12 +26,16 @@ import Heading from "../../../components/ui/Heading";
 import FormContainer from "../../../components/ui/FormContainer";
 
 /**
- * Login component provides a form for existing users to authenticate.
- * It handles validation, API interaction, and redirects authenticated users.
- * Adapted for React Native.
+ * LoginForm component.
+ *
+ * Provides a form for existing users to authenticate. It handles input validation,
+ * backend API interaction, and automatic redirection upon successful login.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.navigation - React Navigation object
+ * @returns {JSX.Element} The rendered login form.
  */
 export default function LoginForm({ navigation }) {
-  // Access authentication context to check user status and refresh data
   const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
@@ -43,6 +51,7 @@ export default function LoginForm({ navigation }) {
     },
   });
 
+  /** Redirect user if they are already authenticated */
   useEffect(() => {
     if (user !== null) {
       ShowNotification({
@@ -56,18 +65,16 @@ export default function LoginForm({ navigation }) {
   }, [user]);
 
   /**
-   * Handles the login form submission.
+   * Handles the login form submission to the backend.
+   *
+   * @param {Object} data - The validated form data (email and password).
    */
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      // Attempt to authenticate with the backend
       await loginUser(data);
-
-      // Update the global AuthContext with the new user data
       await refreshUser();
     } catch (errors) {
-      // Display backend or network errors to the user
       ShowErrorNotification(errors);
     } finally {
       setLoading(false);
@@ -179,23 +186,6 @@ export default function LoginForm({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 20, backgroundColor: "#fff", flexGrow: 1 },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 40,
-  },
-  linkText: { textAlign: "center", marginTop: 10, color: "#666" },
-  link: { color: "#228be6", fontWeight: "600" },
-  formCard: {
-    marginTop: 30,
-    padding: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#dee2e6",
-    backgroundColor: "#fff",
-    elevation: 2,
-  },
   label: { fontSize: 14, fontWeight: "500", marginBottom: 5, color: "#495057" },
   input: {
     borderWidth: 1,

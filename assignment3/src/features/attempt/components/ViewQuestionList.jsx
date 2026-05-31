@@ -1,13 +1,21 @@
+/**
+ * @file ViewQuestionList.jsx
+ * @description Component for rendering a collection of questions in review mode.
+ */
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import ViewQuestion from "./ViewQuestion";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
- * ViewQuestionList component renders a list of questions with their results.
+ * ViewQuestionList component.
  *
- * @param {Array} questions - Array of question objects
- * @param {Object} answers - Map of questionId to selectedOptionId
+ * Renders a vertical list of questions, mapping user answers to their respective questions
+ * to display correctness and feedback.
+ *
+ * @param {Object} props - Component props
+ * @param {Array} props.questions - Array of question objects from the quiz
+ * @param {Array|Object} props.selectedAnswers - User's submitted answers
  */
 export default function ViewQuestionList({ questions, selectedAnswers }) {
   const { theme } = useTheme();
@@ -23,11 +31,12 @@ export default function ViewQuestionList({ questions, selectedAnswers }) {
         {},
       )
     : selectedAnswers || {};
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      {/* Map through questions to display the result for each */}
+      {/* Iterate through questions to render individual review cards */}
       {questions.map((question, index) => (
         <ViewQuestion
           key={question._id}

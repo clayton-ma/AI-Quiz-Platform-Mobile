@@ -1,3 +1,7 @@
+/**
+ * @file SearchBar.jsx
+ * @description A reusable search input component with theme-aware styling.
+ */
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { SearchBar as RNElementsSearchBar } from "@rneui/themed";
@@ -39,9 +43,10 @@ export default function SearchBar({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
+  /** Main wrapper for the search bar */
+  container: { width: "100%" },
+
+  /** Outer container for the RNE SearchBar component */
   searchContainer: {
     backgroundColor: "transparent",
     borderTopWidth: 0,

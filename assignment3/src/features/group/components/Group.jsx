@@ -28,11 +28,13 @@ export default function ListGroup({
       <View style={styles.info}>
         <Text style={[styles.name, { color: theme.colors.text }]}>{name}</Text>
         <Text
-          style={[styles.count, { color: theme.dark ? "#909296" : "#666" }]}
+          style={[styles.count, { color: theme.dark ? "#A0A0A0" : "#7F8C8D" }]}
         >
           {memberCount} members
         </Text>
       </View>
+
+      {/* Conditional Action Button based on User Role */}
       {isAdmin ? (
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.colors.primary }]}
@@ -68,9 +70,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
   },
-  name: { fontSize: 18, fontWeight: "bold" },
-  count: { fontSize: 14 },
-  button: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 6 },
-  disabledButton: { backgroundColor: "#adb5bd" },
-  buttonText: { color: "#fff" },
+  info: {
+    flex: 1,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  count: {
+    fontSize: 14,
+    marginTop: 4,
+  },
+  button: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  disabledButton: {
+    backgroundColor: "#adb5bd",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
 });

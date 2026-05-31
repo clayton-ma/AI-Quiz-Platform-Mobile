@@ -1,35 +1,33 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  Vibration,
-  TouchableOpacity,
-} from "react-native";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { View, Text, StyleSheet, Modal, Vibration } from "react-native";
 import { Accelerometer } from "expo-sensors";
 import { Icon, Button } from "@rneui/themed";
 import { useTheme } from "../../../app/providers/ThemeContext";
 
 /**
  * StabilityGuard component monitors device acceleration.
- * If the device is moving too much (shaking or in a vehicle),
- * it displays a warning overlay.
+ *
+ * It uses the Accelerometer sensor to detect excessive movement or shaking.
+ * If the movement exceeds a defined threshold, a modal overlay is displayed
+ * to advise the user to find a stable environment for the quiz.
+ *
+ * @returns {JSX.Element} A Modal component that triggers on high acceleration.
  */
 export default function StabilityGuard() {
   const { theme } = useTheme();
   const [subscription, setSubscription] = useState(null);
   const [isUnstable, setIsUnstable] = useState(false);
-  const lastData = useRef({ x: 0, y: 0, z: 0 });
+  const lastAcceleration = useRef({ x: 0, y: 0, z: 0 });
 
-  // Threshold for "unstable" movement (G-force)
+  // Threshold for "unstable" movement (change in G-force)
   const STABILITY_THRESHOLD = 2.5;
 
+  /** Starts listening to accelerometer updates */
   const _subscribe = () => {
     Accelerometer.setUpdateInterval(100);
     const sub = Accelerometer.addListener((accelerometerData) => {
       const { x, y, z } = accelerometerData;
-      const prev = lastData.current;
+      const prev = lastAcceleration.current;
 
       // Calculate change in acceleration (delta) to detect shaking specifically
       const delta = Math.sqrt(
@@ -41,11 +39,12 @@ export default function StabilityGuard() {
         Vibration.vibrate(500);
       }
 
-      lastData.current = accelerometerData;
+      lastAcceleration.current = accelerometerData;
     });
     setSubscription(sub);
   };
 
+  /** Stops listening to accelerometer updates */
   const _unsubscribe = () => {
     subscription && subscription.remove();
     setSubscription(null);
@@ -56,10 +55,24 @@ export default function StabilityGuard() {
     return () => _unsubscribe();
   }, []);
 
+  /** Closes the warning modal */
+  const handleDismiss = useCallback(() => {
+    setIsUnstable(false);
+  }, []);
+
   return (
     <Modal transparent={true} visible={isUnstable} animationType="fade">
       <View style={styles.overlay}>
-        <View style={[styles.alertBox, { backgroundColor: theme.colors.card }]}>
+        <View
+          style={[
+            styles.alertBox,
+            {
+              backgroundColor: theme.colors.card,
+              borderColor: theme.colors.border,
+              borderWidth: 1,
+            },
+          ]}
+        >
           <Icon name="vibration" type="material" size={50} color="#E74C3C" />
           <Text style={[styles.title, { color: theme.colors.text }]}>
             Shaking Detected
@@ -72,9 +85,7 @@ export default function StabilityGuard() {
           </Text>
           <Button
             title="I am in a stable place"
-            onPress={() => {
-              setIsUnstable(false);
-            }}
+            onPress={handleDismiss}
             type="clear"
             titleStyle={{ color: "#E74C3C", marginTop: 10 }}
             icon={

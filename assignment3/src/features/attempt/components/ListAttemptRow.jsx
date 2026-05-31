@@ -1,3 +1,7 @@
+/**
+ * @file ListAttemptRow.jsx
+ * @description Component for rendering a single attempt summary row in a list.
+ */
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -9,6 +13,7 @@ import { useTheme } from "../../../app/providers/ThemeContext";
  * It displays attempt metadata and provides navigation actions.
  *
  * @param {Object} attempt - The attempt data object
+ * @returns {JSX.Element} The rendered attempt row.
  */
 export default function ListAttemptRow(attempt) {
   const navigation = useNavigation();
@@ -60,7 +65,14 @@ export default function ListAttemptRow(attempt) {
         </View>
 
         <View style={styles.scoreRow}>
-          <Text style={styles.scoreLabel}>Score: </Text>
+          <Text
+            style={[
+              styles.scoreLabel,
+              { color: theme.dark ? "#A0A0A0" : "#2C3E50" },
+            ]}
+          >
+            Score:{" "}
+          </Text>
           <Text style={[styles.scoreValue, { color: theme.colors.text }]}>
             {scoreText}
           </Text>
@@ -126,12 +138,10 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     fontSize: 14,
-    color: "#2C3E50",
   },
   scoreValue: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#2C3E50",
   },
   actions: {
     paddingLeft: 10,

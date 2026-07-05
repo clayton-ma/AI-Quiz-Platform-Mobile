@@ -1,6 +1,6 @@
 # AI-Driven Quiz Platform - Mobile App (React Native)
 
-This is the mobile client for the AI-Driven Quiz Platform developed by Clayton Ma for IFN666. It is built with **React Native**, **Expo**, and **React Native Elements**. The platform provides user authentication, group management, quiz creation and editing, and AI-powered question generation using Gemini.
+This is the mobile client for the AI-Driven Quiz Platform developed by Clayton Ma. It is built with **React Native**, **Expo**, and **React Native Elements**. The platform provides user authentication, group management, quiz creation and editing, and AI-powered question generation using Gemini.
 
 ## Purpose
 
@@ -57,7 +57,7 @@ Key dependencies used in this assignment:
 
     ```bash
     git clone <repository-url>
-    cd AI-Quiz-Platform-Mobile/assignment3
+    cd AI-Quiz-Platform-Mobile/client/mobileapp
     ```
 
 2.  **Install dependencies**
@@ -67,7 +67,7 @@ Key dependencies used in this assignment:
     ```
 
 3.  **Configure Environment Variables**
-    Create a `.env` file in the `assignment3` root directory and add the following:
+    Create a `.env` file in the `client/mobileapp` root directory and add the following:
 
     ```env
     EXPO_PUBLIC_API_BASE_URL=<<your_api_base_url>>

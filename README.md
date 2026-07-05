@@ -6,6 +6,15 @@ This is the mobile client for the AI-Driven Quiz Platform developed by Clayton M
 
 The purpose of this mobile app is to provide a responsive, intuitive, and secure mobile interface that interfaces with the backend API. It handles the user experience for digitizing assessments, managing group hierarchies, and facilitating interaction with Large Language Models (LLMs) to automate the creation of educational content on the go.
 
+
+## 📱 Web App and Server
+
+The React web application companion for this platform and the server are hosted in a dedicated repository. You can find the mobile codebase, installation instructions, and deployment guides here:
+
+👉 **[React Web App and Server Repository](https://github.com/clayton-ma/AI-Quiz-Platform)** 
+
+
+
 ## Architecture
 
 The application follows a standard client-server architecture using a feature-based folder structure:
